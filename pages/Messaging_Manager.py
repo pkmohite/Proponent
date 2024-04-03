@@ -3,14 +3,22 @@ import json
 import os
 import csv
 from openai import OpenAI
+import openai
 from dotenv import load_dotenv
+import pandas as pd
+from element_configs import column_config_edit, config_csv_upload
 
-client = OpenAI()
+#client = OpenAI()
+def pass_openAI_key(openai_key = None):
+    if "USER_API_KEY" in os.environ:
+        openai.api_key = os.getenv("USER_API_KEY")
+    else:
+        st.error("OpenAI API key not found. Please set the API key in the Setting page.")
 
 
 def get_embedding(text, model="text-embedding-3-large"):
     text = text.replace("\n", " ")
-    return client.embeddings.create(input=[text], model=model).data[0].embedding
+    return openai.embeddings.create(input=[text], model=model).data[0].embedding
 
 
 def load_csv(csv_file="mf_content.csv"):
@@ -43,25 +51,7 @@ def add_painpoint_to_content(painpoint):
         writer.writerows(data)
     print("Content CSV saved successfully!")
 
-def delete_painpoint_from_content(painpoint):
-    # Read the existing data from the CSV file
-    data = load_csv()
-    # Delete the painpoint from the data
-    data.remove(painpoint)
-    # Save the data back to the CSV file
-    with open("mf_content.csv", "w") as file:
-        writer = csv.DictWriter(file, fieldnames=data[0].keys())
-        writer.writeheader()
-        writer.writerows(data)
 
-def delete_painpoint_from_embeddings(painpoint, data):
-    # Delete the painpoint from the data
-    data.remove(painpoint)
-    # Save the updated data with embeddings to a new JSON file
-    with open("mf_embeddings.json", "w") as file:
-        json.dump(data, file, indent=4)
-
-# Function to add a new painpoint
 def add_painpoint_to_embeddings(painpoint, data):
 
     # Generate the embedding for the new painpoint
@@ -81,9 +71,29 @@ def add_painpoint_to_embeddings(painpoint, data):
         json.dump(data, file, indent=4)
     print("Embedding generation and JSON file saving successful!")
 
+
+def delete_painpoint_from_content(painpoint):
+    # Read the existing data from the CSV file
+    data = load_csv()
+    # Delete the painpoint from the data
+    data.remove(painpoint)
+    # Save the data back to the CSV file
+    with open("mf_content.csv", "w") as file:
+        writer = csv.DictWriter(file, fieldnames=data[0].keys())
+        writer.writeheader()
+        writer.writerows(data)
+
+
+def delete_painpoint_from_embeddings(painpoint, data):
+    # Delete the painpoint from the data
+    data.remove(painpoint)
+    # Save the updated data with embeddings to a new JSON file
+    with open("mf_embeddings.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+
 ## Streamlit Functions
     
-# Add a new painpoint
 def add_new_message(data):
     st.markdown("#### Add New Message")
     paint_point = st.text_input("Enter Customer Pain Point:")
@@ -123,7 +133,7 @@ def add_new_message(data):
         else:
             st.error("Please attach a PDF or MP4 file to save the painpoint.")
 
-# Edit the existing painpoints
+
 def edit_message(data):
     # Create a new list to store the formatted data
     editor_data = []
@@ -140,76 +150,65 @@ def edit_message(data):
             "checkVideo": bool(mf["videoFile"]),
         }
         editor_data.append(editor_mf)
-    column_config = {
-        "painPointId": None,
-        "embedding": None,
-        "pdfFile": None,
-        "videoFile": None,
-        "selected": st.column_config.Column(label="Select", width="small"),
-        "customerPainPoint": st.column_config.Column(
-            label="Customer Pain Point", width="medium"
-        ),
-        "featureName": st.column_config.Column(
-            label="Feature Name", width="medium"
-        ),
-        "valueProposition": st.column_config.Column(
-            label="Value Proposition", width="medium"
-        ),
-    }
     
     # Display the data editor
     st.markdown("#### Modify Existing Pain Points")
     edited_data = st.data_editor(
-        editor_data, column_config=column_config, hide_index=True, use_container_width=True
+        editor_data, column_config=column_config_edit, hide_index=True, use_container_width=True
     )
     
     # Get the selected painpoints
     selected_painpoints = [mf for mf in edited_data if mf["selected"] == True]
     
-    col1, col2 = st.columns([1, 1])
-    if col1.button("Save"):
+    col1, col2 = st.columns([1, 8])
+    if col1.button("Save Selected Records"):
         # Save implementation is pending
         st.success("Save implementation is pending!")
         
-    if col2.button("Delete"):
+    if col2.button("Delete Selected Records"):
         for painpoint in selected_painpoints:
             # Delete the painpoint from the data
             delete_painpoint_from_content(painpoint)
             delete_painpoint_from_embeddings(painpoint, data)
         st.success("Painpoints deleted successfully!")
 
-# Upload messages via CSV
-def upload_message_via_csv():
 
+def upload_message_via_csv():    
+    
     st.markdown("#### Add Painpoints via CSV")
     csv_file = st.file_uploader("Upload CSV File:", type=["csv"])
     if csv_file is not None:
-        data = load_csv(csv_file)
-        # Check if the CSV file has the required columns
-        required_columns = ["customerPainPoint", "featureName", "valueProposition"]
-        if all(column in data[0] for column in required_columns):
-            for row in data:
-                # Add the new painpoint to the data
-                add_painpoint_to_content(row)
+        csv_display = pd.read_csv(csv_file)
 
-                # Add the new painpoint to mf_embeddings.json
-                add_painpoint_to_embeddings(row, data)
+        # View the data
+        st.data_editor(csv_display, column_config=config_csv_upload, use_container_width=True)
+        if st.button("Upload CSV"):
 
-                # Save the pdf file in the slides folder
-                if row["pdfFile"]:
-                    with open(os.path.join("slides", row["pdfFile"]), "wb") as file:
-                        file.write(row["pdfFile"].getbuffer())
+            # Check if the CSV file has the required columns
+            required_columns = ["customerPainPoint", "featureName", "valueProposition"]
+            if all(column in data[0] for column in required_columns):
+                for row in data:
+                    # Add the new painpoint to the data
+                    add_painpoint_to_content(row)
 
-                # Save the video file in the videos folder
-                if row["videoFile"]:
-                    with open(os.path.join("videos", row["videoFile"]), "wb") as file:
-                        file.write(row["videoFile"].getbuffer())
+                    # Add the new painpoint to mf_embeddings.json
+                    add_painpoint_to_embeddings(row, data)
 
-            st.success("Painpoints added successfully!")
-        else:
-            st.error(
-                f"Please make sure the CSV file has the required columns: {', '.join(required_columns)} and one of pdfFile or videoFile."
-            )
+                    # Save the pdf file in the slides folder
+                    if row["pdfFile"]:
+                        with open(os.path.join("slides", row["pdfFile"]), "wb") as file:
+                            file.write(row["pdfFile"].getbuffer())
+
+                    # Save the video file in the videos folder
+                    if row["videoFile"]:
+                        with open(os.path.join("videos", row["videoFile"]), "wb") as file:
+                            file.write(row["videoFile"].getbuffer())
+
+                st.success("Painpoints added successfully!")
+            else:
+                st.error(
+                    f"Please make sure the CSV file has the required columns: {', '.join(required_columns)} and one of pdfFile or videoFile."
+                )
 
 
 # Load the data
@@ -218,6 +217,10 @@ data = load_json()
 ## Streamlit app
 st.title("Messaging Manager")
 
+## Pass OpenAI API key
+pass_openAI_key()
+
+## Tabs
 tab1, tab2, tab3 = st.tabs(["Add New Message", "Modify Messaging Framework", "Upload CSV"])
 
 # Add painpoint

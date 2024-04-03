@@ -1,44 +1,34 @@
 import json
-from openai import OpenAI
-from dotenv import load_dotenv
 import os
 import numpy as np
 import pandas as pd
-from PyPDF2 import PdfMerger
 import streamlit as st
+from openai import OpenAI
+import openai
+from dotenv import load_dotenv
+from PyPDF2 import PdfMerger
 from fpdf import FPDF
 from streamlit_pdf_viewer import pdf_viewer
 import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
+from element_configs import column_config_recommendations, config_about
 
-### Constants
+def pass_openAI_key(api_key=None):
+    if "USER_API_KEY" in os.environ:
+        openai.api_key = os.getenv("USER_API_KEY")
+    else:
+        st.error("OpenAI API key not found. Please set the API key in the Setting page.")
 
-# OpenAI API key
-client = OpenAI()
-# Define the column configuration for the data editor
-column_config = {
-    "Select": st.column_config.Column(label="Select", disabled=False),
-    "Customer Pain Point": st.column_config.Column(
-        label="Customer Pain Point", disabled=True, width="medium"
-    ),
-    "Feature Name": st.column_config.Column(
-        label="Feature Name", disabled=True, width="medium"
-    ),
-    "Value Proposition": st.column_config.Column(
-        label="Value Proposition", disabled=True, width="large"
-    ),
-    "Similarity Score": st.column_config.ProgressColumn(label="Similarity Score"),
-    "PDF File": st.column_config.Column(label="PDF File", disabled=True),
-    "Video File": st.column_config.Column(label="Video File", disabled=True),
-    "PDF File Name": None,
-    "Video File Name": None,
-}
+def create_env_file():
+    if not os.path.exists(".env"):
+        with open(".env", "w") as file:
+            file.write("USER_API_KEY=\n")
+            file.write("IMAGEIO_FFMPEG_EXE = \"/usr/bin/ffmpeg\"")
 
 
-### Functions
-def get_embedding(text, model="text-embedding-3-large"):
+def get_embedding(text, model="text-embedding-3-large"): # alt is replacing openai with client = OpenAI()
     text = text.replace("\n", " ")
-    return client.embeddings.create(input=[text], model=model).data[0].embedding
+    return openai.embeddings.create(input=[text], model=model).data[0].embedding
 
 
 def cosine_similarity(a, b):
@@ -68,7 +58,7 @@ def generate_customized_email(recommendations, user_input, customer_name, custom
     ]
 
     # Generate the email body using the OpenAI API
-    response = client.chat.completions.create(
+    response = openai.chat.completions.create(
         model="gpt-4-0125-preview", messages=conversation
     )
 
@@ -155,7 +145,7 @@ def create_image_deck(df):
 
 
 def create_summary(user_input):
-    response = client.chat.completions.create(
+    response = openai.chat.completions.create(
         model="gpt-4-0125-preview",
         messages=[
             {
@@ -240,26 +230,37 @@ def displayPDF(file, column = st):
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)
 
+def setup_streamlit():
+    # Pass a variable to the set_page_config function
+    my_variable = None
+    st.set_page_config(
+        page_title="Proponent",
+        page_icon=None,
+        layout="wide",
+        initial_sidebar_state="expanded",
+        menu_items={
+            'Get Help': "mailto:pmohite95@gmail.com",
+            'About': config_about,
+        }
+    )
 
-### Session State Stuff
+### Streamlit Code
 
-# Load the data
-data = load_data()
-
-# Create a session state variable to track if the button has been clicked
+## Session State Stuff
 if "clicked" not in st.session_state:
     st.session_state.clicked = False
 if "download_video" not in st.session_state:
     st.session_state.video_download = False
 
-### Streamlit code
-## Title Streamlit setup
-st.set_page_config(layout="wide")
-
-# Title and logo
+## Title and logo
+setup_streamlit()
 logo, title = st.columns([1, 12])
 logo.image("assets/logo.png", width=90)
 title.title("Proponent").markdown("# Proponent")
+
+## Set the OpenAI API key
+create_env_file()
+pass_openAI_key()
 
 ## Body Streamlit code
 # create a column layout
@@ -275,29 +276,22 @@ user_input = st.text_area("Enter your text here:", label_visibility="collapsed")
 
 # Button to get recommendations
 if st.button("Get Recommendations", on_click=click_button):
-    # Generate a summary of the user input
+    data = load_data()
     summary = create_summary(user_input)
-
-    # Get embeddings for the user input
     summary_embedding = get_embedding(summary)
-
-    # Get the top 5 recommendations based on the user input
     df = calculate_similarity_ordered(summary_embedding, data)
     top_5 = df.head(5)
-
-    ## Prepare the recommendations for display
     st.session_state.display_df = format_display_df(top_5)
     st.session_state.summary = summary
 
 if st.session_state.clicked:
     st.divider()
-    # Recommendations Display
     st.markdown("### Customer Ask:")
     st.write(st.session_state.summary)
     st.markdown("#### Recommendations:")
     selected_df = st.data_editor(
         st.session_state.display_df,
-        column_config=column_config,
+        column_config=column_config_recommendations,
         hide_index=True,
         use_container_width=True,
     )
@@ -320,12 +314,8 @@ if st.session_state.clicked:
 
     # Button to generate customized PDF deck
     if col1.button("Build Sales Deck"):
-        # create_pdf_deck(selected_recommendations)
+        # Create a PDF deck with the selected recommendations
         create_image_deck(selected_recommendations)
-        # Display the combined PDF
-        # col2.markdown("##### Sales Deck Preview:")
-
-        # Download the combined PDF file
         with open("downloads/combined_PDF.pdf", "rb") as file:
             col2.download_button(
                 label="Download PDF Deck",
@@ -337,14 +327,9 @@ if st.session_state.clicked:
 
     # Button to generate a customized video
     if col1.button("Build Demo Video"):
-        # Create a video from the selected recommendations
-        # create_video(selected_recommendations)
-
+        # Create a video with the selected recommendations
+        # create_video(selected_recommendations)  ##<<Uncomment this line to generate video
         if os.path.exists("downloads/video.mp4"):
-            # Preview the video
-            # col2.markdown("##### Video Preview:")
-
-            # Download the video file
             with open("downloads/video.mp4", "rb") as file:
                 col2.download_button(
                     label="Download Video",

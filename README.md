@@ -1,10 +1,10 @@
-<p align="center">
+<p align="left">
   <img src="assets/logo.png" alt="Proponent Logo" width="200">
 </p>
 
-<h1 align="center">Proponent: Sales Enablement that makes everyone a product expert</h1>
+<h1 align="left">Proponent: Sales Enablement that makes everyone a product expert</h1>
 
-<p align="center">
+<p align="left">
   <a href="#features">Features</a> •
   <a href="#key-differentiation">Key Differentiation</a> •
   <a href="#project-status">Project Status</a> •

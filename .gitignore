@@ -1,0 +1,7 @@
+slides/
+video/
+archive/
+downloads/
+videos/
+**/.DS_Store
+**/.env

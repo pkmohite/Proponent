@@ -1,0 +1,358 @@
+import json
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+import numpy as np
+import pandas as pd
+from PyPDF2 import PdfMerger
+import streamlit as st
+from fpdf import FPDF
+from streamlit_pdf_viewer import pdf_viewer
+import base64
+from moviepy.editor import VideoFileClip, concatenate_videoclips
+
+### Constants
+
+# OpenAI API key
+client = OpenAI()
+# Define the column configuration for the data editor
+column_config = {
+    "Select": st.column_config.Column(label="Select", disabled=False),
+    "Customer Pain Point": st.column_config.Column(
+        label="Customer Pain Point", disabled=True, width="medium"
+    ),
+    "Feature Name": st.column_config.Column(
+        label="Feature Name", disabled=True, width="medium"
+    ),
+    "Value Proposition": st.column_config.Column(
+        label="Value Proposition", disabled=True, width="large"
+    ),
+    "Similarity Score": st.column_config.ProgressColumn(label="Similarity Score"),
+    "PDF File": st.column_config.Column(label="PDF File", disabled=True),
+    "Video File": st.column_config.Column(label="Video File", disabled=True),
+    "PDF File Name": None,
+    "Video File Name": None,
+}
+
+
+### Functions
+def get_embedding(text, model="text-embedding-3-large"):
+    text = text.replace("\n", " ")
+    return client.embeddings.create(input=[text], model=model).data[0].embedding
+
+
+def cosine_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
+def generate_customized_email(recommendations, user_input, customer_name, customer_company):
+
+    # Extract the feature names and value propositions from the recommendations DataFrame
+    features_str = "\n".join(recommendations["Feature Name"])
+    value_prop_str = "\n".join(recommendations["Value Proposition"])
+
+    # Create the conversation for the OpenAI API
+    conversation = [
+        {
+            "role": "system",
+            "content": "You are an expert sales communication assistant. Your goal is to craft a personalized, engaging, and concise email under 200 words to follow up with a customer based on their pain points, feature requests, and our proposed solutions.",
+        },
+        {
+            "role": "user",
+            "content": f"Here is the context of my conversation with the customer {customer_name} from {customer_company}:\n\n{user_input}\n\nBased on their input, we have identified the following features and value propositions:\n\nFeatures:\n{features_str}\n\nValue Propositions:\n{value_prop_str}\n\nPlease draft a short follow-up email that:\n1. Thanks the customer for their input and acknowledges their pain points\n2. Highlights all the shortlisted features and their corresponding value propositions in a bullet-point format\n3. Explains how these features collectively address their needs and improve their workflow\n4. Ends with a clear call-to-action, inviting them to schedule a demo or discuss further\n\nKeep the email concise, personalized, and focused on the customer's unique situation. Use a friendly yet professional tone.",
+        },
+        {
+            "role": "assistant",
+            "content": "Dear [Customer Name],\n\nThank you for taking the time to share your pain points and feature requests with us. We truly appreciate your valuable input and insights.\n\nAfter carefully reviewing your feedback, we believe the following features from our product will comprehensively address your needs:\n\n[List all shortlisted features and their value propositions in bullet points]\n\nTogether, these features will significantly streamline your workflow, increase efficiency, and help you achieve your goals more effectively.\n\nWe would love to show you how our product can be tailored to your specific use case. If you're interested, I would be happy to schedule a personalized demo at your convenience. Please let me know your availability, and I'll set it up.\n\nBest regards,\n[Your Name]\nSales Team \n Generate in Markdown format.",
+        },
+    ]
+
+    # Generate the email body using the OpenAI API
+    response = client.chat.completions.create(
+        model="gpt-4-0125-preview", messages=conversation
+    )
+
+    # Extract the generated email body from the API response
+    email_body = response.choices[0].message.content
+
+    return email_body
+
+
+def calculate_similarity_ordered(user_input_embedding, data):
+    df = pd.DataFrame()
+
+    for mf in data:
+        mf_embedding = mf["embedding"]
+        similarity = cosine_similarity(user_input_embedding, mf_embedding)
+        mf["similarity_score"] = similarity
+        df = df._append(mf, ignore_index=True)
+
+    df.sort_values(by="similarity_score", ascending=False, inplace=True)
+
+    return df
+
+
+def create_pdf_deck(df):
+
+    # Create a PdfMerger object
+    merger = PdfMerger()
+
+    # Iterate over each row in the DataFrame
+    for index, row in df.iterrows():
+        # Get the PDF file name from the "PDF File" column
+        pdf_file = row["PDF File Name"]
+
+        # Construct the file path
+        file_path = os.path.join("slides", pdf_file)
+
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Open the PDF file in read binary mode
+            with open(file_path, "rb") as file:
+                # Add the PDF file to the merger
+                merger.append(file)
+
+    # Specify the output file path
+    output_path = "downloads/combined_PDF.pdf"
+
+    # Write the merged PDF to the output file
+    with open(output_path, "wb") as file:
+        merger.write(file)
+
+    print(f"Combined PDF created: {output_path}")
+
+
+def create_image_deck(df):
+    # Create a list to store the image paths
+    image_paths = []
+
+    # Iterate over each row in the DataFrame
+    for index, row in df.iterrows():
+        # Construct the file path
+        image_file = row["PDF File Name"]
+        file_path = os.path.join("slides", image_file)
+
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Add the image path to the list
+            image_paths.append(file_path)
+
+    # Specify the output file path
+    output_path = "downloads/combined_PDF.pdf"
+
+    # Create a new PDF document with 16:9 layout
+    pdf = FPDF(orientation="L", format="Legal")
+
+    # Add each image to the PDF document
+    for image_path in image_paths:
+        pdf.add_page()
+        pdf.image(image_path, x=-1, y=2, w=380)
+
+    # Save the PDF document
+    pdf.output(output_path)
+
+    print(f"Combined image PDF created: {output_path}")
+
+
+def create_summary(user_input):
+    response = client.chat.completions.create(
+        model="gpt-4-0125-preview",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant. Extract key customer asks from text I share with you and generate a summary of the customer pain points or asks ONLY. Don't include anything else",
+            },
+            {"role": "user", "content": user_input},
+            {
+                "role": "assistant",
+                "content": "Here is a summary of your input:\n\n",
+            },
+        ],
+    )
+    summary = response.choices[0].message.content
+    return summary
+
+
+def click_button():
+    st.session_state.clicked = True
+
+
+def remove_video():
+    os.remove("downloads/video.mp4")
+
+
+def format_display_df(recommendations):
+
+    # Create a DataFrame for the recommendations with a "Select" column
+    recommendations_df = pd.DataFrame(
+        {
+            "Select": [False] * len(recommendations),
+            "Customer Pain Point": recommendations["customerPainPoint"],
+            "Feature Name": recommendations["featureName"],
+            "Value Proposition": recommendations["valueProposition"],
+            # add normalized similarity score to the data frame, normalized to the min and max similarity score
+            "Similarity Score": (
+                recommendations["similarity_score"]
+                - recommendations["similarity_score"].min()
+            )
+            / (
+                recommendations["similarity_score"].max()
+                - recommendations["similarity_score"].min()
+            ),
+            "PDF File": recommendations["pdfFile"].apply(lambda x: bool(x)),
+            "Video File": recommendations["videoFile"].apply(lambda x: bool(x)),
+            "PDF File Name": recommendations["pdfFile"],
+            "Video File Name": recommendations["videoFile"],
+        }
+    )
+
+    return recommendations_df
+
+
+def load_data():
+    # Load the JSON data from file
+    with open("mf_embeddings.json", "r") as file:
+        data = json.load(file)
+    return data
+
+
+def create_video(df):
+    video_names = df["Video File Name"].apply(lambda x: os.path.splitext(x)[0]).tolist()
+
+    video_clips = []
+    for video_name in video_names:
+        video_path = os.path.join("videos", video_name + ".mp4")
+        video_clip = VideoFileClip(video_path)
+        video_clips.append(video_clip)
+
+    final_clip = concatenate_videoclips(video_clips, method="compose")
+    final_clip.write_videofile("downloads/video.mp4", codec="libx264")
+
+
+def displayPDF(file, column = st):
+    # Opening file from file path
+    with open(file, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+
+    # Embedding PDF in HTML
+    pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
+
+    # Displaying File
+    column.markdown(pdf_display, unsafe_allow_html=True)
+
+
+### Session State Stuff
+
+# Load the data
+data = load_data()
+
+# Create a session state variable to track if the button has been clicked
+if "clicked" not in st.session_state:
+    st.session_state.clicked = False
+if "download_video" not in st.session_state:
+    st.session_state.video_download = False
+
+### Streamlit code
+## Title Streamlit setup
+st.set_page_config(layout="wide")
+
+# Title and logo
+logo, title = st.columns([1, 12])
+logo.image("assets/logo.png", width=90)
+title.title("Proponent").markdown("# Proponent")
+
+## Body Streamlit code
+# create a column layout
+name_col, indus_col = st.columns([1, 1])
+name_col.markdown("##### Customer Name:")
+
+customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed")
+indus_col.markdown("##### Company Name:")
+customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed")
+
+st.markdown("##### Describe your customer pain point or feature request:")
+user_input = st.text_area("Enter your text here:", label_visibility="collapsed")
+
+# Button to get recommendations
+if st.button("Get Recommendations", on_click=click_button):
+    # Generate a summary of the user input
+    summary = create_summary(user_input)
+
+    # Get embeddings for the user input
+    summary_embedding = get_embedding(summary)
+
+    # Get the top 5 recommendations based on the user input
+    df = calculate_similarity_ordered(summary_embedding, data)
+    top_5 = df.head(5)
+
+    ## Prepare the recommendations for display
+    st.session_state.display_df = format_display_df(top_5)
+    st.session_state.summary = summary
+
+if st.session_state.clicked:
+    st.divider()
+    # Recommendations Display
+    st.markdown("### Customer Ask:")
+    st.write(st.session_state.summary)
+    st.markdown("#### Recommendations:")
+    selected_df = st.data_editor(
+        st.session_state.display_df,
+        column_config=column_config,
+        hide_index=True,
+        use_container_width=True,
+    )
+
+    # Store the selected recommendations in a df
+    selected_recommendations = selected_df[selected_df["Select"] == True]
+
+    # Buttons for generating email, sales deck, and video
+    st.divider()
+    st.markdown("### Content Center:")
+    col1, col2 = st.columns([1.5,5])
+
+    if col1.button("Draft Custom Email"):
+        # Generate a customized email with the recommendations
+        email_body = generate_customized_email(
+            selected_recommendations, user_input, customer_name, customer_company
+        )
+        # col2.markdown("##### Email Preview:")
+        col2.markdown(email_body)
+
+    # Button to generate customized PDF deck
+    if col1.button("Build Sales Deck"):
+        # create_pdf_deck(selected_recommendations)
+        create_image_deck(selected_recommendations)
+        # Display the combined PDF
+        # col2.markdown("##### Sales Deck Preview:")
+
+        # Download the combined PDF file
+        with open("downloads/combined_PDF.pdf", "rb") as file:
+            col2.download_button(
+                label="Download PDF Deck",
+                data=file.read(),
+                file_name="customized_deck.pdf",
+                mime="application/pdf",
+            )
+        displayPDF("downloads/combined_PDF.pdf", col2)
+
+    # Button to generate a customized video
+    if col1.button("Build Demo Video"):
+        # Create a video from the selected recommendations
+        # create_video(selected_recommendations)
+
+        if os.path.exists("downloads/video.mp4"):
+            # Preview the video
+            # col2.markdown("##### Video Preview:")
+
+            # Download the video file
+            with open("downloads/video.mp4", "rb") as file:
+                col2.download_button(
+                    label="Download Video",
+                    data=file.read(),
+                    file_name="downloads/video.mp4",
+                    mime="video/mp4",
+                    on_click=remove_video,
+                )
+            col2.video("downloads/video.mp4")
+        else:
+            st.error("Error generating video. Please try again.")

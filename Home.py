@@ -12,6 +12,7 @@ from streamlit_pdf_viewer import pdf_viewer
 import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from element_configs import column_config_recommendations, config_about
+#from pyopenshot import Clip, Timeline, FFmpegReader, FFmpegWriter
 
 def pass_openAI_key(api_key=None):
     if "USER_API_KEY" in os.environ:
@@ -216,8 +217,35 @@ def create_video(df):
         video_clips.append(video_clip)
 
     final_clip = concatenate_videoclips(video_clips, method="compose")
-    final_clip.write_videofile("downloads/video.mp4", codec="libx264")
 
+
+def create_video_alt(df):
+    video_names = df['Video File Name'].apply(lambda x: os.path.splitext(x)[0]).tolist()
+    video_files = [f'videos/{name}.mp4' for name in video_names]
+
+    # Create a timeline
+    timeline = Timeline(1280, 720, 30, 44100, 2, 1)
+
+    # Add clips to the timeline
+    start_frame = 1
+    for video_file in video_files:
+        reader = FFmpegReader(video_file)
+        clip = Clip(reader)
+        clip.Position(start_frame)
+        timeline.AddClip(clip)
+        start_frame += reader.info.video_length
+
+    # Write the timeline to a video file
+    writer = FFmpegWriter('output.mp4')
+    timeline.Open(writer)
+    for frame_number in range(1, start_frame):
+        timeline.GetFrame(frame_number)
+        writer.WriteFrame()
+    writer.Close()
+
+    # Close all clips
+    for clip in timeline.Clips():
+        clip.Close()
 
 def displayPDF(file, column = st):
     # Opening file from file path
@@ -328,7 +356,7 @@ if st.session_state.clicked:
     # Button to generate a customized video
     if col1.button("Build Demo Video"):
         # Create a video with the selected recommendations
-        # create_video(selected_recommendations)  ##<<Uncomment this line to generate video
+        create_video(selected_recommendations)  ##<<Uncomment this line to generate video
         if os.path.exists("downloads/video.mp4"):
             with open("downloads/video.mp4", "rb") as file:
                 col2.download_button(

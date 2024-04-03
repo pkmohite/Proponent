@@ -20,6 +20,7 @@ def pass_openAI_key(api_key=None):
     else:
         st.error("OpenAI API key not found. Please set the API key in the Setting page.")
 
+
 def create_env_file():
     if not os.path.exists(".env"):
         with open(".env", "w") as file:

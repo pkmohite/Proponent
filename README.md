@@ -25,20 +25,9 @@ Proponent is an innovative sales enablement tool that harnesses the power of art
 - Continuous learning from customer interactions to refine understanding of their needs
 - Seamless integration with multiple sales and marketing channels
 
-
 ## Project Status
 
 Please note that Proponent is currently under active development and may not be fully ready for deployment yet. We are working diligently to refine the features, improve the codebase, and ensure a seamless user experience. Stay tuned for updates on the project's progress and future release plans.
-
-## Contributing
-
-We welcome contributions to improve Proponent. If you'd like to contribute, please follow these steps:
-
-1. Fork the repository
-2. Create a new branch for your feature or bug fix
-3. Make your changes and commit them with descriptive messages
-4. Push your changes to your forked repository
-5. Submit a pull request to the main repository
 
 ## License
 
@@ -46,4 +35,4 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Contact
 
-📧 If you have any questions, suggestions, or feedback, please feel free to reach out at [pmohite95@gmail.com](mailto:pmohite95@gmail.com).
+If you have any questions, suggestions, or feedback, please feel free to reach out at [pmohite95@gmail.com](mailto:pmohite95@gmail.com).

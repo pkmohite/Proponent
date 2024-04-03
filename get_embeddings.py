@@ -25,3 +25,5 @@ for mf in data:
 # Save the updated data with embeddings to a new JSON file
 with open('mf_embedded.json', 'w') as file:
     json.dump(data, file, indent=4)
+
+print("Embeddings generated and saved to mf_embedded.json")

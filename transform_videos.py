@@ -224,7 +224,9 @@ def delete_nonexistent_jpgs(folder_path, json_file):
             os.remove(file_path)
 
 
-# Example usage
-folder_path = 'slides2'
-json_file = "mf_embeddings.json"
-delete_nonexistent_jpgs(folder_path, json_file)
+# # Example usage
+# folder_path = 'slides2'
+# json_file = "mf_embeddings.json"
+# delete_nonexistent_jpgs(folder_path, json_file)
+
+

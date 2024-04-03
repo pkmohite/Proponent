@@ -3,7 +3,6 @@ import os
 import numpy as np
 import pandas as pd
 import streamlit as st
-from openai import OpenAI
 import openai
 from dotenv import load_dotenv
 from PyPDF2 import PdfMerger
@@ -12,7 +11,7 @@ from streamlit_pdf_viewer import pdf_viewer
 import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from element_configs import column_config_recommendations, config_about
-#from pyopenshot import Clip, Timeline, FFmpegReader, FFmpegWriter
+
 
 def pass_openAI_key(api_key=None):
     if "USER_API_KEY" in os.environ:
@@ -219,34 +218,6 @@ def create_video(df):
 
     final_clip = concatenate_videoclips(video_clips, method="compose")
 
-
-def create_video_alt(df):
-    video_names = df['Video File Name'].apply(lambda x: os.path.splitext(x)[0]).tolist()
-    video_files = [f'videos/{name}.mp4' for name in video_names]
-
-    # Create a timeline
-    timeline = Timeline(1280, 720, 30, 44100, 2, 1)
-
-    # Add clips to the timeline
-    start_frame = 1
-    for video_file in video_files:
-        reader = FFmpegReader(video_file)
-        clip = Clip(reader)
-        clip.Position(start_frame)
-        timeline.AddClip(clip)
-        start_frame += reader.info.video_length
-
-    # Write the timeline to a video file
-    writer = FFmpegWriter('output.mp4')
-    timeline.Open(writer)
-    for frame_number in range(1, start_frame):
-        timeline.GetFrame(frame_number)
-        writer.WriteFrame()
-    writer.Close()
-
-    # Close all clips
-    for clip in timeline.Clips():
-        clip.Close()
 
 def displayPDF(file, column = st):
     # Opening file from file path

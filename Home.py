@@ -292,7 +292,7 @@ if "clicked" not in st.session_state:
     st.session_state.clicked = False
 if "download_video" not in st.session_state:
     st.session_state.video_download = False
-
+    
 ## Title and logo
 setup_streamlit()
 logo, title = st.columns([1, 12])
@@ -376,8 +376,9 @@ if st.session_state.clicked:
 
     # Button to generate a customized video
     if col1.button("Build Demo Video"):
-        # Create a video with the selected recommendations
-        create_video(selected_recommendations)  ##<<Uncomment this line to generate video
+        if not os.path.exists("downloads/video.mp4"):
+            create_video(selected_recommendations)
+        
         if os.path.exists("downloads/video.mp4"):
             with open("downloads/video.mp4", "rb") as file:
                 col2.download_button(

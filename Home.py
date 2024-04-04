@@ -12,6 +12,7 @@ import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from element_configs import column_config_recommendations, config_about
 
+## Functions
 
 def pass_openAI_key(api_key=None):
     if "USER_API_KEY" in os.environ:
@@ -244,6 +245,7 @@ def displayPDF(file, column = st):
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)
+
 
 def setup_streamlit():
     # Pass a variable to the set_page_config function

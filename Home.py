@@ -24,7 +24,6 @@ def create_env_file():
     if not os.path.exists(".env"):
         with open(".env", "w") as file:
             file.write("USER_API_KEY=\n")
-            file.write("IMAGEIO_FFMPEG_EXE = \"/usr/bin/ffmpeg\"")
 
 
 def get_embedding(text, model="text-embedding-3-large"): # alt is replacing openai with client = OpenAI()

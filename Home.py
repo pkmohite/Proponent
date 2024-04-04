@@ -207,16 +207,32 @@ def load_data():
     return data
 
 
-def create_video(df):
-    video_names = df["Video File Name"].apply(lambda x: os.path.splitext(x)[0]).tolist()
+def create_video(recommendations):
+    # Create a list to store the video paths
+    video_paths = []
 
-    video_clips = []
-    for video_name in video_names:
-        video_path = os.path.join("videos", video_name + ".mp4")
-        video_clip = VideoFileClip(video_path)
-        video_clips.append(video_clip)
+    # Iterate over each row in the DataFrame
+    for index, row in recommendations.iterrows():
+        # Construct the file path
+        video_file = row["Video File Name"]
+        file_path = os.path.join("videos", video_file)
 
-    final_clip = concatenate_videoclips(video_clips, method="compose")
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Add the video path to the list
+            video_paths.append(file_path)
+
+    # Concatenate the video clips
+    video_clips = [VideoFileClip(video_path) for video_path in video_paths]
+    final_clip = concatenate_videoclips(video_clips)
+
+    # Specify the output file path
+    output_path = "downloads/video.mp4"
+
+    # Write the concatenated video to the output file
+    final_clip.write_videofile(output_path, codec="libx264", fps=24)
+
+    print(f"Concatenated video created: {output_path}")
 
 
 def displayPDF(file, column = st):

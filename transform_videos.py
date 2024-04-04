@@ -99,8 +99,8 @@ def download_playlist(playlist_url, destination_folder, start_time=None, end_tim
 # playlist_url = (
 #     "https://www.youtube.com/playlist?list=PLutcJfNEwNkSzUWW3NW3858GhsDJ5XYHV"
 # )
-# destination_folder = "monday_videos".replace("\\", "/")  # Replace backslashes with forward slashes
-# download_playlist(playlist_url, destination_folder)
+# destination_folder = "videos".replace("\\", "/")  # Replace backslashes with forward slashes
+# download_playlist(playlist_url, destination_folder, start_time, end_time)
 
 def extract_file_names(folder_path, csv_file_path):
     # Get all file names in the folder
@@ -140,7 +140,7 @@ def change_file_names_to_lowercase(folder_path):
         os.rename(current_file_path, new_file_path)
 
 # # Example usage
-# folder_path = 'monday_videos'
+# folder_path = 'videos'
 # change_file_names_to_lowercase(folder_path)
 
 def delete_nonexistent_videos(folder_path, json_file):
@@ -230,3 +230,27 @@ def delete_nonexistent_jpgs(folder_path, json_file):
 # delete_nonexistent_jpgs(folder_path, json_file)
 
 
+def shorten_all_videos(folder_path, destination_folder, start_time, end_time):
+    # Get all file names in the folder
+    file_names = os.listdir(folder_path)
+
+    # Iterate over the file names
+    for file_name in file_names:
+        # Get the current file path
+        current_file_path = os.path.join(folder_path, file_name)
+
+        # Set the path for the shortened video
+        shortened_video_folder = os.path.join(destination_folder, "shortened_videos")
+        if not os.path.exists(shortened_video_folder):
+            os.makedirs(shortened_video_folder)
+        shortened_video_path = os.path.join(shortened_video_folder, file_name)
+
+        # Shorten the video using moviepy
+        ffmpeg_extract_subclip(current_file_path, start_time, end_time, targetname=shortened_video_path)
+        
+# # Example usage
+# folder_path = 'videos'
+# destination_folder = 'shortened_videos'
+# start_time = 0
+# end_time = 60
+# shorten_all_videos(folder_path, destination_folder, start_time, end_time)

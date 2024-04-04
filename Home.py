@@ -261,13 +261,14 @@ def setup_streamlit():
         }
     )
 
+
 def load_examples(file_path = "assets/examples.csv"):
 
     # Load the CSV data into a DataFrame
     data = pd.read_csv(file_path)
-
+    
     # Create a dropdown to select the type
-    selected_type = st.selectbox("Load Example Conversation", ["None"] + data["type"].unique().tolist())
+    selected_type = st.sidebar.selectbox("Load Example Conversation", ["None"] + data["type"].unique().tolist())
 
     # Filter the data based on the selected type
     filtered_data = data[data["type"] == selected_type]
@@ -324,8 +325,11 @@ if st.button("Get Recommendations", on_click=click_button):
     summary = create_summary(user_input)
     summary_embedding = get_embedding(summary)
     df = calculate_similarity_ordered(summary_embedding, data)
-    top_5 = df.head(5)
-    st.session_state.display_df = format_display_df(top_5)
+    # top_5 = df.head(5)
+    # st.session_state.display_df = format_display_df(top_5)
+    df_formatted = format_display_df(df)
+    top_7 = df_formatted.head(7)
+    st.session_state.display_df = top_7
     st.session_state.summary = summary
 
 if st.session_state.clicked:

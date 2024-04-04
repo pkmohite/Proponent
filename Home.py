@@ -261,7 +261,7 @@ def setup_streamlit():
         }
     )
 
-def load_examples(file_path = "code_aux/examples.csv"):
+def load_examples(file_path = "assets/examples.csv"):
 
     # Load the CSV data into a DataFrame
     data = pd.read_csv(file_path)

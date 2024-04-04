@@ -261,6 +261,29 @@ def setup_streamlit():
         }
     )
 
+def load_examples(file_path = "code_aux/examples.csv"):
+
+    # Load the CSV data into a DataFrame
+    data = pd.read_csv(file_path)
+
+    # Create a dropdown to select the type
+    selected_type = st.selectbox("Load Example Conversation", ["None"] + data["type"].unique().tolist())
+
+    # Filter the data based on the selected type
+    filtered_data = data[data["type"] == selected_type]
+
+    # Populate the input fields based on the filtered data
+    if selected_type != "None":
+        customer_name = filtered_data["name"].iloc[0]
+        customer_company = filtered_data["company"].iloc[0]
+        user_input = filtered_data["text"].iloc[0]
+    else:
+        customer_name = ""
+        customer_company = ""
+        user_input = ""
+        
+    return customer_name, customer_company, user_input
+
 ### Streamlit Code
 
 ## Session State Stuff
@@ -280,16 +303,20 @@ create_env_file()
 pass_openAI_key()
 
 ## Body Streamlit code
+
+# Load examples
+customer_name, customer_company, user_input = load_examples()
+
 # create a column layout
 name_col, indus_col = st.columns([1, 1])
 name_col.markdown("##### Customer Name:")
 
-customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed")
+customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed", value= customer_name if customer_name else None)
 indus_col.markdown("##### Company Name:")
-customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed")
+customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed", value= customer_company if customer_company else None)
 
 st.markdown("##### Describe your customer pain point or feature request:")
-user_input = st.text_area("Enter your text here:", label_visibility="collapsed")
+user_input = st.text_area("Enter your text here:", label_visibility="collapsed", height=400, value= user_input if user_input else None)
 
 # Button to get recommendations
 if st.button("Get Recommendations", on_click=click_button):
@@ -303,9 +330,10 @@ if st.button("Get Recommendations", on_click=click_button):
 
 if st.session_state.clicked:
     st.divider()
-    st.markdown("### Customer Ask:")
+    st.markdown("### Proponent Recommendations:")
+    st.markdown("##### Summary of Customer Asks:")
     st.write(st.session_state.summary)
-    st.markdown("#### Recommendations:")
+    st.markdown("##### Recommended Features:")
     selected_df = st.data_editor(
         st.session_state.display_df,
         column_config=column_config_recommendations,
@@ -318,7 +346,7 @@ if st.session_state.clicked:
 
     # Buttons for generating email, sales deck, and video
     st.divider()
-    st.markdown("### Content Center:")
+    st.markdown("### Sales Enablement Center:")
     col1, col2 = st.columns([1.5,5])
 
     if col1.button("Draft Custom Email"):

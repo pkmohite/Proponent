@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "proponent"
+version = "0.1.0"
+description = ""
+authors = ["pkmohite <pmohite95@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.4"
+pandas = "^2.2.1"
+streamlit = "^1.33.0"
+openai = "^1.16.2"
+PyPDF2 = "^3.0.1"
+fpdf = "^1.7.2"
+streamlit-pdf-viewer = "^0.0.10"
+moviepy = "^1.0.3"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

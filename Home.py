@@ -11,6 +11,9 @@ from streamlit_pdf_viewer import pdf_viewer
 import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from element_configs import column_config_recommendations, config_about
+import pyarrow as pa
+import pyarrow.parquet as pq
+
 
 ## Functions
 
@@ -288,6 +291,65 @@ def load_examples(file_path = "assets/examples.csv"):
         
     return customer_name, customer_title, customer_company, user_input
 
+
+def record_log_recommendations(top_7):
+    input_fields = pd.DataFrame({
+        "customer_name": [customer_name],
+        "customer_title": [customer_title],
+        "customer_company": [customer_company],
+        "persona_category1": [category1_value],
+        "persona_category2": [category2_value],
+        "persona_category3": [category3_value],
+        "user_input": [user_input],
+        "pp1": [int(top_7["painPointId"].iloc[0])],
+        "pp2": [int(top_7["painPointId"].iloc[1])],
+        "pp3": [int(top_7["painPointId"].iloc[2])],
+        "pp4": [int(top_7["painPointId"].iloc[3])],
+        "pp5": [int(top_7["painPointId"].iloc[4])],
+        "pp6": [int(top_7["painPointId"].iloc[5])],
+        "pp7": [int(top_7["painPointId"].iloc[6])],
+        "date": [pd.Timestamp.now().strftime("%Y-%m-%d")],
+        "time": [pd.Timestamp.now().strftime("%H:%M:%S")],
+    })
+
+    # Specify the schema for the Parquet file
+    schema = pa.schema([
+        pa.field("customer_name", pa.string()),
+        pa.field("customer_title", pa.string()),
+        pa.field("customer_company", pa.string()),
+        pa.field("persona_category1", pa.string()),
+        pa.field("persona_category2", pa.string()),
+        pa.field("persona_category3", pa.string()),
+        pa.field("user_input", pa.string()),
+        pa.field("pp1", pa.int64()),
+        pa.field("pp2", pa.int64()),
+        pa.field("pp3", pa.int64()),
+        pa.field("pp4", pa.int64()),
+        pa.field("pp5", pa.int64()),
+        pa.field("pp6", pa.int64()),
+        pa.field("pp7", pa.int64()),
+        pa.field("date", pa.string()),
+        pa.field("time", pa.string()),
+    ])
+
+    # Convert the DataFrame to a PyArrow Table
+    table = pa.Table.from_pandas(input_fields, schema=schema)
+
+    # Check if the Parquet file already exists
+    parquet_file = "assets/log.parquet"
+    if os.path.exists(parquet_file):
+        # Read the existing data from the Parquet file
+        existing_data = pq.read_table(parquet_file)
+
+        # Concatenate the existing data with the new data
+        combined_data = pa.concat_tables([existing_data, table])
+
+        # Write the combined data back to the Parquet file
+        pq.write_table(combined_data, parquet_file)
+    else:
+        # If the Parquet file is empty or doesn't exist, write the new data directly
+        pq.write_table(table, parquet_file)
+
 ### Streamlit Code
 
 ## Session State Stuff
@@ -341,12 +403,13 @@ if st.button("Get Recommendations", on_click=click_button):
     summary = create_summary(user_input, customer_name, customer_title, customer_company)
     summary_embedding = get_embedding(summary)
     df = calculate_similarity_ordered(summary_embedding, data)
-    # top_5 = df.head(5)
-    # st.session_state.display_df = format_display_df(top_5)
     df_formatted = format_display_df(df)
     top_7 = df_formatted.head(7)
     st.session_state.display_df = top_7
     st.session_state.summary = summary
+    # Log the recommendations
+    top_7_unformatted = df.head(7)
+    record_log_recommendations(top_7_unformatted)
 
 if st.session_state.clicked:
     st.divider()

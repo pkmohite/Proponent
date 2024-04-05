@@ -16,6 +16,7 @@ fpdf = "^1.7.2"
 streamlit-pdf-viewer = "^0.0.10"
 moviepy = "^1.0.3"
 python-dotenv = "^1.0.1"
+pytube = "^15.0.0"
 
 
 [build-system]

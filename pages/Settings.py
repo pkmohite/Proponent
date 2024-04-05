@@ -73,10 +73,11 @@ def update_customer_personas():
                 st.write("File saved as JSON!")
 
 
-def read_themes_csv():
+def update_themes_csv():
     themes_df = pd.read_csv("assets/themes.csv")
     theme_names = themes_df["themeName"].tolist()
-    selected_theme = st.selectbox("Select a theme", theme_names)
+    st.markdown("### Change Proponent Theme")
+    selected_theme = st.selectbox("Change Proponent Theme", theme_names,label_visibility="collapsed")
     selected_theme_values = themes_df.loc[themes_df["themeName"] == selected_theme].iloc[0]
     # apply button that updates the selected theme values in streamlit/config.toml
     if st.button("Apply"):
@@ -96,7 +97,7 @@ def read_themes_csv():
 # Create tabs
 tab1, tab2, tab3 = st.tabs(["General", "LLM", "Customer Personas"])
 with tab1:
-    read_themes_csv()
+    update_themes_csv()
 with tab2:
     set_API_key()
 

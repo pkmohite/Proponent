@@ -60,3 +60,12 @@ column_config_edit = {
             label="Value Proposition", width="medium"
         ),
     }
+
+
+default_theme = {
+    "primaryColor": "#F63366",
+    "backgroundColor": "#FFFFFF",
+    "secondaryBackgroundColor": "#F0F2F6",
+    "textColor": "#262730",
+    "font": "sans serif"
+}

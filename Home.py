@@ -308,13 +308,24 @@ pass_openAI_key()
 # Load examples
 customer_name, customer_company, user_input = load_examples()
 
-# create a column layout
+# Column grid for user Customer Name and Company Name
 name_col, indus_col = st.columns([1, 1])
 name_col.markdown("##### Customer Name:")
 
 customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed", value= customer_name if customer_name else None)
 indus_col.markdown("##### Company Name:")
 customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed", value= customer_company if customer_company else None)
+
+# Load the customer profiles from assets/customer_profiles.json
+with open("assets/customer_personas.json", "r") as file:
+    customer_profiles = json.load(file)
+
+# Create a selectbox for each category
+cp1, cp2, cp3 = st.columns([1, 1, 1])
+category1_value = cp1.selectbox(list(customer_profiles.keys())[0], [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]])
+category2_value = cp2.selectbox(list(customer_profiles.keys())[1], [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]])
+category3_value = cp3.selectbox(list(customer_profiles.keys())[2], [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]])
+
 
 st.markdown("##### Describe your customer pain point or feature request:")
 user_input = st.text_area("Enter your text here:", label_visibility="collapsed", height=400, value= user_input if user_input else None)

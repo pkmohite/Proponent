@@ -1,0 +1,24 @@
+{
+    "Category A": [
+        {
+            "persona name": "Persona 1",
+            "persona description": "This is the description for Persona 1."
+        },
+        {
+            "persona name": "Persona 3",
+            "persona description": "This is the description for Persona 3."
+        }
+    ],
+    "Category B": [
+        {
+            "persona name": "Persona 2",
+            "persona description": "This is the description for Persona 2."
+        }
+    ],
+    "Category C": [
+        {
+            "persona name": "Persona 4",
+            "persona description": "This is the description for Persona 4."
+        }
+    ]
+}

@@ -36,7 +36,7 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 
-def generate_customized_email(recommendations, user_input, customer_name, customer_company):
+def generate_customized_email(recommendations, user_input, customer_name, customer_title, customer_company):
 
     # Extract the feature names and value propositions from the recommendations DataFrame
     features_str = "\n".join(recommendations["Feature Name"])
@@ -50,7 +50,7 @@ def generate_customized_email(recommendations, user_input, customer_name, custom
         },
         {
             "role": "user",
-            "content": f"Here is the context of my conversation with the customer {customer_name} from {customer_company}:\n\n{user_input}\n\nBased on their input, we have identified the following features and value propositions:\n\nFeatures:\n{features_str}\n\nValue Propositions:\n{value_prop_str}\n\nPlease draft a short follow-up email that:\n1. Thanks the customer for their input and acknowledges their pain points\n2. Highlights all the shortlisted features and their corresponding value propositions in a bullet-point format\n3. Explains how these features collectively address their needs and improve their workflow\n4. Ends with a clear call-to-action, inviting them to schedule a demo or discuss further\n\nKeep the email concise, personalized, and focused on the customer's unique situation. Use a friendly yet professional tone.",
+            "content": f"Here is the context of my conversation with the customer {customer_name}, {customer_title} from {customer_company}:\n\n{user_input}\n\nBased on their input, we have identified the following features and value propositions:\n\nFeatures:\n{features_str}\n\nValue Propositions:\n{value_prop_str}\n\nPlease draft a short follow-up email that:\n1. Thanks the customer for their input and acknowledges their pain points\n2. Highlights all the shortlisted features and their corresponding value propositions in a bullet-point format\n3. Explains how these features collectively address their needs and improve their workflow\n4. Ends with a clear call-to-action, inviting them to schedule a demo or discuss further\n\nKeep the email concise, personalized, and focused on the customer's unique situation. Use a friendly yet professional tone.",
         },
         {
             "role": "assistant",
@@ -145,13 +145,14 @@ def create_image_deck(df):
     print(f"Combined image PDF created: {output_path}")
 
 
-def create_summary(user_input):
+def create_summary(user_input, customer_name, customer_title, customer_company):
     response = openai.chat.completions.create(
         model="gpt-4-0125-preview",
         messages=[
             {
                 "role": "system",
-                "content": "You are a helpful assistant. Extract key customer asks from text I share with you and generate a summary of the customer pain points or asks ONLY. Don't include anything else",
+                "content": f'"You are a helpful sales enablement assistant. I\'m interacting with {customer_name} with title {customer_title} from {customer_company}.\
+                    Extract key customer asks from text I share with you and generate a summary of the customer pain points or asks ONLY. Don\'t include anything else"',
             },
             {"role": "user", "content": user_input},
             {
@@ -276,14 +277,16 @@ def load_examples(file_path = "assets/examples.csv"):
     # Populate the input fields based on the filtered data
     if selected_type != "None":
         customer_name = filtered_data["name"].iloc[0]
+        customer_title = filtered_data["title"].iloc[0]
         customer_company = filtered_data["company"].iloc[0]
         user_input = filtered_data["text"].iloc[0]
     else:
         customer_name = ""
+        customer_title = ""
         customer_company = ""
         user_input = ""
         
-    return customer_name, customer_company, user_input
+    return customer_name, customer_title, customer_company, user_input
 
 ### Streamlit Code
 
@@ -306,14 +309,15 @@ pass_openAI_key()
 ## Body Streamlit code
 
 # Load examples
-customer_name, customer_company, user_input = load_examples()
+customer_name, customer_title, customer_company, user_input = load_examples()
 
 # Column grid for user Customer Name and Company Name
-name_col, indus_col = st.columns([1, 1])
-name_col.markdown("##### Customer Name:")
-
+name_col, title_col, indus_col = st.columns([1, 1, 1])
+name_col.markdown("##### Name")
 customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed", value= customer_name if customer_name else None)
-indus_col.markdown("##### Company Name:")
+title_col.markdown("##### Title")
+customer_title = title_col.text_input("Customer Title:", label_visibility="collapsed", value= customer_title if customer_title else None)
+indus_col.markdown("##### Company")
 customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed", value= customer_company if customer_company else None)
 
 # Load the customer profiles from assets/customer_profiles.json
@@ -321,19 +325,20 @@ with open("assets/customer_personas.json", "r") as file:
     customer_profiles = json.load(file)
 
 # Create a selectbox for each category
+st.markdown("##### Customer Persona")
 cp1, cp2, cp3 = st.columns([1, 1, 1])
-category1_value = cp1.selectbox(list(customer_profiles.keys())[0], [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]])
-category2_value = cp2.selectbox(list(customer_profiles.keys())[1], [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]])
-category3_value = cp3.selectbox(list(customer_profiles.keys())[2], [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]])
+category1_value = cp1.selectbox("cat1", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]], index = None, placeholder = list(customer_profiles.keys())[0], label_visibility='collapsed')
+category2_value = cp2.selectbox("cat2", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]], index = None, placeholder = list(customer_profiles.keys())[1], label_visibility='collapsed')
+category3_value = cp3.selectbox("cat3", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]], index = None, placeholder = list(customer_profiles.keys())[2], label_visibility='collapsed')
 
-
-st.markdown("##### Describe your customer pain point or feature request:")
-user_input = st.text_area("Enter your text here:", label_visibility="collapsed", height=400, value= user_input if user_input else None)
+# Text area for user input
+st.markdown("##### Customer Interaction Text")
+user_input = st.text_area("Interaction Text", label_visibility="collapsed", height=400, placeholder="Enter the transcript of your customer interaction",value= user_input if user_input else None)
 
 # Button to get recommendations
 if st.button("Get Recommendations", on_click=click_button):
     data = load_data()
-    summary = create_summary(user_input)
+    summary = create_summary(user_input, customer_name, customer_title, customer_company)
     summary_embedding = get_embedding(summary)
     df = calculate_similarity_ordered(summary_embedding, data)
     # top_5 = df.head(5)
@@ -367,7 +372,7 @@ if st.session_state.clicked:
     if col1.button("Draft Custom Email"):
         # Generate a customized email with the recommendations
         email_body = generate_customized_email(
-            selected_recommendations, user_input, customer_name, customer_company
+            selected_recommendations, user_input, customer_name, customer_title, customer_company
         )
         # col2.markdown("##### Email Preview:")
         col2.markdown(email_body)

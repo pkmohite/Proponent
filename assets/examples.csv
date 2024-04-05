@@ -1,5 +1,5 @@
-type,name,company,text
-Email Exchange,"Sarah Godwin, Chief Technology Officer",ABC Logistics,"Subject: Streamline Your 3PL Operations with Monday.com
+type,name,title,company,text
+Email Exchange,Sarah Godwin,Chief Technology Officer,ABC Logistics,"Subject: Streamline Your 3PL Operations with Monday.com
 
 Dear Sarah,
 
@@ -33,7 +33,7 @@ Best,
 Sarah
 Director of Operations
 ABC Logistics"
-Call Transcript,"Mike Maron, Director of Operations",Apex Logistics,"Sales Rep: Good morning! Thank you for calling Monday.com. My name is Sarah, and I'm a sales representative. How may I assist you today?
+Call Transcript,Mike Maron,Director of Operations,Apex Logistics,"Sales Rep: Good morning! Thank you for calling Monday.com. My name is Sarah, and I'm a sales representative. How may I assist you today?
 
 Customer: Hi Sarah, this is Mike from Apex Logistics. We're a third-party logistics provider, and I'm interested in learning more about how Monday.com can help us streamline our operations.
 
@@ -70,7 +70,7 @@ Sales Rep: You're welcome, Mike. I'm excited about the opportunity to work with 
 Customer: Thanks again, Sarah. You've been very helpful. I look forward to speaking with you soon.
 
 Sales Rep: It's my pleasure, Mike. I look forward to the opportunity to collaborate with Apex Logistics and help you achieve your operational goals with Monday.com. Feel free to reach out anytime if you have any questions or concerns. Have a wonderful day!"
-Text Message Exchange,Alex Burns. Operations Manager,Green Thumb Gardens,"Sales Rep: Hi there! Welcome to Monday.com's live chat. My name is Emily, and I'm here to help you today. How can I assist you?
+Text Message Exchange,Alex Burns,Operations Manager,Green Thumb Gardens,"Sales Rep: Hi there! Welcome to Monday.com's live chat. My name is Emily, and I'm here to help you today. How can I assist you?
 
 Customer: Hello Emily, I'm Alex, the Operations Manager at Green Thumb Gardens, a leading supplier of organic produce. We've been experiencing some challenges in our supply chain management, and I'm exploring project management tools to help streamline our processes. I came across Monday.com and wanted to learn more about how it could benefit our business.
 

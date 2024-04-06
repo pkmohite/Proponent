@@ -160,7 +160,7 @@ def edit_message(data):
     # Get the selected painpoints
     selected_painpoints = [mf for mf in edited_data if mf["selected"] == True]
     
-    col1, col2 = st.columns([1, 8])
+    col1, col2 = st.columns([1.3, 8])
     if col1.button("Save Selected Records"):
         # Save implementation is pending
         st.success("Save implementation is pending!")

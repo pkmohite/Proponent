@@ -1,4 +1,5 @@
 import streamlit as st
+import pyarrow as pa
 
 # Home - Recommendations Table
 column_config_recommendations = {
@@ -69,3 +70,16 @@ default_theme = {
     "textColor": "#262730",
     "font": "sans serif"
 }
+
+parquet_schema = pa.schema([
+    pa.field("customer_name", pa.string()),
+    pa.field("customer_title", pa.string()),
+    pa.field("customer_company", pa.string()),
+    pa.field("persona_category1", pa.string()),
+    pa.field("persona_category2", pa.string()),
+    pa.field("persona_category3", pa.string()),
+    pa.field("user_input", pa.string()),
+    pa.field("paintpoints", pa.list_(pa.int64())),
+    pa.field("date", pa.string()),
+    pa.field("time", pa.string())
+    ])

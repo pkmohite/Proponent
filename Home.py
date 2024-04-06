@@ -10,7 +10,7 @@ from fpdf import FPDF
 from streamlit_pdf_viewer import pdf_viewer
 import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
-from element_configs import column_config_recommendations, config_about
+from element_configs import column_config_recommendations, config_about, parquet_schema
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -292,63 +292,50 @@ def load_examples(file_path = "assets/examples.csv"):
     return customer_name, customer_title, customer_company, user_input
 
 
-def record_log_recommendations(top_7):
-    input_fields = pd.DataFrame({
-        "customer_name": [customer_name],
-        "customer_title": [customer_title],
-        "customer_company": [customer_company],
-        "persona_category1": [category1_value],
-        "persona_category2": [category2_value],
-        "persona_category3": [category3_value],
-        "user_input": [user_input],
-        "pp1": [int(top_7["painPointId"].iloc[0])],
-        "pp2": [int(top_7["painPointId"].iloc[1])],
-        "pp3": [int(top_7["painPointId"].iloc[2])],
-        "pp4": [int(top_7["painPointId"].iloc[3])],
-        "pp5": [int(top_7["painPointId"].iloc[4])],
-        "pp6": [int(top_7["painPointId"].iloc[5])],
-        "pp7": [int(top_7["painPointId"].iloc[6])],
-        "date": [pd.Timestamp.now().strftime("%Y-%m-%d")],
-        "time": [pd.Timestamp.now().strftime("%H:%M:%S")],
-    })
+def update_log_parquet(
+    customer_name,
+    customer_title,
+    customer_company,
+    persona_category1,
+    persona_category2,
+    persona_category3,
+    user_input,
+    top_7,
+):
+    # Get the current date and time
+    date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    time = pd.Timestamp.now().strftime("%H:%M:%S")
 
-    # Specify the schema for the Parquet file
-    schema = pa.schema([
-        pa.field("customer_name", pa.string()),
-        pa.field("customer_title", pa.string()),
-        pa.field("customer_company", pa.string()),
-        pa.field("persona_category1", pa.string()),
-        pa.field("persona_category2", pa.string()),
-        pa.field("persona_category3", pa.string()),
-        pa.field("user_input", pa.string()),
-        pa.field("pp1", pa.int64()),
-        pa.field("pp2", pa.int64()),
-        pa.field("pp3", pa.int64()),
-        pa.field("pp4", pa.int64()),
-        pa.field("pp5", pa.int64()),
-        pa.field("pp6", pa.int64()),
-        pa.field("pp7", pa.int64()),
-        pa.field("date", pa.string()),
-        pa.field("time", pa.string()),
-    ])
+    # Extract the pain point IDs from the top 7 recommendations
+    painPointIDs = [int(id) for id in top_7["painPointId"].tolist()]
 
-    # Convert the DataFrame to a PyArrow Table
-    table = pa.Table.from_pandas(input_fields, schema=schema)
-
-    # Check if the Parquet file already exists
+    # Specify the Parquet file path
     parquet_file = "assets/log.parquet"
+
+    # Create a new Arrow table with the variable values
+    data = [
+        [customer_name],
+        [customer_title],
+        [customer_company],
+        [persona_category1],
+        [persona_category2],
+        [persona_category3],
+        [user_input],
+        [painPointIDs],
+        [date],
+        [time],
+    ]
+    table = pa.Table.from_arrays(data, schema=parquet_schema)
+
+    # Check if the Parquet file exists
     if os.path.exists(parquet_file):
-        # Read the existing data from the Parquet file
-        existing_data = pq.read_table(parquet_file)
-
-        # Concatenate the existing data with the new data
-        combined_data = pa.concat_tables([existing_data, table])
-
-        # Write the combined data back to the Parquet file
-        pq.write_table(combined_data, parquet_file)
+        pq.write_to_dataset(
+            table, root_path=parquet_file, filesystem=None, preserve_index=False
+        )
     else:
-        # If the Parquet file is empty or doesn't exist, write the new data directly
+        st.error("Parquet file not found. Creating a new file...")
         pq.write_table(table, parquet_file)
+        st.success("Parquet file created and updated with your first log entry!")
 
 ### Streamlit Code
 
@@ -357,7 +344,7 @@ if "clicked" not in st.session_state:
     st.session_state.clicked = False
 if "download_video" not in st.session_state:
     st.session_state.video_download = False
-    
+
 ## Title and logo
 setup_streamlit()
 logo, title = st.columns([1, 12])
@@ -409,7 +396,7 @@ if st.button("Get Recommendations", on_click=click_button):
     st.session_state.summary = summary
     # Log the recommendations
     top_7_unformatted = df.head(7)
-    record_log_recommendations(top_7_unformatted)
+    update_log_parquet(customer_name, customer_title, customer_company, category1_value, category2_value, category1_value, user_input, top_7_unformatted)
 
 if st.session_state.clicked:
     st.divider()

@@ -4,13 +4,10 @@ import json
 import streamlit as st
 import pandas as pd
 from PyPDF2 import PdfMerger
-from fpdf import FPDF
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from moviepy.editor import VideoFileClip, concatenate_videoclips
-from assets.code.element_configs import parquet_schema
-
+from assets.code.element_configs import parquet_schema_log
 
 ## OpenAI Functions
 
@@ -134,67 +131,6 @@ def create_pdf_deck(df):
     with open(output_path, "wb") as file:
         merger.write(file)
 
-# Function to create an image deck from the DataFrame
-def create_image_deck(df):
-    # Create a list to store the image paths
-    image_paths = []
-
-    # Iterate over each row in the DataFrame
-    for index, row in df.iterrows():
-        # Construct the file path
-        image_file = row["PDF File Name"]
-        file_path = os.path.join("slides", image_file)
-
-        # Check if the file exists
-        if os.path.exists(file_path):
-            # Add the image path to the list
-            image_paths.append(file_path)
-
-    # Specify the output file path
-    output_path = "downloads/combined_PDF.pdf"
-
-    # Create a new PDF document with 16:9 layout
-    pdf = FPDF(orientation="L", format="Legal")
-
-    # Add each image to the PDF document
-    for image_path in image_paths:
-        pdf.add_page()
-        pdf.image(image_path, x=-1, y=2, w=380)
-
-    # Save the PDF document
-    pdf.output(output_path)
-
-    print(f"Combined image PDF created: {output_path}")
-
-# Function to create a video from the recommendations
-def create_video(recommendations):
-    # Create a list to store the video paths
-    video_paths = []
-
-    # Iterate over each row in the DataFrame
-    for index, row in recommendations.iterrows():
-        # Construct the file path
-        video_file = row["Video File Name"]
-        file_path = os.path.join("videos", video_file)
-
-        # Check if the file exists
-        if os.path.exists(file_path):
-            # Add the video path to the list
-            video_paths.append(file_path)
-
-    # Concatenate the video clips
-    video_clips = [VideoFileClip(video_path) for video_path in video_paths]
-    final_clip = concatenate_videoclips(video_clips)
-
-    # Specify the output file path
-    output_path = "downloads/video.mp4"
-
-    # Write the concatenated video to the output file
-    final_clip.write_videofile(output_path, codec="libx264", fps=24)
-
-    print(f"Concatenated video created: {output_path}")
-
-
 
 ## DB Functions
 
@@ -232,7 +168,7 @@ def update_log_parquet(
         [date],
         [time],
     ]
-    table = pa.Table.from_arrays(data, schema=parquet_schema)
+    table = pa.Table.from_arrays(data, schema=parquet_schema_log)
 
     # Check if the Parquet file exists and append the new data
     if os.path.exists(parquet_file):
@@ -254,7 +190,7 @@ def add_painpoint_to_content(painpoint):
     data = pd.read_csv("mf_content.csv")
 
     # Add the new painpoint to the data
-    data = data.append(painpoint, ignore_index=True)
+    data = data._append(painpoint, ignore_index=True)
 
     # Save the data back to the CSV file
     data.to_csv("mf_content.csv", index=False)

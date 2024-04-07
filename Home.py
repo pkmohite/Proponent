@@ -5,7 +5,10 @@ import streamlit as st
 import base64
 from assets.code.element_configs import column_config_recommendations, config_about
 from assets.code.utils import pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered
-from assets.code.utils import create_image_deck, generate_customized_email, create_video, create_summary, get_themed_logo, update_log_parquet
+from assets.code.utils import generate_customized_email, create_summary, get_themed_logo, update_log_parquet
+from fpdf import FPDF
+from moviepy.editor import VideoFileClip, concatenate_videoclips
+
 # from assets.code.utils import create_pdf_deck
 
 ## Functions
@@ -163,6 +166,67 @@ def display_recommendations():
     
     return selected_recommendations
 
+
+def create_image_deck(df):
+    # Create a list to store the image paths
+    image_paths = []
+
+    # Iterate over each row in the DataFrame
+    for index, row in df.iterrows():
+        # Construct the file path
+        image_file = row["PDF File Name"]
+        file_path = os.path.join("slides", image_file)
+
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Add the image path to the list
+            image_paths.append(file_path)
+
+    # Specify the output file path
+    output_path = "downloads/combined_PDF.pdf"
+
+    # Create a new PDF document with 16:9 layout
+    pdf = FPDF(orientation="L", format="Legal")
+
+    # Add each image to the PDF document
+    for image_path in image_paths:
+        pdf.add_page()
+        pdf.image(image_path, x=-1, y=2, w=380)
+
+    # Save the PDF document
+    pdf.output(output_path)
+
+    print(f"Combined image PDF created: {output_path}")
+
+
+def create_video(recommendations):
+    # Create a list to store the video paths
+    video_paths = []
+
+    # Iterate over each row in the DataFrame
+    for index, row in recommendations.iterrows():
+        # Construct the file path
+        video_file = row["Video File Name"]
+        file_path = os.path.join("videos", video_file)
+
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Add the video path to the list
+            video_paths.append(file_path)
+
+    # Concatenate the video clips
+    video_clips = [VideoFileClip(video_path) for video_path in video_paths]
+    final_clip = concatenate_videoclips(video_clips)
+
+    # Specify the output file path
+    output_path = "downloads/video.mp4"
+
+    # Write the concatenated video to the output file
+    final_clip.write_videofile(output_path, codec="libx264", fps=24)
+
+    print(f"Concatenated video created: {output_path}")
+
+
 ## Setup
 setup_streamlit()
 create_env_file()
@@ -224,7 +288,6 @@ if st.session_state.clicked:
                     data=file.read(),
                     file_name="downloads/video.mp4",
                     mime="video/mp4",
-                    on_click=os.remove("downloads/video.mp4"),
                 )
             col2.video("downloads/video.mp4")
         else:

@@ -46,11 +46,11 @@ config_csv_upload = {
 
 
 column_config_edit = {
-        "painPointId": None,
+        "painPointId": st.column_config.Column(label="ID"),
         "embedding": None,
-        "pdfFile": None,
-        "videoFile": None,
-        "selected": st.column_config.Column(label="Select", width="small"),
+        "pdfFile": st.column_config.Column(label="PDF File", width="small"),
+        "videoFile": st.column_config.Column(label="Video File", width="small"),
+        #"selected": st.column_config.Column(label="Select", width="small"),
         "customerPainPoint": st.column_config.Column(
             label="Customer Pain Point", width="medium"
         ),
@@ -71,7 +71,7 @@ default_theme = {
     "font": "sans serif"
 }
 
-parquet_schema = pa.schema([
+parquet_schema_log = pa.schema([
     pa.field("customer_name", pa.string()),
     pa.field("customer_title", pa.string()),
     pa.field("customer_company", pa.string()),
@@ -83,3 +83,13 @@ parquet_schema = pa.schema([
     pa.field("date", pa.string()),
     pa.field("time", pa.string())
     ])
+
+parquet_schema_mf = pa.schema([
+    pa.field("painPointId", pa.int64()),
+    pa.field("customerPainPoint", pa.string()),
+    pa.field("featureName", pa.string()),
+    pa.field("valueProposition", pa.string()),
+    pa.field("pdfFile", pa.string(), nullable=True),
+    pa.field("videoFile", pa.string(), nullable=True),
+    pa.field("embedding", pa.list_(pa.float64()), nullable=True)
+])

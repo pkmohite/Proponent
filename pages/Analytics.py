@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from assets.code.element_configs import parquet_schema
+from assets.code.element_configs import parquet_schema_log
 import matplotlib.pyplot as plt
 import textwrap
 import altair as alt
@@ -52,7 +52,7 @@ def view_log_parquet():
     
     if st.button("Update Parquet"):
         # Convert parquet_change to an Arrow Table with the specified schema
-        table = pa.Table.from_pandas(parquet_change, schema=parquet_schema)
+        table = pa.Table.from_pandas(parquet_change, schema=parquet_schema_log)
         # Write the Arrow Table to the Parquet file
         pq.write_table(table, 'assets/log.parquet')
 

@@ -121,9 +121,9 @@ def get_user_input():
     # Create a selectbox for each category
     st.markdown("##### Customer Persona")
     cp1, cp2, cp3 = st.columns([1, 1, 1])
-    category1_value = cp1.selectbox("cat1", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]], index = None, placeholder = list(customer_profiles.keys())[0], label_visibility='collapsed')
-    category2_value = cp2.selectbox("cat2", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]], index = None, placeholder = list(customer_profiles.keys())[1], label_visibility='collapsed')
-    category3_value = cp3.selectbox("cat3", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]], index = None, placeholder = list(customer_profiles.keys())[2], label_visibility='collapsed')
+    category1_value = cp1.selectbox("cat1", [persona["persona_name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]], index = None, placeholder = list(customer_profiles.keys())[0], label_visibility='collapsed')
+    category2_value = cp2.selectbox("cat2", [persona["persona_name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]], index = None, placeholder = list(customer_profiles.keys())[1], label_visibility='collapsed')
+    category3_value = cp3.selectbox("cat3", [persona["persona_name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]], index = None, placeholder = list(customer_profiles.keys())[2], label_visibility='collapsed')
 
     # Text area for user input
     st.markdown("##### Customer Interaction Text")

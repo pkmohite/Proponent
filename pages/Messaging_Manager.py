@@ -123,14 +123,19 @@ def manage_mf():
 
     
 def upload_mf_via_csv():
-    
-    st.markdown("#### Add Painpoints via CSV")
-    csv_file = st.file_uploader("Upload CSV File:", type=["csv"])
+    # Add a download button
+    st.markdown("##### Add Painpoints via CSV")
+    # Add a download button for the template
+    col1, col2 = st.columns([10, 1])
+    template_csv = "assets/templates/mf_template.csv"
+    col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
+    # Upload the CSV file
+    csv_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
     if csv_file is not None:
         # Display the data editor
         csv_display = pd.read_csv(csv_file)
         edited_data = st.data_editor(csv_display, column_config=config_csv_upload, use_container_width=True, hide_index=True, num_rows='dynamic')
-        
+
         # Create Messaging records from CSV
         if st.button("Upload CSV"):
             # Create a new DataFrame to store the data with embeddings

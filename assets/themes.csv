@@ -1,8 +1,7 @@
 themeName,primaryColor,backgroundColor,secondaryBackgroundColor,textColor,font,vibe,active
 Proponent White [light],#007A6D,#FFFFFF,#F0F2F6,#262730,serif,light,
-Proponent Dark [dark],#007A6D,#101010,#1A1A1A,#E0E0E0,serif,dark,x
-Silver Moon [light],#BDBDBD,#F2F2F2,#D8D8D8,#333333,serif,light,
 Proponent Black [dark],#007A6D,#000000,#1A1A1A,#FFFFFF,serif,dark,
+Silver Moon [light],#BDBDBD,#F2F2F2,#D8D8D8,#333333,serif,light,x
 Lavender Breeze [light],#673AB7,#FFFFFF,#F0F0F0,#333333,serif,light,
 Midnight Bloom [dark],#FF4081,#121212,#1F1F1F,#FFFFFF,serif,dark,
 Blush Elegance [light],#E91E63,#FAFAFA,#EEEEEE,#212121,serif,light,

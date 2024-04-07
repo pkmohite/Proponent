@@ -1,37 +1,13 @@
 import streamlit as st
-import json
 import os
-from dotenv import load_dotenv
 import pandas as pd
 from assets.code.element_configs import column_config_edit, config_csv_upload, parquet_schema_mf
-from assets.code.utils import pass_openAI_key, get_embedding
+from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data
 import pyarrow as pa
 import pyarrow.parquet as pq
 
 
 ## Functions
-def load_mf_data(file="assets/mf_embeddings.parquet"):
-    if not os.path.exists(file):
-        
-        st.warning("No data found. Upload painpoints via CSV.")
-        # Go to the Upload CSV tab
-
-        # Create a single line parquet file using the schema
-        # data = [
-        #     [0],
-        #     ["sample pain point"],
-        #     ["sample feature"],
-        #     ["sample value proposition"],
-        #     [None],
-        #     [None],
-        #     [None],
-        # ]
-        # table = pa.Table.from_arrays(data, schema=parquet_schema_mf)
-        # pq.write_table(table, file)
-    
-    mf_data = pd.read_parquet(file)
-    
-    return mf_data
 
 ## Streamlit Functions
 def add_new_message():

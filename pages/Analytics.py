@@ -115,11 +115,11 @@ def get_painpoint_metrics(df, mf_content, title = None, date_range = None, perso
 def get_content():
     # Read the data from log.parquet
     df = read_parquet('assets/log.parquet')
+    
+    # Read the data from assets/mf_embeddings.parquet
+    mf_content = pq.read_table('assets/mf_embeddings.parquet').to_pandas()
 
-    # Read the data from mf_content.csv
-    data = pd.read_csv('mf_content.csv')
-
-    return df, data
+    return df, mf_content
 
 
 def create_filter_components(df):

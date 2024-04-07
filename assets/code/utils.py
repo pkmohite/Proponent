@@ -1,6 +1,5 @@
 import openai
 import os
-import json
 import streamlit as st
 import pandas as pd
 from PyPDF2 import PdfMerger
@@ -83,20 +82,17 @@ def cosine_similarity(a, b):
 # Function to calculate the similarity scores between the user input and the data
 def calculate_similarity_ordered(user_input_embedding):
     
-    # Load the JSON data from file
-    with open("mf_embeddings.json", "r") as file:
-        json_data = json.load(file)
+    # Load assets/mf_embeddings.parquet
+    mf_data = load_mf_data()
     
-    df = pd.DataFrame()
+    # Calculate the similarity scores
+    mf_data["similarity_score"] = mf_data["embedding"].apply(
+        lambda x: cosine_similarity(user_input_embedding, x)
+    )
 
-    for mf in json_data:
-        mf_embedding = mf["embedding"]
-        similarity = cosine_similarity(user_input_embedding, mf_embedding)
-        mf["similarity_score"] = similarity
-        df = df._append(mf, ignore_index=True)
-
-    df.sort_values(by="similarity_score", ascending=False, inplace=True)
-
+    # Sort the data based on the similarity scores
+    df = mf_data.sort_values(by="similarity_score", ascending=False)
+    
     return df
 
 
@@ -133,6 +129,32 @@ def create_pdf_deck(df):
 
 
 ## DB Functions
+
+# Function to load the data from the Parquet file
+def load_mf_data(file="assets/mf_embeddings.parquet"):
+    if not os.path.exists(file):
+        
+        st.warning("No data found. Upload painpoints via CSV.")
+        # Go to the Upload CSV tab
+
+        # Create a single line parquet file using the schema
+        # data = [
+        #     [0],
+        #     ["sample pain point"],
+        #     ["sample feature"],
+        #     ["sample value proposition"],
+        #     [None],
+        #     [None],
+        #     [None],
+        # ]
+        # table = pa.Table.from_arrays(data, schema=parquet_schema_mf)
+        # pq.write_table(table, file)
+        mf_data = None
+    else:
+        mf_data = pd.read_parquet(file)
+    
+    return mf_data
+
 
 # Function to update the log in a Parquet file
 def update_log_parquet(
@@ -183,48 +205,6 @@ def update_log_parquet(
     else:
         # Write the table to a new Parquet file
         pq.write_table(table, parquet_file)
-
-# Function to get the user input from the Home page
-def add_painpoint_to_content(painpoint):
-    # Read the existing data from the CSV file
-    data = pd.read_csv("mf_content.csv")
-
-    # Add the new painpoint to the data
-    data = data._append(painpoint, ignore_index=True)
-
-    # Save the data back to the CSV file
-    data.to_csv("mf_content.csv", index=False)
-
-# Function to add a new painpoint to the embeddings
-def delete_painpoint_from_content(painpoint):
-    # Read the existing data from the CSV file
-    data = pd.read_csv("mf_content.csv")
-    
-    # Delete the painpoint from the data
-    data = data[data["painPointId"] != painpoint["painPointId"]]
-
-    # Save the data back to the CSV file
-    data.to_csv("mf_content.csv", index=False)
-
-# Function to delete a painpoint from the embeddings
-def add_painpoint_to_embeddings(painpoint, data):
-
-    # Generate the embedding for the new painpoint
-    embeddings_text = (
-        painpoint["customerPainPoint"]
-        + " "
-        + painpoint["featureName"]
-        + " "
-        + painpoint["valueProposition"]
-    )
-    embedding = get_embedding(embeddings_text)
-    painpoint["embedding"] = embedding
-    data.append(painpoint)
-
-    # Save the updated data with embeddings to a new JSON file
-    with open("mf_embeddings.json", "w") as file:
-        json.dump(data, file, indent=4)
-
 
 
 ## Auxiliary Functions

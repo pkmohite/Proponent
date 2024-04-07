@@ -47,7 +47,7 @@ config_csv_upload = {
 
 column_config_edit = {
         "painPointId": st.column_config.Column(label="ID"),
-        "embedding": None,
+        "embedding": st.column_config.Column(label="Embedding"),
         "pdfFile": st.column_config.Column(label="PDF File", width="small"),
         "videoFile": st.column_config.Column(label="Video File", width="small"),
         #"selected": st.column_config.Column(label="Select", width="small"),

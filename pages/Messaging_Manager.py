@@ -6,7 +6,7 @@ from openai import OpenAI
 import openai
 from dotenv import load_dotenv
 import pandas as pd
-from element_configs import column_config_edit, config_csv_upload
+from assets.code.element_configs import column_config_edit, config_csv_upload
 
 #client = OpenAI()
 def pass_openAI_key(openai_key = None):

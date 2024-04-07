@@ -72,12 +72,13 @@ def update_customer_personas():
 def update_themes_csv():
     themes_df = pd.read_csv("assets/themes.csv")
     theme_names = themes_df["themeName"].tolist()
+    # get the index of the row where active = 'x'
+    current_theme_index = int(themes_df[themes_df["active"] == "x"].index[0])
     st.markdown("### Set Theme")
-    selected_theme = st.selectbox("Change Proponent Theme", theme_names,label_visibility="collapsed")
+    selected_theme = st.selectbox("Change Proponent Theme", theme_names,label_visibility="collapsed", index= current_theme_index)
     selected_theme_values = themes_df.loc[themes_df["themeName"] == selected_theme].iloc[0]
     # apply button that updates the selected theme values in streamlit/config.toml
     if st.button("Apply"):
-        st.write(f"Theme {selected_theme} applied!")
         # Add the code to update the theme in the config.toml file here
         with open(".streamlit/config.toml", "w") as file:
             file.write("[theme]\n")
@@ -85,7 +86,12 @@ def update_themes_csv():
             file.write(f'backgroundColor="{selected_theme_values["backgroundColor"]}"\n')
             file.write(f'secondaryBackgroundColor="{selected_theme_values["secondaryBackgroundColor"]}"\n')
             file.write(f'textColor="{selected_theme_values["textColor"]}"\n')
-            file.write(f'font="{selected_theme_values["font"]}"\n')
+            file.write(f'font="{selected_theme_values["font"]}"\n')        
+        st.write(f"Theme {selected_theme} applied!")
+        # update the active column in the themes.csv file
+        themes_df["active"] = ""
+        themes_df.loc[themes_df["themeName"] == selected_theme, "active"] = "x"
+        themes_df.to_csv("assets/themes.csv", index=False)
         st.rerun()
 
 

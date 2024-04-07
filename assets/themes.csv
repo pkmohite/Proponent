@@ -1,12 +1,12 @@
-themeName,primaryColor,backgroundColor,secondaryBackgroundColor,textColor,font
-Proponent White,#F63366,#FFFFFF,#F0F2F6,#262730,sans serif
-Vibrant Dawn,#F63366,#FFFFFF,#F0F2F6,#262730,sans serif
-Midnight Bloom,#FF4081,#121212,#1F1F1F,#FFFFFF,monospace
-Blush Elegance,#E91E63,#FAFAFA,#EEEEEE,#212121,serif
-Amethyst Shadow,#9C27B0,#1E1E1E,#2C2C2C,#F5F5F5,sans serif
-Lavender Breeze,#673AB7,#FFFFFF,#F0F0F0,#333333,monospace
-Sapphire Nights,#3F51B5,#0F0F0F,#1A1A1A,#F0F0F0,serif
-Azure Skies,#2196F3,#FAFAFA,#E0E0E0,#424242,sans serif
-Turquoise Twilight,#00BCD4,#212121,#363636,#EEEEEE,monospace
-Emerald Oasis,#009688,#FFFFFF,#F0F0F0,#212121,serif
-Verdant Dusk,#4CAF50,#000000,#141414,#E0E0E0,sans serif
+themeName,primaryColor,backgroundColor,secondaryBackgroundColor,textColor,font,vibe,active
+Proponent White,#007A6D,#FFFFFF,#F0F2F6,#262730,serif,light,
+Vibrant Dawn,#F63366,#FFFFFF,#F0F2F6,#262730,sans serif,light,
+Midnight Bloom,#FF4081,#121212,#1F1F1F,#FFFFFF,monospace,dark,
+Blush Elegance,#E91E63,#FAFAFA,#EEEEEE,#212121,serif,light,x
+Amethyst Shadow,#9C27B0,#1E1E1E,#2C2C2C,#F5F5F5,sans serif,dark,
+Lavender Breeze,#673AB7,#FFFFFF,#F0F0F0,#333333,monospace,light,
+Sapphire Nights,#3F51B5,#0F0F0F,#1A1A1A,#F0F0F0,serif,dark,
+Azure Skies,#2196F3,#FAFAFA,#E0E0E0,#424242,sans serif,light,
+Turquoise Twilight,#00BCD4,#212121,#363636,#EEEEEE,monospace,dark,
+Emerald Oasis,#009688,#FFFFFF,#F0F0F0,#212121,serif,light,
+Verdant Dusk,#4CAF50,#000000,#141414,#E0E0E0,sans serif,dark,

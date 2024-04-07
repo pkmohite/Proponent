@@ -10,10 +10,9 @@ from fpdf import FPDF
 from streamlit_pdf_viewer import pdf_viewer
 import base64
 from moviepy.editor import VideoFileClip, concatenate_videoclips
-from element_configs import column_config_recommendations, config_about, parquet_schema
+from assets.code.element_configs import column_config_recommendations, config_about, parquet_schema
 import pyarrow as pa
 import pyarrow.parquet as pq
-
 
 ## Functions
 
@@ -264,11 +263,19 @@ def setup_streamlit():
             'About': config_about,
         }
     )
-    logo, title = st.columns([1, 12])
-    logo.image("assets/logo.png", width=90)
-    title.title("Proponent").markdown("# Proponent")
+    get_themed_logo()
 
-
+def get_themed_logo():
+    # read assets/themes.csv and check if active theme's vibe column is dark or light
+    themes_df = pd.read_csv("assets/themes.csv")
+    current_theme_index = int(themes_df[themes_df["active"] == "x"].index[0])
+    current_theme_values = themes_df.loc[current_theme_index]
+    if current_theme_values["vibe"] == "dark":
+        st.image("assets/images/logo_full_white.png", width=300)
+    else:
+        st.image("assets/images/logo_full_black.png", width=300)
+    st.markdown('#')
+    
 def load_examples(file_path = "assets/examples.csv"):
 
     # Load the CSV data into a DataFrame
@@ -330,16 +337,20 @@ def update_log_parquet(
     ]
     table = pa.Table.from_arrays(data, schema=parquet_schema)
 
-    # Check if the Parquet file exists
+    # Check if the Parquet file exists and append the new data
     if os.path.exists(parquet_file):
-        pq.write_to_dataset(
-            table, root_path=parquet_file, filesystem=None, preserve_index=False
-        )
-    else:
-        st.error("Parquet file not found. Creating a new file...")
-        pq.write_table(table, parquet_file)
-        st.success("Parquet file created and updated with your first log entry!")
+        # Read the existing Parquet file
+        existing_table = pq.read_table(parquet_file)
 
+        # Append the new data to the existing table
+        new_table = pa.concat_tables([existing_table, table])
+
+        # Write the updated table to the Parquet file
+        pq.write_table(new_table, parquet_file)
+    else:
+        # Write the table to a new Parquet file
+        pq.write_table(table, parquet_file)
+        
 
 def get_user_input():
     # Load examples

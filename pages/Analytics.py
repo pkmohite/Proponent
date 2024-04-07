@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from element_configs import parquet_schema
+from assets.code.element_configs import parquet_schema
 import matplotlib.pyplot as plt
 import textwrap
 import altair as alt

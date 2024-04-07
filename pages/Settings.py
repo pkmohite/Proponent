@@ -19,14 +19,10 @@ def set_API_key():
     st.subheader("Set API Key")
     con = st.empty()
     st.session_state.api_key = con.text_input("Enter your API key", value=os.getenv("USER_API_KEY"), type="password", key = '1')
-    b1,b2,b3 = st.columns([.5,1,8])
+    b1,b2,b3 = st.columns([1,1,6])
 
     # Save API key to environment variable
-    if b1.button("Save"):
-        pass_openAI_key()
-        os.environ["USER_API_KEY"] = st.session_state.api_key
-        st.write("API key saved!")
-    if b2.button("Save key in .env"):
+    if b1.button("Save API Key"):
         pass_openAI_key()
         os.environ["USER_API_KEY"] = st.session_state.api_key
         with open(".env", "r+") as file:
@@ -44,7 +40,7 @@ def set_API_key():
             file.truncate()
         st.write("API key saved in .env file!")
 
-    if b3.button("Delete key in .env"):
+    if b2.button("Delete API Key"):
         os.environ["USER_API_KEY"] = ""
         with open(".env", "r+") as file:
             lines = file.readlines()
@@ -76,7 +72,7 @@ def update_customer_personas():
 def update_themes_csv():
     themes_df = pd.read_csv("assets/themes.csv")
     theme_names = themes_df["themeName"].tolist()
-    st.markdown("### Change Proponent Theme")
+    st.markdown("### Set Theme")
     selected_theme = st.selectbox("Change Proponent Theme", theme_names,label_visibility="collapsed")
     selected_theme_values = themes_df.loc[themes_df["themeName"] == selected_theme].iloc[0]
     # apply button that updates the selected theme values in streamlit/config.toml
@@ -93,6 +89,9 @@ def update_themes_csv():
         st.rerun()
 
 
+# Setuo
+st.set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
+st.title("Settings")
 
 # Create tabs
 tab1, tab2, tab3 = st.tabs(["General", "LLM", "Customer Personas"])

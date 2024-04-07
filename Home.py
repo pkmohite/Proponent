@@ -264,6 +264,9 @@ def setup_streamlit():
             'About': config_about,
         }
     )
+    logo, title = st.columns([1, 12])
+    logo.image("assets/logo.png", width=90)
+    title.title("Proponent").markdown("# Proponent")
 
 
 def load_examples(file_path = "assets/examples.csv"):
@@ -337,6 +340,38 @@ def update_log_parquet(
         pq.write_table(table, parquet_file)
         st.success("Parquet file created and updated with your first log entry!")
 
+
+def get_user_input():
+    # Load examples
+    customer_name, customer_title, customer_company, user_input = load_examples()
+
+    # Column grid for user Customer Name and Company Name
+    name_col, title_col, indus_col = st.columns([1, 1, 1])
+    name_col.markdown("##### Name")
+    customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed", value= customer_name if customer_name else None)
+    title_col.markdown("##### Title")
+    customer_title = title_col.text_input("Customer Title:", label_visibility="collapsed", value= customer_title if customer_title else None)
+    indus_col.markdown("##### Company")
+    customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed", value= customer_company if customer_company else None)
+
+    # Load the customer profiles from assets/customer_profiles.json
+    with open("assets/customer_personas.json", "r") as file:
+        customer_profiles = json.load(file)
+
+    # Create a selectbox for each category
+    st.markdown("##### Customer Persona")
+    cp1, cp2, cp3 = st.columns([1, 1, 1])
+    category1_value = cp1.selectbox("cat1", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]], index = None, placeholder = list(customer_profiles.keys())[0], label_visibility='collapsed')
+    category2_value = cp2.selectbox("cat2", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]], index = None, placeholder = list(customer_profiles.keys())[1], label_visibility='collapsed')
+    category3_value = cp3.selectbox("cat3", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]], index = None, placeholder = list(customer_profiles.keys())[2], label_visibility='collapsed')
+
+    # Text area for user input
+    st.markdown("##### Customer Interaction Text")
+    user_input = st.text_area("Interaction Text", label_visibility="collapsed", height=400, placeholder="Enter the transcript of your customer interaction",value= user_input if user_input else None)
+
+    return customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input
+
+
 ### Streamlit Code
 
 ## Session State Stuff
@@ -345,44 +380,16 @@ if "clicked" not in st.session_state:
 if "download_video" not in st.session_state:
     st.session_state.video_download = False
 
-## Title and logo
+## Setup
 setup_streamlit()
-logo, title = st.columns([1, 12])
-logo.image("assets/logo.png", width=90)
-title.title("Proponent").markdown("# Proponent")
-
-## Set the OpenAI API key
 create_env_file()
 pass_openAI_key()
 
+
 ## Body Streamlit code
 
-# Load examples
-customer_name, customer_title, customer_company, user_input = load_examples()
-
-# Column grid for user Customer Name and Company Name
-name_col, title_col, indus_col = st.columns([1, 1, 1])
-name_col.markdown("##### Name")
-customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed", value= customer_name if customer_name else None)
-title_col.markdown("##### Title")
-customer_title = title_col.text_input("Customer Title:", label_visibility="collapsed", value= customer_title if customer_title else None)
-indus_col.markdown("##### Company")
-customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed", value= customer_company if customer_company else None)
-
-# Load the customer profiles from assets/customer_profiles.json
-with open("assets/customer_personas.json", "r") as file:
-    customer_profiles = json.load(file)
-
-# Create a selectbox for each category
-st.markdown("##### Customer Persona")
-cp1, cp2, cp3 = st.columns([1, 1, 1])
-category1_value = cp1.selectbox("cat1", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]], index = None, placeholder = list(customer_profiles.keys())[0], label_visibility='collapsed')
-category2_value = cp2.selectbox("cat2", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]], index = None, placeholder = list(customer_profiles.keys())[1], label_visibility='collapsed')
-category3_value = cp3.selectbox("cat3", [persona["persona name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]], index = None, placeholder = list(customer_profiles.keys())[2], label_visibility='collapsed')
-
-# Text area for user input
-st.markdown("##### Customer Interaction Text")
-user_input = st.text_area("Interaction Text", label_visibility="collapsed", height=400, placeholder="Enter the transcript of your customer interaction",value= user_input if user_input else None)
+# Display the user input fields
+customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input = get_user_input()
 
 # Button to get recommendations
 if st.button("Get Recommendations", on_click=click_button):

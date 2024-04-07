@@ -160,7 +160,7 @@ def edit_message(data):
     # Get the selected painpoints
     selected_painpoints = [mf for mf in edited_data if mf["selected"] == True]
     
-    col1, col2 = st.columns([1.3, 8])
+    col1, col2, col3 = st.columns([1, 1, 5])
     if col1.button("Save Selected Records"):
         # Save implementation is pending
         st.success("Save implementation is pending!")
@@ -211,11 +211,12 @@ def upload_message_via_csv():
                 )
 
 
+# Setup
+st.set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
+st.title("Messaging Manager")
+
 # Load the data
 data = load_json()
-
-## Streamlit app
-st.title("Messaging Manager")
 
 ## Pass OpenAI API key
 pass_openAI_key()

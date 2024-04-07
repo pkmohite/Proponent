@@ -128,6 +128,24 @@ def get_user_input():
 
     return customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input
 
+
+def get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value):
+    # Get the summary and recommendations
+    summary = create_summary(user_input, customer_name, customer_title, customer_company)
+    summary_embedding = get_embedding(summary)
+    df = calculate_similarity_ordered(summary_embedding)
+    df_formatted = format_display_df(df)
+    top_7 = df_formatted.head(7)
+    
+    # Store the recommendations in session state
+    st.session_state.display_df = top_7
+    st.session_state.summary = summary
+    
+    # Log the recommendations
+    top_7_unformatted = df.head(7)
+    update_log_parquet(customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input, top_7_unformatted)
+
+
 def display_recommendations():
     st.markdown("### Proponent Recommendations:")
     st.markdown("##### Summary of Customer Asks:")
@@ -154,23 +172,14 @@ pass_openAI_key()
 # Display the user input fields
 customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input = get_user_input()
 
+rec1, rec2, rec3 = st.columns([1, 1, 5])
 # Button to get recommendations
-if st.button("Get Recommendations", on_click=click_button):
-
-    def get_recommendations(user_input, customer_name, customer_title, customer_company):
-        # Get the summary and recommendations
-        summary = create_summary(user_input, customer_name, customer_title, customer_company)
-        summary_embedding = get_embedding(summary)
-        df = calculate_similarity_ordered(summary_embedding)
-        df_formatted = format_display_df(df)
-        top_7 = df_formatted.head(7)
-        
-        # Store the recommendations in session state
-        st.session_state.display_df = top_7
-        st.session_state.summary = summary
-    # Log the recommendations
-    top_7_unformatted = df.head(7)
-    update_log_parquet(customer_name, customer_title, customer_company, category1_value, category2_value, category1_value, user_input, top_7_unformatted)
+if rec1.button("Get Recommendations", on_click=click_button):
+    # Get the recommendations
+    get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value)
+if rec2.button("Clear"):
+    # delete st.session_state.clicked
+    st.session_state.clicked = False
 
 if st.session_state.clicked:
     # Display the recommendations

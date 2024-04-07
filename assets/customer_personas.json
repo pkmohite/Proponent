@@ -1,24 +1,60 @@
 {
-    "Category A": [
+    "Buyer Persona": [
         {
-            "persona name": "Persona 1",
+            "persona name": "Decision Maker",
             "persona description": "This is the description for Persona 1."
         },
         {
-            "persona name": "Persona 3",
+            "persona name": "Influencer",
+            "persona description": "This is the description for Persona 3."
+        },
+        {
+            "persona name": "Operational User",
             "persona description": "This is the description for Persona 3."
         }
     ],
-    "Category B": [
+    "Company Size": [
         {
-            "persona name": "Persona 2",
+            "persona name": "1-10 Employees",
             "persona description": "This is the description for Persona 2."
+        },
+        {
+            "persona name": "11-50 Employees",
+            "persona description": "This is the description for Persona 3."
+        },
+        {
+            "persona name": "51-100 Employees",
+            "persona description": "This is the description for Persona 4."
+        },
+        {
+            "persona name": "101-500 Employees",
+            "persona description": "This is the description for Persona 5."
+        },
+        {
+            "persona name": "500+ Employees",
+            "persona description": "This is the description for Persona 6."
         }
     ],
-    "Category C": [
+    "Role": [
         {
-            "persona name": "Persona 4",
-            "persona description": "This is the description for Persona 4."
+            "persona name": "Healthcare Professional",
+            "persona description": "This is the description for Persona 9."
+        },
+        {
+            "persona name": "Financial Analyst",
+            "persona description": "This is the description for Persona 10."
+        },
+        {
+            "persona name": "Marketing Manager",
+            "persona description": "This is the description for Persona 11."
+        },
+        {
+            "persona name": "Software Engineer",
+            "persona description": "This is the description for Persona 12."
+        },
+        {
+            "persona name": "Teacher",
+            "persona description": "This is the description for Persona 13."
         }
     ]
 }

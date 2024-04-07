@@ -1,87 +1,19 @@
 import streamlit as st
 import json
 import os
-import csv
-from openai import OpenAI
-import openai
 from dotenv import load_dotenv
 import pandas as pd
 from assets.code.element_configs import column_config_edit, config_csv_upload
-
-#client = OpenAI()
-def pass_openAI_key(openai_key = None):
-    if "USER_API_KEY" in os.environ:
-        openai.api_key = os.getenv("USER_API_KEY")
-    else:
-        st.error("OpenAI API key not found. Please set the API key in the Setting page.")
+from assets.code.utils import pass_openAI_key, add_painpoint_to_content, delete_painpoint_from_content, add_painpoint_to_embeddings
 
 
-def get_embedding(text, model="text-embedding-3-large"):
-    text = text.replace("\n", " ")
-    return openai.embeddings.create(input=[text], model=model).data[0].embedding
-
-
-def load_csv(csv_file="mf_content.csv"):
-    # Read the CSV file
-    with open(csv_file, "r") as file:
-        reader = csv.DictReader(file)
-        # Convert each row to a dictionary and store in a list
-        data = [row for row in reader]
-
-    return data
-
-
+## Functions
 def load_json(json_file="mf_embeddings.json"):
     # Read the JSON file
     with open(json_file, "r") as file:
         data = json.load(file)
 
     return data
-
-
-def add_painpoint_to_content(painpoint):
-    # Read the existing data from the CSV file
-    data = load_csv()
-    # Add the new painpoint to the data
-    data.append(painpoint)
-    # Save the data back to the CSV file
-    with open("mf_content.csv", "w") as file:
-        writer = csv.DictWriter(file, fieldnames=data[0].keys())
-        writer.writeheader()
-        writer.writerows(data)
-    print("Content CSV saved successfully!")
-
-
-def add_painpoint_to_embeddings(painpoint, data):
-
-    # Generate the embedding for the new painpoint
-    embeddings_text = (
-        painpoint["customerPainPoint"]
-        + " "
-        + painpoint["featureName"]
-        + " "
-        + painpoint["valueProposition"]
-    )
-    embedding = get_embedding(embeddings_text)
-    painpoint["embedding"] = embedding
-    data.append(painpoint)
-
-    # Save the updated data with embeddings to a new JSON file
-    with open("mf_embeddings.json", "w") as file:
-        json.dump(data, file, indent=4)
-    print("Embedding generation and JSON file saving successful!")
-
-
-def delete_painpoint_from_content(painpoint):
-    # Read the existing data from the CSV file
-    data = load_csv()
-    # Delete the painpoint from the data
-    data.remove(painpoint)
-    # Save the data back to the CSV file
-    with open("mf_content.csv", "w") as file:
-        writer = csv.DictWriter(file, fieldnames=data[0].keys())
-        writer.writeheader()
-        writer.writerows(data)
 
 
 def delete_painpoint_from_embeddings(painpoint, data):
@@ -93,7 +25,6 @@ def delete_painpoint_from_embeddings(painpoint, data):
 
 
 ## Streamlit Functions
-    
 def add_new_message(data):
     st.markdown("#### Add New Message")
     paint_point = st.text_input("Enter Customer Pain Point:")

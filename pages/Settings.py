@@ -1,16 +1,8 @@
 import streamlit as st
 import os
 import json
-import openai
-from dotenv import load_dotenv
 import pandas as pd
-
-# Function to pass the OpenAI key
-def pass_openAI_key():
-    if "USER_API_KEY" in os.environ:
-        openai.api_key = os.getenv("USER_API_KEY")
-    else:
-        st.error("OpenAI API key not found. Please set the API key in the Setting page.")
+from assets.code.utils import pass_openAI_key
 
 # Tab 2: LLM settings
 def set_API_key():
@@ -51,7 +43,6 @@ def set_API_key():
             file.truncate()
         st.write("API key deleted from .env file!")
         con.text_input("Enter your API key", value=os.getenv("USER_API_KEY"), type="password", key = '2')   
-
 
 # Tab 3: Customer Personas
 def update_customer_personas():

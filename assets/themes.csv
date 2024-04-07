@@ -1,6 +1,6 @@
 themeName,primaryColor,backgroundColor,secondaryBackgroundColor,textColor,font,vibe,active
 Proponent White [light],#007A6D,#FFFFFF,#F0F2F6,#262730,serif,light,
-Proponent Dark [dark],#007A6D,#101010,#1A1A1A,#E0E0E0,serif,dark,
+Proponent Dark [dark],#007A6D,#101010,#1A1A1A,#E0E0E0,serif,dark,x
 Silver Moon [light],#BDBDBD,#F2F2F2,#D8D8D8,#333333,serif,light,
 Proponent Black [dark],#007A6D,#000000,#1A1A1A,#FFFFFF,serif,dark,
 Lavender Breeze [light],#673AB7,#FFFFFF,#F0F0F0,#333333,serif,light,
@@ -11,4 +11,4 @@ Golden Sunrise [light],#FFD700,#FFFFFF,#F0F0F0,#333333,serif,light,
 Crimson Fire [dark],#FF0000,#000000,#1A1A1A,#FFFFFF,serif,dark,
 Emerald Forest [light],#008000,#FFFFFF,#F0F2F6,#262730,serif,light,
 Ocean Blue [light],#0000FF,#FFFFFF,#F0F2F6,#262730,serif,light,
-Sunset Orange [light],#FF4500,#FFFFFF,#F0F2F6,#262730,serif,light,x
+Sunset Orange [light],#FF4500,#FFFFFF,#F0F2F6,#262730,serif,light,

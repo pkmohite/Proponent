@@ -13,15 +13,15 @@ def generate_dummy_data(parquet_file):
     # Generate dummy data
     dummy_data = pd.DataFrame({
         "customer_name": np.random.choice(["John", "Jane", "Mike", "Emily"], size=100),
-        "customer_title": np.random.choice(["Manager", "Director", "Engineer"], size=100),
+        "customer_title": np.random.choice(["Manager", "Director", "CXO"], size=100),
         "customer_company": np.random.choice(["Company A", "Company B", "Company C"], size=100),
-        "persona_category1": np.random.choice(["Category 1", "Category 2", "Category 3"], size=100),
-        "persona_category2": np.random.choice(["Category A", "Category B", "Category C"], size=100),
-        "persona_category3": np.random.choice(["Category X", "Category Y", "Category Z"], size=100),
+        "persona_category1": np.random.choice(["Decision Maker", "Influencer", "Operational User"], size=100),
+        "persona_category2": np.random.choice(["1-100 Employees", "101-500", "500+ Employees"], size=100),
+        "persona_category3": np.random.choice(["Marketing Manager", "Software Engineer", "Product Manager"], size=100),
         "user_input": np.random.choice(["Input 1", "Input 2", "Input 3"], size=100),
         "paintpoints": [np.random.randint(1, 20, size=7) for _ in range(100)],
-        "date": pd.Timestamp.now().strftime("%Y-%m-%d"),
-        "time": pd.Timestamp.now().strftime("%H:%M:%S")
+        "date": pd.to_datetime(np.random.choice(pd.date_range(start='2023-04-01', end='2024-04-01'), size=100)).strftime("%Y-%m-%d"),
+        "time": pd.to_datetime(np.random.choice(pd.date_range(start='2022-01-01 10:00:00', end='2022-01-01 16:00:00', freq='s'), size=100)).strftime("%H:%M:%S")
     })
 
     # Convert the DataFrame to a PyArrow Table
@@ -144,11 +144,11 @@ def click_button():
 
 
 def visualize_customer_trends():
-            opt1, opt2, opt3 = st.columns([1, 1, 1])
-            core_ref = opt1.selectbox("Display By", ["customerPainPoint", "featureName"], index=1)
+            #opt1, opt2, opt3 = st.columns([1, 1, 1])
+            #core_ref = opt1.selectbox("Display By", ["customerPainPoint", "featureName"], index=1)
+            core_ref = "featureName"
 
-
-            t1, t2, t3 = st.tabs(["Bar Chart", "Pie Chart", "Altair Chart"])
+            t1, t2 = st.tabs(["Bar Chart", "Pie Chart"])
             with t1.empty():
                 
                 painpoint_data = pd.DataFrame({
@@ -162,7 +162,7 @@ def visualize_customer_trends():
                     y=alt.Y('pain_point', title='Customer Pain Point', sort='-x'),
                     tooltip=['pain_point', 'score']
                 ).properties(
-                    title='Top 7 Customer Pain Points',
+                    title='Top Features',
                     width=600,
                     height=500
                 ).interactive()

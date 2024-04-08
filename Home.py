@@ -236,7 +236,7 @@ pass_openAI_key()
 # Display the user input fields
 customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input = get_user_input()
 
-rec1, rec2, rec3 = st.columns([1, 1, 5])
+rec1, rec2, rec3 = st.columns([1.5, 1.5, 3])
 # Button to get recommendations
 if rec1.button("Get Recommendations", on_click=click_button):
     # Get the recommendations

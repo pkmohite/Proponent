@@ -1,5 +1,6 @@
+<br>
 <p align="left">
-  <img src="assets/images/logo_full_black.png" alt="Proponent Logo" width="300">
+  <img src="assets/images/logo_full_black.png" alt="Proponent Logo" width="350">
 </p>
 
 # Introducing Proponent: Empowering Product-Led Sales with AI
@@ -16,6 +17,7 @@
 ---
 
 Proponent is an NLU-powered sales enablement tool designed to help product-led businesses drive revenue growth. By leveraging AI and customer insights, Proponent generates hyper-relevant content and enables sales teams to have more effective conversations with prospects.
+<br><br>
 
 ## Features
 
@@ -23,6 +25,7 @@ Proponent is an NLU-powered sales enablement tool designed to help product-led b
 - **Actionable Customer Insights**: Analyzes customer data to surface insights for personalized outreach
 - **Messaging Manager**: Enables easy management of product messaging and sales enablement materials
 - **Customer Personas**: Gathers customer profile data to refine messaging strategies and targeting
+<br><br>
 
 ## Getting Started
 
@@ -45,6 +48,7 @@ To run the Proponent application locally:
    ```
 
 Alternatively, you can access the deployed Proponent application on Streamlit Sharing at [https://proponent.streamlit.app/](https://proponent.streamlit.app/).
+<br><br>
 
 ## Contributing
 
@@ -57,10 +61,12 @@ We welcome contributions to help make Proponent even better. If you'd like to co
 5. Open a pull request
 
 Please note that for feature contributions, we only accept features built using Streamlit native elements, components, and experimental features. We are not open to non-official elements at this time.
+<br><br>
 
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+<br><br>
 
 ## Code Stack
 

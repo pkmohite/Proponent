@@ -1,5 +1,5 @@
 <p align="left">
-  <img src="assets/images/logo_full_black.png" alt="Proponent Logo" width="150">
+  <img src="assets/images/logo_full_black.png" alt="Proponent Logo" width="300">
 </p>
 
 <h1 align="left">Proponent: Sales Enablement that makes everyone a product expert</h1>

@@ -15,6 +15,7 @@
 </p>
 
 ---
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://proponent.streamlit.app/) &nbsp;&nbsp;&nbsp; [![Proponent Landing Page](https://img.shields.io/badge/Proponent-Landing%20Page-blue?style=flat-square&logo=github)](https://proponent.streamlit.app/) &nbsp;&nbsp;&nbsp; [![LinkedIn Badge](https://img.shields.io/badge/LinkedIn-Prashant%20Mohite-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/pmohite/)
 
 Proponent is an NLU-powered sales enablement tool designed to help product-led businesses drive revenue growth. By leveraging AI and customer insights, Proponent generates hyper-relevant content and enables sales teams to have more effective conversations with prospects.
 <br><br>
@@ -47,8 +48,8 @@ To run the Proponent application locally:
    poetry run streamlit run app.py
    ```
 
-Alternatively, you can access the deployed Proponent application on Streamlit Sharing at [https://proponent.streamlit.app/](https://proponent.streamlit.app/).
-<br><br>
+<br>
+
 
 ## Contributing
 

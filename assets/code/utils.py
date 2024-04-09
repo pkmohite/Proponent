@@ -15,7 +15,7 @@ def pass_openAI_key(api_key=None):
     if "USER_API_KEY" in os.environ:
         openai.api_key = os.getenv("USER_API_KEY")
     else:
-        st.error("OpenAI API key not found. Please set the API key in the Setting page.")
+        st.sidebar.error("OpenAI API key not found. Please set the API key in the Setting page.")
 
 # Function to get the embedding of a text from the OpenAI API
 def get_embedding(text, model="text-embedding-3-large"):

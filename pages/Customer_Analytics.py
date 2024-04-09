@@ -8,6 +8,7 @@ from assets.code.element_configs import parquet_schema_log
 import matplotlib.pyplot as plt
 import textwrap
 import altair as alt
+import json
 
 def generate_dummy_data(parquet_file):
     # Generate dummy data

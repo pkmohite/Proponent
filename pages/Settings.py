@@ -14,26 +14,27 @@ def set_API_key():
     b1,b2,b3 = st.columns([1,1,6])
 
     # Save API key to environment variable
-    if b1.button("Save API Key", key="save") and st.session_state.api_key != "":
-        os.environ["USER_API_KEY"] = st.session_state.api_key
-        with open(".env", "r+") as file:
-            lines = file.readlines()
-            file.seek(0)
-            key_exists = False
-            for line in lines:
-                if line.startswith("USER_API_KEY="):
+    if b1.button("Save API Key", key="save"):
+        if st.session_state.api_key != "":
+            os.environ["USER_API_KEY"] = st.session_state.api_key
+            with open(".env", "r+") as file:
+                lines = file.readlines()
+                file.seek(0)
+                key_exists = False
+                for line in lines:
+                    if line.startswith("USER_API_KEY="):
+                        file.write(f"USER_API_KEY={st.session_state.api_key}\n")
+                        key_exists = True
+                    else:
+                        file.write(line)
+                if not key_exists:
                     file.write(f"USER_API_KEY={st.session_state.api_key}\n")
-                    key_exists = True
-                else:
-                    file.write(line)
-            if not key_exists:
-                file.write(f"USER_API_KEY={st.session_state.api_key}\n")
-            file.truncate()
-        pass_openAI_key()
-        st.warning("API key saved in session environment, make sure to delete it before exiting the session.")
-    else:
-        st.error("Please enter an API key to save it.")
-
+                file.truncate()
+            pass_openAI_key()
+            st.warning("API key saved in session environment, make sure to delete it before exiting the session.")        
+        else:
+            st.error("Please enter an API key to save it.")
+    
     if b2.button("Delete API Key"):
         os.environ["USER_API_KEY"] = ""
         with open(".env", "r+") as file:

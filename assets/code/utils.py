@@ -207,6 +207,24 @@ def update_log_parquet(
         pq.write_table(table, parquet_file)
 
 
+# Function to get the log and the mf embeddings
+def get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet'):
+   
+    # Read the Parquet file into an Arrow Table
+    table = pq.read_table(log_file)
+    
+    # Convert the Arrow Table to a Pandas DataFrame
+    df = table.to_pandas()
+    
+    # Convert the 'paintpoints' array into separate columns
+    df = pd.concat([df.drop('paintpoints', axis=1), df['paintpoints'].apply(pd.Series).add_prefix('pp')], axis=1)
+    
+    # Read the data from assets/mf_embeddings.parquet
+    mf_content = pq.read_table(mf_file).to_pandas()
+
+    return df, mf_content
+
+
 ## Auxiliary Functions
 
 # Function to create the .env file if it does not exist 

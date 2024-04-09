@@ -9,69 +9,27 @@ import matplotlib.pyplot as plt
 import textwrap
 import altair as alt
 import json
-
-def generate_dummy_data(parquet_file):
-    # Generate dummy data
-    dummy_data = pd.DataFrame({
-        "customer_name": np.random.choice(["John", "Jane", "Mike", "Emily"], size=100),
-        "customer_title": np.random.choice(["Manager", "Director", "CXO"], size=100),
-        "customer_company": np.random.choice(["Company A", "Company B", "Company C"], size=100),
-        "persona_category1": np.random.choice(["Decision Maker", "Influencer", "Operational User"], size=100),
-        "persona_category2": np.random.choice(["1-100 Employees", "101-500", "500+ Employees"], size=100),
-        "persona_category3": np.random.choice(["Marketing Manager", "Software Engineer", "Product Manager"], size=100),
-        "user_input": np.random.choice(["Input 1", "Input 2", "Input 3"], size=100),
-        "paintpoints": [np.random.randint(1, 20, size=7) for _ in range(100)],
-        "date": pd.to_datetime(np.random.choice(pd.date_range(start='2023-04-01', end='2024-04-01'), size=100)).strftime("%Y-%m-%d"),
-        "time": pd.to_datetime(np.random.choice(pd.date_range(start='2022-01-01 10:00:00', end='2022-01-01 16:00:00', freq='s'), size=100)).strftime("%H:%M:%S")
-    })
-
-    # Convert the DataFrame to a PyArrow Table
-    table = pa.Table.from_pandas(dummy_data, preserve_index=False)
-
-    if os.path.exists(parquet_file):
-        # Read the existing data from the Parquet file
-        existing_data = pq.read_table(parquet_file)
-
-        # Concatenate the existing data with the new data
-        combined_data = pa.concat_tables([existing_data, table])
-
-        # Write the combined data back to the Parquet file
-        pq.write_table(combined_data, parquet_file)
-    else:
-        # If the Parquet file is empty or doesn't exist, write the new data directly
-        pq.write_table(table, parquet_file)
+from assets.code.utils import get_mf_and_log
 
 
-def view_log_parquet():
-    # Try reading the Parquet file
-    try:
-        data = pd.read_parquet('assets/log.parquet')
-        parquet_change = st.data_editor(data, num_rows='dynamic')
-    except:
-        # Error message if the file is not found
-        st.error("Parquet file not found. Please generate dummy data first.")
-    
-    if st.button("Update Parquet"):
-        # Convert parquet_change to an Arrow Table with the specified schema
-        table = pa.Table.from_pandas(parquet_change, schema=parquet_schema_log)
-        # Write the Arrow Table to the Parquet file
-        pq.write_table(table, 'assets/log.parquet')
+# Tab 1: Analytics - Create Filter Components
+def create_filter_components(df):
+    a1, a2, a3 = st.columns([2, 1, 1])
+    b1, b2, b3 = st.columns([1, 1, 1])
 
-    if st.button("Generate Dummy Data"):
-        generate_dummy_data('assets/log.parquet')
-        st.success("Dummy data generated successfully!")
+    title = a1.selectbox("Customer Title", df['customer_title'].unique(), index=None)
+    from_date = a2.date_input("From Date", None)
+    to_date = a3.date_input("To Date", None)
+    date_range = [from_date, to_date]
+       
 
+    persona_category1 = b1.selectbox("Persona Category 1", df['persona_category1'].unique(), index=None)
+    persona_category2 = b2.selectbox("Persona Category 2", df['persona_category2'].unique(), index=None)
+    persona_category3 = b3.selectbox("Persona Category 3", df['persona_category3'].unique(), index=None)
 
-def read_parquet(parquet_file):
-    # Read the Parquet file into an Arrow Table
-    table = pq.read_table(parquet_file)
-    # Convert the Arrow Table to a Pandas DataFrame
-    df = table.to_pandas()
-    # Convert the 'paintpoints' array into separate columns
-    df = pd.concat([df.drop('paintpoints', axis=1), df['paintpoints'].apply(pd.Series).add_prefix('pp')], axis=1)
-    return df
+    return title, date_range, persona_category1, persona_category2, persona_category3
 
-
+# Tab 1: Analytics - Get Painpoint Metrics
 def get_painpoint_metrics(df, mf_content, title = None, date_range = None, persona_category1 = None, persona_category2 = None, persona_category3 = None, get_all = False):
     painpoint_cols = ['pp0', 'pp1', 'pp2', 'pp3', 'pp4', 'pp5', 'pp6']
     
@@ -112,61 +70,7 @@ def get_painpoint_metrics(df, mf_content, title = None, date_range = None, perso
     sorted_pref_data = pref_data.sort_values('score', ascending=False)
     return sorted_pref_data
 
-
-def get_content():
-    # Read the data from log.parquet
-    df = read_parquet('assets/log.parquet')
-    
-    # Read the data from assets/mf_embeddings.parquet
-    mf_content = pq.read_table('assets/mf_embeddings.parquet').to_pandas()
-
-    return df, mf_content
-
-
-def create_filter_components(df):
-    a1, a2, a3 = st.columns([2, 1, 1])
-    b1, b2, b3 = st.columns([1, 1, 1])
-
-    title = a1.selectbox("Customer Title", df['customer_title'].unique(), index=None)
-    from_date = a2.date_input("From Date", None)
-    to_date = a3.date_input("To Date", None)
-    date_range = [from_date, to_date]
-       
-
-    persona_category1 = b1.selectbox("Persona Category 1", df['persona_category1'].unique(), index=None)
-    persona_category2 = b2.selectbox("Persona Category 2", df['persona_category2'].unique(), index=None)
-    persona_category3 = b3.selectbox("Persona Category 3", df['persona_category3'].unique(), index=None)
-
-    return title, date_range, persona_category1, persona_category2, persona_category3
-
-
-def click_button():
-    st.session_state.display_metrics = True
-
-# Tab 3: Customer Personas
-def update_customer_personas():
-    st.subheader("Customer Personas")
-    st.write("Upload a CSV file with columns category name, persona name, and persona description.")
-    # Add a download button for template
-    col1, col2 = st.columns([10, 1])
-    template_csv = "assets/templates/mf_template.csv"
-    col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
-    uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
-    
-    if uploaded_file is not None:
-        # Preview the uploaded file using st.write
-        df = pd.read_csv(uploaded_file)
-        edited_data = st.data_editor(df, hide_index=True)
-        
-        # Add a button to save the uploaded file as a json file
-        if st.button("Save as JSON"):
-            df_json = edited_data.groupby("category_name").apply(lambda x: x[["persona_name", "persona_description"]].to_dict(orient="records")).to_dict()
-            with open("assets/customer_personas.json", "w") as file:
-                json.dump(df_json, file)
-                st.write("File saved as JSON!")
-
-
-
+# Tab 1: Analytics - Visualize Customer Trends
 def visualize_customer_trends():
             #opt1, opt2, opt3 = st.columns([1, 1, 1])
             #core_ref = opt1.selectbox("Display By", ["customerPainPoint", "featureName"], index=1)
@@ -229,19 +133,95 @@ def visualize_customer_trends():
                 # Display the chart using Streamlit
                 st.altair_chart(pie_chart, use_container_width=True)
 
+# Tab 2: View Logs - View Log Parquet
+def view_log_parquet():
+    # Try reading the Parquet file
+    try:
+        data = pd.read_parquet('assets/log.parquet')
+        parquet_change = st.data_editor(data, num_rows='dynamic')
+    except:
+        # Error message if the file is not found
+        st.error("Parquet file not found. Please generate dummy data first.")
+    
+    if st.button("Update Parquet"):
+        # Convert parquet_change to an Arrow Table with the specified schema
+        table = pa.Table.from_pandas(parquet_change, schema=parquet_schema_log)
+        # Write the Arrow Table to the Parquet file
+        pq.write_table(table, 'assets/log.parquet')
+
+    if st.button("Generate Dummy Data"):
+        generate_dummy_data('assets/log.parquet')
+        st.success("Dummy data generated successfully!")
+
+# Tab 2: View Logs - Generate Dummy Data
+def generate_dummy_data(parquet_file):
+    # Generate dummy data
+    dummy_data = pd.DataFrame({
+        "customer_name": np.random.choice(["John", "Jane", "Mike", "Emily"], size=100),
+        "customer_title": np.random.choice(["Manager", "Director", "CXO"], size=100),
+        "customer_company": np.random.choice(["Company A", "Company B", "Company C"], size=100),
+        "persona_category1": np.random.choice(["Decision Maker", "Influencer", "Operational User"], size=100),
+        "persona_category2": np.random.choice(["1-100 Employees", "101-500", "500+ Employees"], size=100),
+        "persona_category3": np.random.choice(["Marketing Manager", "Software Engineer", "Product Manager"], size=100),
+        "user_input": np.random.choice(["Input 1", "Input 2", "Input 3"], size=100),
+        "paintpoints": [np.random.randint(1, 20, size=7) for _ in range(100)],
+        "date": pd.to_datetime(np.random.choice(pd.date_range(start='2023-04-01', end='2024-04-01'), size=100)).strftime("%Y-%m-%d"),
+        "time": pd.to_datetime(np.random.choice(pd.date_range(start='2022-01-01 10:00:00', end='2022-01-01 16:00:00', freq='s'), size=100)).strftime("%H:%M:%S")
+    })
+
+    # Convert the DataFrame to a PyArrow Table
+    table = pa.Table.from_pandas(dummy_data, preserve_index=False)
+
+    if os.path.exists(parquet_file):
+        # Read the existing data from the Parquet file
+        existing_data = pq.read_table(parquet_file)
+
+        # Concatenate the existing data with the new data
+        combined_data = pa.concat_tables([existing_data, table])
+
+        # Write the combined data back to the Parquet file
+        pq.write_table(combined_data, parquet_file)
+    else:
+        # If the Parquet file is empty or doesn't exist, write the new data directly
+        pq.write_table(table, parquet_file)
+
+# Tab 3: Customer Personas
+def update_customer_personas():
+    st.subheader("Customer Personas")
+    st.write("Upload a CSV file with columns category name, persona name, and persona description.")
+    # Add a download button for template
+    col1, col2 = st.columns([10, 1])
+    template_csv = "assets/templates/mf_template.csv"
+    col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
+    uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
+    
+    if uploaded_file is not None:
+        # Preview the uploaded file using st.write
+        df = pd.read_csv(uploaded_file)
+        edited_data = st.data_editor(df, hide_index=True)
+        
+        # Add a button to save the uploaded file as a json file
+        if st.button("Save as JSON"):
+            df_json = edited_data.groupby("category_name").apply(lambda x: x[["persona_name", "persona_description"]].to_dict(orient="records")).to_dict()
+            with open("assets/customer_personas.json", "w") as file:
+                json.dump(df_json, file)
+                st.write("File saved as JSON!")
 
 
 ## Session State Stuff
+def click_button():
+    st.session_state.display_metrics = True
 if "display_metrics" not in st.session_state:
     st.session_state.display_metrics = False
 if "painpoint_metrics" not in st.session_state:
     st.session_state.painpoint_metrics = None
 
+
 ## Streamlit code
 # Setup
 st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
 st.title("Customer Analytics")
-df, mf_content = get_content()
+df, mf_content = get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet')
 
 # Create tabs
 tab1, tab2, tab3, tab4 = st.tabs(["Analytics", "View Logs", "Feature Leaderboard", "Customer Personas"])
@@ -263,7 +243,6 @@ with tab1:
 
         st.markdown("#### Visualize Customer Trends")
         visualize_customer_trends()   
-
 
 with tab2:
     # Code for the second tab

@@ -35,6 +35,7 @@ To run the Proponent application locally:
 
 2. Install dependencies:
    ```
+   pip install poetry
    poetry install
    ```
 

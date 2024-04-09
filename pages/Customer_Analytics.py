@@ -142,6 +142,29 @@ def create_filter_components(df):
 def click_button():
     st.session_state.display_metrics = True
 
+# Tab 3: Customer Personas
+def update_customer_personas():
+    st.subheader("Customer Personas")
+    st.write("Upload a CSV file with columns category name, persona name, and persona description.")
+    # Add a download button for template
+    col1, col2 = st.columns([10, 1])
+    template_csv = "assets/templates/mf_template.csv"
+    col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
+    uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
+    
+    if uploaded_file is not None:
+        # Preview the uploaded file using st.write
+        df = pd.read_csv(uploaded_file)
+        edited_data = st.data_editor(df, hide_index=True)
+        
+        # Add a button to save the uploaded file as a json file
+        if st.button("Save as JSON"):
+            df_json = edited_data.groupby("category_name").apply(lambda x: x[["persona_name", "persona_description"]].to_dict(orient="records")).to_dict()
+            with open("assets/customer_personas.json", "w") as file:
+                json.dump(df_json, file)
+                st.write("File saved as JSON!")
+
+
 
 def visualize_customer_trends():
             opt1, opt2, opt3 = st.columns([1, 1, 1])
@@ -216,11 +239,12 @@ if "painpoint_metrics" not in st.session_state:
 ## Streamlit code
 # Setup
 st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
-st.title("Analytics")
+st.title("Customer Analytics")
 df, mf_content = get_content()
 
 # Create tabs
-tab1, tab2, tab3 = st.tabs(["Analytics", "View Logs", "Feature Leaderboard"])
+tab1, tab2, tab3, tab4 = st.tabs(["Analytics", "View Logs", "Feature Leaderboard", "Customer Personas"])
+
 with tab1:
     title, date_range, persona_category1, persona_category2, persona_category3 = create_filter_components(df)
 
@@ -249,3 +273,6 @@ with tab3:
     # Code for the third tab
     st.title("Feature Leaderboard")
     st.session_state.global_metrics = get_painpoint_metrics(df, mf_content, get_all=True)
+
+with tab4:
+    update_customer_personas()

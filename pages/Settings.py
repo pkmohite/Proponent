@@ -15,7 +15,6 @@ def set_API_key():
 
     # Save API key to environment variable
     if b1.button("Save API Key"):
-        pass_openAI_key()
         os.environ["USER_API_KEY"] = st.session_state.api_key
         with open(".env", "r+") as file:
             lines = file.readlines()
@@ -30,7 +29,8 @@ def set_API_key():
             if not key_exists:
                 file.write(f"USER_API_KEY={st.session_state.api_key}\n")
             file.truncate()
-        st.write("API key saved in .env file!")
+        pass_openAI_key()
+        st.success("API key saved in .env file!")
 
     if b2.button("Delete API Key"):
         os.environ["USER_API_KEY"] = ""
@@ -41,7 +41,7 @@ def set_API_key():
                 if not line.startswith("USER_API_KEY="):
                     file.write(line)
             file.truncate()
-        st.write("API key deleted from .env file!")
+        st.success("API key deleted from .env file!")
         con.text_input("Enter your API key", value=os.getenv("USER_API_KEY"), type="password", key = '2')   
 
 

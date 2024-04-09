@@ -30,7 +30,7 @@ def set_API_key():
                 file.write(f"USER_API_KEY={st.session_state.api_key}\n")
             file.truncate()
         pass_openAI_key()
-        st.warning("API key saved in session environment, make sure to delete it before exiting the session!")
+        st.warning("API key saved in session environment, make sure to delete it before exiting the session.")
 
     if b2.button("Delete API Key"):
         os.environ["USER_API_KEY"] = ""
@@ -41,7 +41,7 @@ def set_API_key():
                 if not line.startswith("USER_API_KEY="):
                     file.write(line)
             file.truncate()
-        st.success("API key deleted from .env file!")
+        st.success("API key deleted from the session environment.")
         con.text_input("Enter your API key", value=os.getenv("USER_API_KEY"), type="password", key = '2')   
 
 

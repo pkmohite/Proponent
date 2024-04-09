@@ -51,7 +51,10 @@ def displayPDF(file, column = st):
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
 
     # Embedding PDF in HTML
-    pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
+    # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
+    
+    # Method 2 - Using IFrame
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)
@@ -181,6 +184,8 @@ def create_image_deck(df):
         if os.path.exists(file_path):
             # Add the image path to the list
             image_paths.append(file_path)
+        else:
+            st.error(f"No slides in database. Please upload via Messaging Framework Tab or Contact Support if that doesn't work.")
 
     # Specify the output file path
     output_path = "downloads/combined_PDF.pdf"
@@ -233,14 +238,25 @@ create_env_file()
 pass_openAI_key()
 
 ## Main
+
 # Display the user input fields
 customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input = get_user_input()
+rec1, rec2, rec3 = st.columns([1.3, 1, 6])
 
-rec1, rec2, rec3 = st.columns([1.5, 1.5, 3])
 # Button to get recommendations
 if rec1.button("Get Recommendations", on_click=click_button):
+    # Check if api key is set
+    if not os.getenv("USER_API_KEY"):
+        st.error("Please set your OpenAI API key in the settings tab before proceeding.")
+        st.stop()
+    # check if user input is empty
+    if not user_input:
+        st.error("Please enter a customer interaction text before proceeding.")
+        st.stop()
+
     # Get the recommendations
     get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value)
+
 if rec2.button("Clear"):
     # delete st.session_state.clicked
     st.session_state.clicked = False
@@ -274,12 +290,15 @@ if st.session_state.clicked:
                 file_name="customized_deck.pdf",
                 mime="application/pdf",
             )
-        displayPDF("downloads/combined_PDF.pdf", col2)
+        if os.path.exists("downloads/combined_PDF.pdf"):
+            displayPDF("downloads/combined_PDF.pdf", col2)
+        else:
+            st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
     # Button to generate a customized video
     if col1.button("Build Demo Video"):
-        if not os.path.exists("downloads/video.mp4"):
-            create_video(selected_recommendations)
+        # Create a video with the selected recommendations
+        create_video(selected_recommendations)
         
         if os.path.exists("downloads/video.mp4"):
             with open("downloads/video.mp4", "rb") as file:
@@ -291,4 +310,4 @@ if st.session_state.clicked:
                 )
             col2.video("downloads/video.mp4")
         else:
-            st.error("Error generating video. Please try again.")
+            st.error("Error generating video. Please try again or contact me at prashant@yourproponent.com if this persists.")

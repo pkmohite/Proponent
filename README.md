@@ -112,6 +112,6 @@ If you have any questions, suggestions, or feedback, feel free to reach out:
 
 Prashant Mohite
 - Email: [prashant@yourproponent.com](mailto:prashant@yourproponent.com)
-- LinkedIn: [https://www.linkedin.com/in/prashantmohite/](https://www.linkedin.com/in/prashantmohite/)
+- LinkedIn: [https://www.linkedin.com/in/pmohite/](https://www.linkedin.com/in/pmohite/)
 
 We'd love to hear from you!

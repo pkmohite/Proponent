@@ -297,9 +297,9 @@ if st.session_state.clicked:
 
     # Button to generate a customized video
     if col1.button("Build Demo Video"):
-        # Create a video with the selected recommendations
-        # create_video(selected_recommendations)
-        col2.warning("Video generation is not supported on this demo deployement. Below preview is pre-generated.")
+        # Create a video with the selected recommendations 
+        # create_video(selected_recommendations) # Uncomment this line in local deployment to enable video generation
+        col2.warning("Video generation is not supported on this demo deployement. Below preview is pre-generated.") # Comment this line in local deployment
         if os.path.exists("downloads/video.mp4"):
             with open("downloads/video.mp4", "rb") as file:
                 col2.download_button(

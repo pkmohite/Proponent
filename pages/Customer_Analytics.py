@@ -191,7 +191,7 @@ def update_customer_personas():
     st.write("Upload a CSV file with columns category name, persona name, and persona description.")
     # Add a download button for template
     col1, col2 = st.columns([10, 1])
-    template_csv = "assets/templates/mf_template.csv"
+    template_csv = "assets/templates/cp_template.csv"
     col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
     uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
     

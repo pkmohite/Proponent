@@ -79,30 +79,6 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 - Parquet for storage & logging
 - NumPy for numerical computing
 - Matplotli for data visualization
-  
-```
-  proponent/
-  │
-  ├── assets/
-  │   └── images/
-  │       └── logo_full_black.png
-  │
-  ├── pages/
-  │   ├── Customer_Analytics.py
-  │   └── Messaging_Manager.py
-  │
-  ├── templates/
-  │   ├── customer_personas.csv
-  │   ├── messaging_framework.csv
-  │   └── sales_playbook.md
-  │
-  ├── .gitignore
-  ├── LICENSE
-  ├── README.md
-  ├── app.py
-  ├── poetry.lock
-  └── pyproject.toml
-```
 
 &nbsp; 
 ## Contact

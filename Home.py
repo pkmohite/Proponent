@@ -66,6 +66,12 @@ def setup_streamlit():
         st.session_state.clicked = False
     if "download_video" not in st.session_state:
         st.session_state.video_download = False
+    if "video_text" not in st.session_state:
+        st.session_state.video_text = None
+    if "chat_text" not in st.session_state:
+        st.session_state.chat_text = None
+    if "ap_text" not in st.session_state:
+        st.session_state.ap_text = None
     
     # Pass a variable to the set_page_config function
     st.set_page_config(
@@ -78,7 +84,6 @@ def setup_streamlit():
     get_themed_logo()
 
 def get_user_input():
-    user_input = ""
     container_height = 560
     # Create seprate columns for user input & user persona
     input, persona = st.columns([4, 1])
@@ -89,65 +94,80 @@ def get_user_input():
     tab1, tab2, tab3 = inputcontainer.tabs(["Upload Video/Audio", "Upload Emai/Chat Text", "Ask Proponent"])
 
     # 1a - File uploader for video/audio
+    video_text = None
     uploadempty = tab1.empty()
-    # tab1container = uploadempty.container(border=False, height=470)
-    tab1a, tab1b = uploadempty.columns([7, 1])
+    tab1a, tab1b, tab1c = uploadempty.columns([6, 1, 1])
     video_file = tab1a.file_uploader("Upload Video/Audio", type=["mp4", "mov", "avi", "mp3", "wav"], accept_multiple_files=False, label_visibility="collapsed")
     if tab1b.button("Upload Audio/Video File"):
-        if  video_file:
+        if video_file:
             with open("downloads/transcribe_cache.mp4", "wb") as file:
                 file.write(video_file.read())
-            uploadempty.empty()
-            video,transcript = tab1.columns([2.5, 1])
-            video.video("downloads/transcribe_cache.mp4")
-            # user_input_video = transcribe_video("downloads/transcribe_cache.mp4")
-            user_input_video = "This is a sample transcript of the uploaded video/audio file."
-            transcriptcont = transcript.container(border=False)
-            # transcriptcont.markdown("###### Transcript")
-            user_input = transcriptcont.text_area("Transcript", height= container_height-160, label_visibility="visible", value= user_input_video if user_input_video else None)
+            st.session_state.video_text = transcribe_video("downloads/transcribe_cache.mp4")
         else:
             uploadempty.error("Please upload a video or audio file before proceeding.")
+    
+    if tab1c.button("Load Audio/Video Example"):
+        st.session_state.video_text = "This is a sample transcript of the uploaded video/audio file."
+        # save the example video to downloads folder
+        example_video = "assets/templates/transcribe_example.mp4"
+        with open("downloads/transcribe_cache.mp4", "wb") as file:
+            file.write(open(example_video, "rb").read())
+
+    if st.session_state.video_text:
+        uploadempty.empty()
+        video,transcript = tab1.columns([2.5, 1])
+        video.video("downloads/transcribe_cache.mp4")
+        transcriptcont = transcript.container(border=False)
+        video_text = transcriptcont.text_area("Transcript", height= container_height-160, label_visibility="visible", value=st.session_state.video_text)
 
     # 1b - File uploader for chat/transcript
-    chat1, chat2 = tab2.columns([3, 1])
     chat_text = None
+    chat1, chat2 = tab2.columns([3, 1])
     chat_file = chat1.file_uploader("Upload Chat/Transcript", type=["txt"], accept_multiple_files=False, label_visibility="collapsed")
     if chat_file:
-        chat_text = chat_file.read().decode("utf-8")
-    
+        st.session_state.chat_text = chat_file.read().decode("utf-8")
+    # 1b - Load example chat data
     chat_data = pd.read_csv("assets/templates/examples_chat.csv")
     chat_example = chat2.selectbox("Select Example", chat_data["label"].values, index=None, label_visibility="visible")
     if chat_example:
-        chat_text = chat_data[chat_data["label"] == chat_example]["text"].values[0]
-    user_input_chat = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= chat_text)
+        st.session_state.chat_text = chat_data[chat_data["label"] == chat_example]["text"].values[0]
+    chat_text = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= st.session_state.chat_text)
 
 
     # 1c - Text area for Ask Proponent
+    ap_text = None
     ap1, ap2 = tab3.columns([3, 1])
 
-    # Load the CSV data into a DataFrame
-    ap_text = None
+    # 1c - Load example ask proponent data
     ap_data = pd.read_csv("assets/templates/examples_text.csv")
-    # Get all values from column "label" in the DataFrame
     example_names = ap_data["label"].values
-
     if ap2.button(example_names[0]):
-        ap_text = ap_data["text"].values[0]
+        st.session_state.ap_text = ap_data["text"].values[0]
     if ap2.button(example_names[1]):
-        ap_text = ap_data["text"].values[1]
+        st.session_state.ap_text = ap_data["text"].values[1]
     if ap2.button(example_names[2]):
-        ap_text = ap_data["text"].values[2]
+        st.session_state.ap_text = ap_data["text"].values[2]
     if ap2.button(example_names[3]):
-        ap_text = ap_data["text"].values[3]
+        st.session_state.ap_text = ap_data["text"].values[3]
     if ap2.button(example_names[4]):
-        ap_text = ap_data["text"].values[4]
+        st.session_state.ap_text = ap_data["text"].values[4]
     if ap2.button(example_names[5]):
-        ap_text = ap_data["text"].values[5]
+        st.session_state.ap_text = ap_data["text"].values[5]
     if ap2.button(example_names[6]):
-        ap_text = ap_data["text"].values[6]
+        st.session_state.ap_text = ap_data["text"].values[6]
 
-    user_input_ap = ap1.text_area("Interaction Text", height= container_height-100, label_visibility="collapsed", value = ap_text if ap_text else None, placeholder="Describe customer pain point, use-case, feature ask, or any other relevant information..")
+    ap_text = ap1.text_area("Interaction Text", height= container_height-100, label_visibility="collapsed", value = st.session_state.ap_text, placeholder="Describe customer pain point, use-case, feature ask, or any other relevant information..")
 
+    # Check if user input is not None
+    if video_text is not None:
+        user_input = video_text
+    elif chat_text is not None:
+        user_input = chat_text
+        pass
+    elif ap_text is not None:
+        user_input = ap_text
+    else:
+        user_input = None
 
     # 2a - Column grid for user Customer Name and Company Name
     persona.markdown("##### Personalize (Optional)")
@@ -294,10 +314,10 @@ if rec1.button("Get Recommendations", on_click=click_button):
 if rec2.button("Clear View"):
     # delete st.session_state.clicked
     st.session_state.clicked = False
-    ap_text = None
-    chat_text = None
-    user_input_video = None
-    st.stop()
+    st.session_state.video_text = None
+    st.session_state.chat_text = None
+    st.session_state.ap_text = None
+    st.rerun()
 
 if st.session_state.clicked:
     # Display the recommendations

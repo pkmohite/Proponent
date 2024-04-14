@@ -104,7 +104,7 @@ def get_user_input():
             user_input_video = "This is a sample transcript of the uploaded video/audio file."
             transcriptcont = transcript.container(border=False)
             # transcriptcont.markdown("###### Transcript")
-            user_input_video = transcriptcont.text_area("Transcript", height= container_height-160, label_visibility="visible", value= user_input_video if user_input_video else None)
+            user_input = transcriptcont.text_area("Transcript", height= container_height-160, label_visibility="visible", value= user_input_video if user_input_video else None)
         else:
             uploadempty.error("Please upload a video or audio file before proceeding.")
 
@@ -119,7 +119,7 @@ def get_user_input():
     chat_example = chat2.selectbox("Select Example", chat_data["label"].values, index=None, label_visibility="visible")
     if chat_example:
         chat_text = chat_data[chat_data["label"] == chat_example]["text"].values[0]
-    user_input_text = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= chat_text)
+    user_input_chat = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= chat_text)
 
 
     # 1c - Text area for Ask Proponent
@@ -146,11 +146,8 @@ def get_user_input():
     if ap2.button(example_names[6]):
         ap_text = ap_data["text"].values[6]
 
-    user_input_text = ap1.text_area("Interaction Text", height= container_height-100, label_visibility="collapsed", value = ap_text if ap_text else None, placeholder="Describe customer pain point, use-case, feature ask, or any other relevant information..")
+    user_input_ap = ap1.text_area("Interaction Text", height= container_height-100, label_visibility="collapsed", value = ap_text if ap_text else None, placeholder="Describe customer pain point, use-case, feature ask, or any other relevant information..")
 
-    # Collect user input into a single variable
-    if user_input_text:
-        user_input = user_input_text
 
     # 2a - Column grid for user Customer Name and Company Name
     persona.markdown("##### Personalize (Optional)")

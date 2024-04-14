@@ -83,10 +83,32 @@ def setup_streamlit():
     # Set the page logo
     get_themed_logo()
 
+
+def get_example_profile(video=False, chat=False, ap=False):
+    if video:
+        example_name = "John Doe"
+        example_title = "Director of Marketing"
+        example_company = "Acme Inc."
+    elif chat:
+        example_name = "Jane Smith"
+        example_title = "Product Manager"
+        example_company = "Widgets Inc."
+    elif ap:
+        example_name = "Alice Johnson"
+        example_title = "VP of Sales"
+        example_company = "Gadget Corp."
+    else:
+        example_name = None
+        example_title = None
+        example_company = None
+    return example_name, example_title, example_company
+
+
 def get_user_input():
+    # Configure the layout
     container_height = 560
-    # Create seprate columns for user input & user persona
     input, persona = st.columns([4, 1])
+    example_name, example_title, example_company = None, None, None
     
     # 1 - User input
     input.markdown("##### Upload Customer Interaction")
@@ -106,13 +128,16 @@ def get_user_input():
         else:
             uploadempty.error("Please upload a video or audio file before proceeding.")
     
+    # 1a - Load example video/audio file
     if tab1c.button("Load Audio/Video Example"):
+        example_name, example_title, example_company = get_example_profile(video=True, chat=False, ap=False)
         st.session_state.video_text = "This is a sample transcript of the uploaded video/audio file."
         # save the example video to downloads folder
         example_video = "assets/templates/transcribe_example.mp4"
         with open("downloads/transcribe_cache.mp4", "wb") as file:
             file.write(open(example_video, "rb").read())
 
+    # 1a - Display the video and transcript
     if st.session_state.video_text:
         uploadempty.empty()
         video,transcript = tab1.columns([2.5, 1])
@@ -126,13 +151,16 @@ def get_user_input():
     chat_file = chat1.file_uploader("Upload Chat/Transcript", type=["txt"], accept_multiple_files=False, label_visibility="collapsed")
     if chat_file:
         st.session_state.chat_text = chat_file.read().decode("utf-8")
+    
     # 1b - Load example chat data
     chat_data = pd.read_csv("assets/templates/examples_chat.csv")
     chat_example = chat2.selectbox("Select Example", chat_data["label"].values, index=None, label_visibility="visible")
     if chat_example:
         st.session_state.chat_text = chat_data[chat_data["label"] == chat_example]["text"].values[0]
+        example_name, example_title, example_company = get_example_profile(video=False, chat=True, ap=False)
+    
+    # 1b - Display the chat transcript
     chat_text = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= st.session_state.chat_text)
-
 
     # 1c - Text area for Ask Proponent
     ap_text = None
@@ -140,42 +168,35 @@ def get_user_input():
 
     # 1c - Load example ask proponent data
     ap_data = pd.read_csv("assets/templates/examples_text.csv")
-    example_names = ap_data["label"].values
-    if ap2.button(example_names[0]):
-        st.session_state.ap_text = ap_data["text"].values[0]
-    if ap2.button(example_names[1]):
-        st.session_state.ap_text = ap_data["text"].values[1]
-    if ap2.button(example_names[2]):
-        st.session_state.ap_text = ap_data["text"].values[2]
-    if ap2.button(example_names[3]):
-        st.session_state.ap_text = ap_data["text"].values[3]
-    if ap2.button(example_names[4]):
-        st.session_state.ap_text = ap_data["text"].values[4]
-    if ap2.button(example_names[5]):
-        st.session_state.ap_text = ap_data["text"].values[5]
-    if ap2.button(example_names[6]):
-        st.session_state.ap_text = ap_data["text"].values[6]
+    ap_example = ap_data["label"].values
+    for i in range(len(ap_example)):
+        if ap2.button(ap_example[i]):
+            example_name, example_title, example_company = get_example_profile(video=False, chat=False, ap=True)
+            st.session_state.ap_text = ap_data["text"].values[i]
 
+    # 1c - Display the ask proponent text
     ap_text = ap1.text_area("Interaction Text", height= container_height-100, label_visibility="collapsed", value = st.session_state.ap_text, placeholder="Describe customer pain point, use-case, feature ask, or any other relevant information..")
 
-    # Check if user input is not None
+    # 1 - Pass the user input to the persona section
     if video_text is not None:
         user_input = video_text
+        pass
     elif chat_text is not None:
         user_input = chat_text
         pass
     elif ap_text is not None:
         user_input = ap_text
+        pass
     else:
         user_input = None
 
     # 2a - Column grid for user Customer Name and Company Name
     persona.markdown("##### Personalize (Optional)")
     personacontainer = persona.container(border=True, height=container_height)
-    customer_name = personacontainer.text_input("Name:")#, value= example_name if example_name else None)
+    customer_name = personacontainer.text_input("Name:", value= example_name)
     # title_col, indus_col = persona.columns([1, 1])
-    customer_title = personacontainer.text_input("Title:")#, value= example_title if example_title else None)
-    customer_company = personacontainer.text_input("Company:")#, value= example_company if example_company else None)
+    customer_title = personacontainer.text_input("Title:", value= example_title)
+    customer_company = personacontainer.text_input("Company:", value= example_company)
 
     # 2b - Load the customer profiles from assets/customer_profiles.csv
     customer_profiles = pd.read_csv("assets/customer_personas.csv")
@@ -183,7 +204,7 @@ def get_user_input():
     category2_value = personacontainer.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Company Size"]["persona_name"].tolist(), index=None, placeholder="Company Size", label_visibility="collapsed")
     category3_value = personacontainer.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Role"]["persona_name"].tolist(), index=None, placeholder="Role", label_visibility="collapsed")
 
-    # Dropdown for competitors
+    # 2c - Select competitors
     competitors = personacontainer.selectbox("Competitors", ["None", "Smartsheets", "Asana", "Clickup"], index = 0)
 
     return customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input

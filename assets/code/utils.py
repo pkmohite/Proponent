@@ -7,8 +7,20 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log
+import assemblyai as aai
 
 ## OpenAI Functions
+
+## AssemblyAI Functions
+
+def transcribe_video(file):
+    aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
+    transcriber = aai.Transcriber()
+    
+    transcript = transcriber.transcribe(file)
+    # transcript = transcriber.transcribe("./my-local-audio-file.wav")
+    
+    return transcript.text
 
 # Function to pass the OpenAI key
 def pass_openAI_key(api_key=None):
@@ -94,7 +106,6 @@ def calculate_similarity_ordered(user_input_embedding):
     df = mf_data.sort_values(by="similarity_score", ascending=False)
     
     return df
-
 
 
 ## Media Processing Functions

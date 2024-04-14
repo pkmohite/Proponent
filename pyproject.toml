@@ -19,6 +19,7 @@ python-dotenv = "^1.0.1"
 pytube = "^15.0.0"
 matplotlib = "^3.8.4"
 plotly = "^5.20.0"
+assemblyai = "^0.25.0"
 
 
 [build-system]

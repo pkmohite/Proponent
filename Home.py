@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 import base64
 from assets.code.element_configs import column_config_recommendations, config_about
-from assets.code.utils import pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered
+from assets.code.utils import pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
 from assets.code.utils import generate_customized_email, create_summary, get_themed_logo, update_log_parquet
 from fpdf import FPDF
 from moviepy.editor import VideoFileClip, concatenate_videoclips
@@ -77,60 +77,97 @@ def setup_streamlit():
     # Set the page logo
     get_themed_logo()
 
+def get_user_input():
+    user_input = ""
+    container_height = 560
+    # Create seprate columns for user input & user persona
+    input, persona = st.columns([4, 1])
+    
+    # 1 - User input
+    input.markdown("##### Upload Customer Interaction")
+    inputcontainer = input.container(border=True, height=container_height)
+    tab1, tab2, tab3 = inputcontainer.tabs(["Upload Video/Audio", "Upload Emai/Chat Text", "Ask Proponent"])
 
-def load_examples(file_path = "assets/examples.csv"):
+    # 1a - File uploader for video/audio
+    uploadempty = tab1.empty()
+    # tab1container = uploadempty.container(border=False, height=470)
+    tab1a, tab1b = uploadempty.columns([7, 1])
+    video_file = tab1a.file_uploader("Upload Video/Audio", type=["mp4", "mov", "avi", "mp3", "wav"], accept_multiple_files=False, label_visibility="collapsed")
+    if tab1b.button("Upload Audio/Video File"):
+        if  video_file:
+            with open("downloads/transcribe_cache.mp4", "wb") as file:
+                file.write(video_file.read())
+            uploadempty.empty()
+            video,transcript = tab1.columns([2.5, 1])
+            video.video("downloads/transcribe_cache.mp4")
+            # user_input_video = transcribe_video("downloads/transcribe_cache.mp4")
+            user_input_video = "This is a sample transcript of the uploaded video/audio file."
+            transcriptcont = transcript.container(border=False)
+            # transcriptcont.markdown("###### Transcript")
+            user_input_video = transcriptcont.text_area("Transcript", height= container_height-160, label_visibility="visible", value= user_input_video if user_input_video else None)
+        else:
+            uploadempty.error("Please upload a video or audio file before proceeding.")
+
+    # 1b - File uploader for chat/transcript
+    chat1, chat2 = tab2.columns([3, 1])
+    chat_text = None
+    chat_file = chat1.file_uploader("Upload Chat/Transcript", type=["txt"], accept_multiple_files=False, label_visibility="collapsed")
+    if chat_file:
+        chat_text = chat_file.read().decode("utf-8")
+    
+    chat_data = pd.read_csv("assets/templates/examples_chat.csv")
+    chat_example = chat2.selectbox("Select Example", chat_data["label"].values, index=None, label_visibility="visible")
+    if chat_example:
+        chat_text = chat_data[chat_data["label"] == chat_example]["text"].values[0]
+    user_input_text = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= chat_text)
+
+
+    # 1c - Text area for Ask Proponent
+    ap1, ap2 = tab3.columns([3, 1])
 
     # Load the CSV data into a DataFrame
-    data = pd.read_csv(file_path)
-    
-    # Create a dropdown to select the type
-    selected_type = st.sidebar.selectbox("Load Example Conversation", ["None"] + data["type"].unique().tolist())
+    ap_text = None
+    ap_data = pd.read_csv("assets/templates/examples_text.csv")
+    # Get all values from column "label" in the DataFrame
+    example_names = ap_data["label"].values
 
-    # Filter the data based on the selected type
-    filtered_data = data[data["type"] == selected_type]
+    if ap2.button(example_names[0]):
+        ap_text = ap_data["text"].values[0]
+    if ap2.button(example_names[1]):
+        ap_text = ap_data["text"].values[1]
+    if ap2.button(example_names[2]):
+        ap_text = ap_data["text"].values[2]
+    if ap2.button(example_names[3]):
+        ap_text = ap_data["text"].values[3]
+    if ap2.button(example_names[4]):
+        ap_text = ap_data["text"].values[4]
+    if ap2.button(example_names[5]):
+        ap_text = ap_data["text"].values[5]
+    if ap2.button(example_names[6]):
+        ap_text = ap_data["text"].values[6]
 
-    # Populate the input fields based on the filtered data
-    if selected_type != "None":
-        customer_name = filtered_data["name"].iloc[0]
-        customer_title = filtered_data["title"].iloc[0]
-        customer_company = filtered_data["company"].iloc[0]
-        user_input = filtered_data["text"].iloc[0]
-    else:
-        customer_name = ""
-        customer_title = ""
-        customer_company = ""
-        user_input = ""
-        
-    return customer_name, customer_title, customer_company, user_input
+    user_input_text = ap1.text_area("Interaction Text", height= container_height-100, label_visibility="collapsed", value = ap_text if ap_text else None, placeholder="Describe customer pain point, use-case, feature ask, or any other relevant information..")
 
+    # Collect user input into a single variable
+    if user_input_text:
+        user_input = user_input_text
 
-def get_user_input():
-    # Load examples
-    customer_name, customer_title, customer_company, user_input = load_examples()
+    # 2a - Column grid for user Customer Name and Company Name
+    persona.markdown("##### Personalize (Optional)")
+    personacontainer = persona.container(border=True, height=container_height)
+    customer_name = personacontainer.text_input("Name:")#, value= example_name if example_name else None)
+    # title_col, indus_col = persona.columns([1, 1])
+    customer_title = personacontainer.text_input("Title:")#, value= example_title if example_title else None)
+    customer_company = personacontainer.text_input("Company:")#, value= example_company if example_company else None)
 
-    # Column grid for user Customer Name and Company Name
-    name_col, title_col, indus_col = st.columns([1, 1, 1])
-    name_col.markdown("##### Name")
-    customer_name = name_col.text_input("Customer Name:", label_visibility="collapsed", value= customer_name if customer_name else None)
-    title_col.markdown("##### Title")
-    customer_title = title_col.text_input("Customer Title:", label_visibility="collapsed", value= customer_title if customer_title else None)
-    indus_col.markdown("##### Company")
-    customer_company = indus_col.text_input("Company Name:", label_visibility="collapsed", value= customer_company if customer_company else None)
+    # 2b - Load the customer profiles from assets/customer_profiles.csv
+    customer_profiles = pd.read_csv("assets/customer_personas.csv")
+    category1_value = personacontainer.selectbox("Customer Profile", customer_profiles[customer_profiles["category_name"] == "Buyer Persona"]["persona_name"].tolist(), index=None, placeholder="Buyer Persona")
+    category2_value = personacontainer.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Company Size"]["persona_name"].tolist(), index=None, placeholder="Company Size", label_visibility="collapsed")
+    category3_value = personacontainer.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Role"]["persona_name"].tolist(), index=None, placeholder="Role", label_visibility="collapsed")
 
-    # Load the customer profiles from assets/customer_profiles.json
-    with open("assets/customer_personas.json", "r") as file:
-        customer_profiles = json.load(file)
-
-    # Create a selectbox for each category
-    st.markdown("##### Customer Persona")
-    cp1, cp2, cp3 = st.columns([1, 1, 1])
-    category1_value = cp1.selectbox("cat1", [persona["persona_name"] for persona in customer_profiles[list(customer_profiles.keys())[0]]], index = None, placeholder = list(customer_profiles.keys())[0], label_visibility='collapsed')
-    category2_value = cp2.selectbox("cat2", [persona["persona_name"] for persona in customer_profiles[list(customer_profiles.keys())[1]]], index = None, placeholder = list(customer_profiles.keys())[1], label_visibility='collapsed')
-    category3_value = cp3.selectbox("cat3", [persona["persona_name"] for persona in customer_profiles[list(customer_profiles.keys())[2]]], index = None, placeholder = list(customer_profiles.keys())[2], label_visibility='collapsed')
-
-    # Text area for user input
-    st.markdown("##### Customer Interaction Text")
-    user_input = st.text_area("Interaction Text", label_visibility="collapsed", height=280, placeholder="Enter the transcript of your customer interaction",value= user_input if user_input else None)
+    # Dropdown for competitors
+    competitors = personacontainer.selectbox("Competitors", ["None", "Smartsheets", "Asana", "Clickup"], index = 0)
 
     return customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input
 
@@ -257,9 +294,13 @@ if rec1.button("Get Recommendations", on_click=click_button):
     # Get the recommendations
     get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value)
 
-if rec2.button("Clear"):
+if rec2.button("Clear View"):
     # delete st.session_state.clicked
     st.session_state.clicked = False
+    ap_text = None
+    chat_text = None
+    user_input_video = None
+    st.stop()
 
 if st.session_state.clicked:
     # Display the recommendations

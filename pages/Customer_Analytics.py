@@ -192,20 +192,21 @@ def update_customer_personas():
     # Add a download button for template
     col1, col2 = st.columns([10, 1])
     template_csv = "assets/templates/cp_template.csv"
-    col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
+    with open(template_csv, "r") as file:
+        bth = col2.download_button("Download Template", file, file_name="cp_template.csv", mime="text/csv")
+
     uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
-    
+
     if uploaded_file is not None:
         # Preview the uploaded file using st.write
         df = pd.read_csv(uploaded_file)
-        edited_data = st.data_editor(df, hide_index=True)
+        edited_data = st.data_editor(df, hide_index=True, use_container_width=True)
         
         # Add a button to save the uploaded file as a json file
-        if st.button("Save as JSON"):
-            df_json = edited_data.groupby("category_name").apply(lambda x: x[["persona_name", "persona_description"]].to_dict(orient="records")).to_dict()
-            with open("assets/customer_personas.json", "w") as file:
-                json.dump(df_json, file)
-                st.write("File saved as JSON!")
+        if st.button("Upload Customer Personas"):
+            # Save the edited data as a CSV file
+            edited_data.to_csv("assets/customer_personas.csv", index=False)
+            st.success("File saved successfully!")
 
 
 ## Session State Stuff

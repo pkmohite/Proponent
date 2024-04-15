@@ -202,9 +202,9 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
     pass_openAI_key()
 
     # Extract the feature names and value propositions from the recommendations DataFrame into a list
-    feature_list = recommendations["Feature Name"].tolist()
-    value_prop_list = recommendations["Value Proposition"].tolist()
-    web_URl = recommendations["Web URL"].tolist()
+    feature_list = recommendations["featureName"].tolist()
+    value_prop_list = recommendations["valueProposition"].tolist()
+    web_URl = recommendations["webURL"].tolist()
 
     # Create the conversation for the OpenAI API
     conversation = [
@@ -287,12 +287,3 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
 
     return hero_title, hero_description, feature_titles, value_propositions, web_URl
     
-# # Example usage
-# hero_title, hero_description, feature_titles, value_propositions = generate_content()
-
-# features = [generate_feature_section(feature_titles[i], value_propositions[i], "https://source.unsplash.com/random/800x800") for i in range(5)]
-
-# html_template = generate_html_template(hero_title, hero_description, "https://source.unsplash.com/random/800x800", features)
-# # Save the generated HTML template to a file
-# with open("downloads/index.html", "w") as file:
-#     file.write(html_template)

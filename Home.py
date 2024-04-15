@@ -207,7 +207,7 @@ def get_user_input():
 def get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value):
     # Get the summary and recommendations
     summary = create_summary(user_input, customer_name, customer_title, customer_company)
-    summary_embedding = get_embedding(summary)
+    summary_embedding = get_embedding(user_input) #replace with summary if simalrity search on summary instead of user input
     df = calculate_similarity_ordered(summary_embedding)
     df_formatted = format_display_df(df)
     top_7 = df_formatted.head(7)

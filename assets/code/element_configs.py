@@ -65,6 +65,18 @@ column_config_edit = {
         ),
     }
 
+analytics_column_config = {
+    "painPointId": None,
+    "customerPainPoint": st.column_config.Column(
+        label="Customer Pain Point", width="medium"
+    ), 
+    "featureName": st.column_config.Column(
+        label="Feature Name", width="medium"
+    ),
+    "score": st.column_config.Column(label="Score", width="small"),
+    "count": st.column_config.Column(label="Count", width="small"),
+    "percentage": st.column_config.Column(label="Percentage", width="small"),
+}
 
 default_theme = {
     "primaryColor": "#F63366",

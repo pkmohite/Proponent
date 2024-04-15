@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from assets.code.element_configs import parquet_schema_log
+from assets.code.element_configs import parquet_schema_log, analytics_column_config
 import matplotlib.pyplot as plt
 import textwrap
 import altair as alt
@@ -13,20 +13,20 @@ from assets.code.utils import get_mf_and_log
 
 
 # Tab 1: Analytics - Create Filter Components
-def create_filter_components(df):
-    a1, a2, a3 = st.columns([2, 1, 1])
-    b1, b2, b3 = st.columns([1, 1, 1])
+def create_filter_components(df,container = st):
 
-    title = a1.selectbox("Customer Title", df['customer_title'].unique(), index=None)
-    from_date = a2.date_input("From Date", None)
-    to_date = a3.date_input("To Date", None)
+    title = container.selectbox("Customer Title", df['customer_title'].unique(), index=None)
+    a1, a2 = container.columns(2)
+    from_date = a1.date_input("From Date", None)
+    to_date = a2.date_input("To Date", None)
     date_range = [from_date, to_date]
        
 
-    persona_category1 = b1.selectbox("Persona Category 1", df['persona_category1'].unique(), index=None)
-    persona_category2 = b2.selectbox("Persona Category 2", df['persona_category2'].unique(), index=None)
-    persona_category3 = b3.selectbox("Persona Category 3", df['persona_category3'].unique(), index=None)
+    persona_category1 = container.selectbox("Persona Category 1", df['persona_category1'].unique(), index=None)
+    persona_category2 = container.selectbox("Persona Category 2", df['persona_category2'].unique(), index=None)
+    persona_category3 = container.selectbox("Persona Category 3", df['persona_category3'].unique(), index=None)
 
+    competitors = container.selectbox("Competitors", ["Competitor 1", "Competitor 2", "Competitor 3"], index=None)
     return title, date_range, persona_category1, persona_category2, persona_category3
 
 # Tab 1: Analytics - Get Painpoint Metrics
@@ -71,67 +71,56 @@ def get_painpoint_metrics(df, mf_content, title = None, date_range = None, perso
     return sorted_pref_data
 
 # Tab 1: Analytics - Visualize Customer Trends
-def visualize_customer_trends():
+def visualize_customer_trends(container = st):
             #opt1, opt2, opt3 = st.columns([1, 1, 1])
             #core_ref = opt1.selectbox("Display By", ["customerPainPoint", "featureName"], index=1)
             core_ref = "featureName"
 
-            t1, t2 = st.tabs(["Bar Chart", "Pie Chart"])
-            with t1.empty():
-                
-                painpoint_data = pd.DataFrame({
-                    'pain_point': st.session_state.painpoint_metrics[core_ref],
-                    'score': st.session_state.painpoint_metrics['score']
-                })
+            t1, t2, t3 = container.tabs(["Painpoint Metrics","Bar Chart", "Pie Chart"])
+            
+            # Tab 1: Painpoint Metrics
+            t1.markdown("###### Painpoint Metrics")
+            t1.data_editor(st.session_state.painpoint_metrics.head(7), hide_index=True, use_container_width=True, column_config=analytics_column_config)
+            
 
-                # Create the Altair chart
-                chart = alt.Chart(painpoint_data).mark_bar().encode(
-                    x=alt.X('score', title='Score'),
-                    y=alt.Y('pain_point', title='Customer Pain Point', sort='-x'),
-                    tooltip=['pain_point', 'score']
-                ).properties(
-                    title='Top Features',
-                    width=600,
-                    height=500
-                ).interactive()
+            # Tab 2: Bar Chart
+            painpoint_data = pd.DataFrame({
+                'pain_point': st.session_state.painpoint_metrics[core_ref],
+                'score': st.session_state.painpoint_metrics['score']
+            })
+            chart = alt.Chart(painpoint_data).mark_bar().encode(
+                x=alt.X('score', title='Score'),
+                y=alt.Y('pain_point', title='Customer Pain Point', sort='-x'),
+                tooltip=['pain_point', 'score']
+            ).properties(
+                title='Top Features',
+                width=600,
+                height=500
+            ).interactive()
+            t2.altair_chart(chart, use_container_width=True)
 
-                # Display the chart using Streamlit
-                st.altair_chart(chart, use_container_width=True)
-
-            with t2.empty():
-                painpoint_data = pd.DataFrame({
-                    'pain_point': st.session_state.painpoint_metrics[core_ref],
-                    'percentage': st.session_state.painpoint_metrics['percentage']
-                })
-
-                # Calculate the "other" percentage
-                other_percentage = 100 - painpoint_data['percentage'].sum()
-
-                # Add the "other" category to the DataFrame
-                painpoint_data = painpoint_data._append({'pain_point': 'Other', 'percentage': other_percentage}, ignore_index=True)
-
-                # Create the Altair chart
-                chart = alt.Chart(painpoint_data).mark_arc().encode(
-                    theta=alt.Theta('percentage:Q', stack=True),
-                    color=alt.Color('pain_point:N', legend=alt.Legend(title='Pain Points')),
-                    tooltip=[alt.Tooltip('pain_point:N', title='Pain Point'), alt.Tooltip('percentage:Q', format='.1f', title='Percentage')]
-                ).properties(
-                    title='Customer Pain Point Distribution',
-                    width=400,
-                    height=400
-                )
-
-                # Add percentage labels to the chart
-                text = chart.mark_text(radius=140, size=12).encode(
-                    text=alt.Text('percentage:Q', format='.1f'),
-                    color=alt.value('white')
-                )
-
-                # Combine the chart and text labels
-                pie_chart = chart + text
-
-                # Display the chart using Streamlit
-                st.altair_chart(pie_chart, use_container_width=True)
+            # Tab 3: Pie Chart
+            painpoint_data = pd.DataFrame({
+                'pain_point': st.session_state.painpoint_metrics[core_ref],
+                'percentage': st.session_state.painpoint_metrics['percentage']
+            })
+            other_percentage = 100 - painpoint_data['percentage'].sum()
+            painpoint_data = painpoint_data._append({'pain_point': 'Other', 'percentage': other_percentage}, ignore_index=True)
+            chart = alt.Chart(painpoint_data).mark_arc().encode(
+                theta=alt.Theta('percentage:Q', stack=True),
+                color=alt.Color('pain_point:N', legend=alt.Legend(title='Pain Points')),
+                tooltip=[alt.Tooltip('pain_point:N', title='Pain Point'), alt.Tooltip('percentage:Q', format='.1f', title='Percentage')]
+            ).properties(
+                title='Customer Pain Point Distribution',
+                width=400,
+                height=400
+            )
+            text = chart.mark_text(radius=140, size=12).encode(
+                text=alt.Text('percentage:Q', format='.1f'),
+                color=alt.value('white')
+            )
+            pie_chart = chart + text
+            t3.altair_chart(pie_chart, use_container_width=True)
 
 # Tab 2: View Logs - View Log Parquet
 def view_log_parquet():
@@ -228,7 +217,10 @@ df, mf_content = get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'asse
 tab1, tab2, tab3, tab4 = st.tabs(["Analytics", "View Logs", "Feature Leaderboard", "Customer Personas"])
 
 with tab1:
-    title, date_range, persona_category1, persona_category2, persona_category3 = create_filter_components(df)
+    filter_col, content_col = st.columns([1, 3])
+    filter = filter_col.container(border=True)
+    content = content_col.container(border=True)
+    title, date_range, persona_category1, persona_category2, persona_category3 = create_filter_components(df, filter)
 
     if st.button("Display Painpoint Metrics", on_click=click_button):
         if (title or date_range or persona_category1 or persona_category2 or persona_category3) is not None:
@@ -239,11 +231,8 @@ with tab1:
             
     # Display the DataFrame
     if st.session_state.display_metrics:
-        st.markdown("#### Painpoint Metrics")
-        st.data_editor(st.session_state.painpoint_metrics.head(7), hide_index=True, use_container_width=True)
-
-        st.markdown("#### Visualize Customer Trends")
-        visualize_customer_trends()   
+        content.markdown("#### Visualize Customer Trends")
+        visualize_customer_trends(content)   
 
 with tab2:
     # Code for the second tab

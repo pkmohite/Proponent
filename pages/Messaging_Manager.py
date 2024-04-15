@@ -11,12 +11,14 @@ import pyarrow.parquet as pq
 
 ## Streamlit Functions
 def add_new_message():
-    st.markdown("#### Add New Message")
-    paint_point = st.text_input("Enter Customer Pain Point:")
-    feature = st.text_input("Enter Feature Name:")
-    value_prop = st.text_input("Enter Value Proposition:")
-    pdf = st.file_uploader("Upload Product Slide (PDF):", type=["pdf"])
-    video = st.file_uploader("Upload Product Demo (MP4):", type=["mp4"])
+    st.markdown("#### Add New Pain Point")
+    paint_point = st.text_area("Enter Customer Pain Point:")
+    col11, col12 = st.columns(2)
+    feature = col11.text_area("Enter Feature Name:")
+    value_prop = col12.text_area("Enter Value Proposition:")
+    col21, col22 = st.columns(2)
+    pdf = col21.file_uploader("Upload Product Slide (PDF):", type=["pdf"])
+    video = col22.file_uploader("Upload Product Demo (MP4):", type=["mp4"])
     web_url = st.text_input("Enter Web URL:")
 
     if st.button("Add"):

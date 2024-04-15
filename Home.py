@@ -1,12 +1,10 @@
-import json
 import os
 import pandas as pd
 import streamlit as st
 import base64
 from assets.code.element_configs import column_config_recommendations, config_about
 from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
-from assets.code.utils import create_summary, get_themed_logo, update_log_parquet
-from fpdf import FPDF
+from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from assets.code.genHTML import generate_content, generate_feature_section, generate_html_template
 import streamlit.components.v1 as components
@@ -254,39 +252,6 @@ def display_recommendations():
     return selected_recommendations
 
 
-def create_image_deck(df):
-    # Create a list to store the image paths
-    image_paths = []
-
-    # Iterate over each row in the DataFrame
-    for index, row in df.iterrows():
-        # Construct the file path
-        image_file = row["PDF File Name"]
-        file_path = os.path.join("slides", image_file)
-
-        # Check if the file exists
-        if os.path.exists(file_path):
-            # Add the image path to the list
-            image_paths.append(file_path)
-        else:
-            st.error(f"No slides in database. Please upload via Messaging Framework Tab or Contact Support if that doesn't work.")
-
-    # Specify the output file path
-    output_path = "downloads/combined_PDF.pdf"
-
-    # Create a new PDF document with 16:9 layout
-    pdf = FPDF(orientation="L", format="Legal")
-
-    # Add each image to the PDF document
-    for image_path in image_paths:
-        pdf.add_page()
-        pdf.image(image_path, x=-1, y=2, w=380)
-
-    # Save the PDF document
-    pdf.output(output_path)
-
-    print(f"Combined image PDF created: {output_path}")
-
 
 def create_video(recommendations):
     # Create a list to store the video paths
@@ -378,6 +343,7 @@ if st.session_state.clicked:
                 file_name="customized_deck.pdf",
                 mime="application/pdf",
             )
+        
         if os.path.exists("downloads/combined_PDF.pdf"):
             displayPDF("downloads/combined_PDF.pdf", content)
         else:
@@ -402,38 +368,39 @@ if st.session_state.clicked:
 
     # Tab 4 - Generate HTML
     if options.button("Generate HTML"):
-        # # Generate content for the HTML template using OpenAI
-        # hero_title, hero_description, feature_titles, value_propositions = (
-        #     generate_content(
-        #         recommendations=selected_recommendations,
-        #         user_input=user_input,
-        #         customer_name=customer_name,
-        #         customer_title=customer_title,
-        #         customer_company=customer_company,
-        #         model="gpt-3.5-turbo-0125",
-        #     )
-        # )
-        # # Generate HTML for feature sections
-        # features = [
-        #     generate_feature_section(
-        #         feature_titles[i],
-        #         value_propositions[i],
-        #         "https://source.unsplash.com/random/800x800",
-        #     )
-        #     for i in range(5)
-        # ]
-        # # Generate the HTML template
-        # html_template = generate_html_template(hero_title, hero_description, "https://source.unsplash.com/random/800x800", features)
-        # # Save the generated HTML template to a file
-        # with open("downloads/index.html", "w") as file:
-        #     file.write(html_template)
-        
+        # Generate content for the HTML template using OpenAI
+        hero_title, hero_description, feature_titles, value_propositions = (
+            generate_content(
+                recommendations=selected_recommendations,
+                user_input=user_input,
+                customer_name=customer_name,
+                customer_title=customer_title,
+                customer_company=customer_company,
+                model="gpt-3.5-turbo-0125",
+            )
+        )
+        # Generate HTML for feature sections
+        features = [
+            generate_feature_section(
+                feature_titles[i],
+                value_propositions[i],
+                "https://source.unsplash.com/random/800x800",
+            )
+            for i in range(len(feature_titles))
+        ]
+        # Generate the HTML template
+        html_template = generate_html_template(
+            hero_title,
+            hero_description,
+            "https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
+            features,
+        )
+        # Save the generated HTML template to a file
+        with open("downloads/index.html", "w") as file:
+            file.write(html_template)
+
         # View the generated HTML template
-        content.markdown("##### HTML Template:")
-        # Button to open the HTML template in a new tab
-        if content.button("Open HTML Template"):
-            # read the html file
-            with open("assets/templates/index.html", "r") as file:
+        with content.container():
+            with open("downloads/index.html", "r") as file:
                 html_template = file.read()
-            components.html(html_template, height=800, width=800)
-        
+            components.html(html_template, height=5000)

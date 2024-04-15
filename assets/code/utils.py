@@ -8,6 +8,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log
 import assemblyai as aai
+from fpdf import FPDF
 
 ## OpenAI Functions
 
@@ -111,32 +112,62 @@ def calculate_similarity_ordered(user_input_embedding):
 ## Media Processing Functions
 
 # Function to create a PDF deck from the DataFrame
-def create_pdf_deck(df):
+def create_pdf_deck(output_path):
 
-    # Create a PdfMerger object
     merger = PdfMerger()
+
+    # Add the start PDF
+    merger.append("slides/slide-start.pdf")
+
+    # Add the main content PDF
+    merger.append(output_path)
+
+    # Add the end PDF
+    merger.append("slides/slide-end.pdf")
+
+    # Write to an output PDF document
+    merger.write(output_path)
+
+    merger.close()
+
+    print(f"Combined PDF created: {output_path}")
+
+
+def create_image_deck(df):
+    # Create a list to store the image paths
+    image_paths = []
 
     # Iterate over each row in the DataFrame
     for index, row in df.iterrows():
-        # Get the PDF file name from the "PDF File" column
-        pdf_file = row["PDF File Name"]
-
         # Construct the file path
-        file_path = os.path.join("slides", pdf_file)
+        image_file = row["PDF File Name"]
+        file_path = os.path.join("slides", image_file)
 
         # Check if the file exists
         if os.path.exists(file_path):
-            # Open the PDF file in read binary mode
-            with open(file_path, "rb") as file:
-                # Add the PDF file to the merger
-                merger.append(file)
+            # Add the image path to the list
+            image_paths.append(file_path)
+        else:
+            st.error(f"No slides in database. Please upload via Messaging Framework Tab or Contact Support if that doesn't work.")
 
     # Specify the output file path
     output_path = "downloads/combined_PDF.pdf"
 
-    # Write the merged PDF to the output file
-    with open(output_path, "wb") as file:
-        merger.write(file)
+    # Create a new PDF document with 16:9 layout
+    pdf = FPDF(orientation="L", format=(285, 510))
+
+    # Add each image to the PDF document
+    for image_path in image_paths:
+        pdf.add_page()
+        pdf.image(image_path, x=-1, y=2, w=510)
+    
+    # Save the PDF document
+    pdf.output(output_path)
+
+    # create_pdf_deck(output_path)
+
+    print(f"Combined image PDF created: {output_path}")
+
 
 
 ## DB Functions

@@ -10,13 +10,15 @@ def generate_html_template(hero_title, hero_description, hero_image, features):
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <title>My SaaS Product</title>
+  <title>Monday.com Product Highlights</title>
 </head>
 <body class="bg-gray-100">
   <!-- Navigation -->
   <nav class="bg-white py-4">
     <div class="container mx-auto px-4 flex justify-between items-center">
-      <a href="#" class="text-xl font-bold text-gray-800">MySaaS</a>
+      <a href="#">
+        <img src="https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/5757c917-86c3-4a4a-a3f7-4f9dff2dc300/public" alt="Monday.com Logo" class="h-8 w-auto">
+      </a>
       <div>
         <a href="#features" class="text-gray-600 hover:text-gray-800 px-3 py-2">Features</a>
         <a href="#pricing" class="text-gray-600 hover:text-gray-800 px-3 py-2">Pricing</a>
@@ -199,17 +201,17 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
     pass_openAI_key()
 
     # Extract the feature names and value propositions from the recommendations DataFrame into a list
-    # feature_list = recommendations["Feature Name"].tolist()
-    # value_prop_list = recommendations["Value Proposition"].tolist()
+    feature_list = recommendations["Feature Name"].tolist()
+    value_prop_list = recommendations["Value Proposition"].tolist()
 
-    feature_list = ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5"]
-    value_prop_list = ["Value Proposition 1", "Value Proposition 2", "Value Proposition 3", "Value Proposition 4", "Value Proposition 5"]
+    # feature_list = ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5"]
+    # value_prop_list = ["Value Proposition 1", "Value Proposition 2", "Value Proposition 3", "Value Proposition 4", "Value Proposition 5"]
 
     # Create the conversation for the OpenAI API
     conversation = [
         {
             "role": "system",
-            "content": "You are a helpful assistant designed to output JSON.",
+            "content": "You are a helpful product marketing assistant designed to output JSON.",
         },
         {
             "role": "user",
@@ -222,7 +224,7 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
             Value Propositions:
             {value_prop_list}
 
-            Please generate a hero title and a short sub-title text for a personalized the SaaS landing page. The response should be in JSON format with the following structure:
+            Please generate a personalized title and a very short subtitle text for the hero section of the SaaS landing page. The response should be in JSON format with the following structure:
             {{
             "hero_title": "The title for the hero section of the SaaS landing page.",
             "hero_description": "A description for the hero section of the SaaS landing page."
@@ -245,13 +247,13 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
     feature_titles = []
     value_propositions = []
 
-    # Iterate over the first 5 entries in feature_list and value_prop_list
-    for i in range(5):
+    # Iterate over all the entries
+    for i in range(len(feature_list)):
         # Create the conversation for the OpenAI API
         conversation2 = [
             {
                 "role": "system",
-                "content": "You are a helpful assistant designed to output JSON.",
+                "content": "You are a helpful product marketing assistant designed to output JSON.",
             },
             {
                 "role": "user",
@@ -259,7 +261,7 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
                 Here is the context of my conversation with the customer {customer_name}, {customer_title} from {customer_company}:
                 {user_input}
                 
-                Please generate a personalized title and a short value proposition text to highlight the feature {feature_list[i]} and value prop {value_prop_list[i]} for the customer on a SaaS landing page. The response should be in JSON format with the following structure:
+                Please generate a personalized title and a very short subtitle text to highlight the feature {feature_list[i]} and value prop {value_prop_list[i]} for the customer on a landing page. The response should be in JSON format with the following structure:
                 {{
                     "feature_title": "The title for the feature section of the SaaS landing page.",
                     "value_proposition": "A value proposition for the feature section of the SaaS landing page."

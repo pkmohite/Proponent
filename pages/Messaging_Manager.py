@@ -128,7 +128,8 @@ def upload_mf_via_csv():
     # Add a download button for the template
     col1, col2 = st.columns([10, 1])
     template_csv = "assets/templates/mf_template.csv"
-    col2.download_button("Download CSV Template", template_csv, file_name="mf_template.csv")
+    with open(template_csv, "rb") as file:
+        col2.download_button("Download Template", file, file_name="mf_template.csv", mime="text/csv")
     # Upload the CSV file
     csv_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
     if csv_file is not None:

@@ -59,8 +59,8 @@ def create_summary(user_input, customer_name, customer_title, customer_company, 
 def generate_customized_email(recommendations, user_input, customer_name, customer_title, customer_company, model="gpt-3.5-turbo-0125"):
 
     # Extract the feature names and value propositions from the recommendations DataFrame
-    features_str = "\n".join(recommendations["Feature Name"])
-    value_prop_str = "\n".join(recommendations["Value Proposition"])
+    features_str = "\n".join(recommendations["featureName"])
+    value_prop_str = "\n".join(recommendations["valueProposition"])
 
     # Create the conversation for the OpenAI API
     conversation = [

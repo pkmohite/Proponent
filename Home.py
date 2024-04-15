@@ -345,6 +345,7 @@ if st.session_state.clicked:
             )
         
         if os.path.exists("downloads/combined_PDF.pdf"):
+            options.success("PDF Deck created successfully.")
             displayPDF("downloads/combined_PDF.pdf", content)
         else:
             content.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")

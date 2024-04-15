@@ -164,7 +164,7 @@ def create_image_deck(df):
     # Save the PDF document
     pdf.output(output_path)
 
-    # create_pdf_deck(output_path)
+    create_pdf_deck(output_path)
 
     print(f"Combined image PDF created: {output_path}")
 

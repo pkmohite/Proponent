@@ -35,9 +35,9 @@ def get_embedding(text, model="text-embedding-3-large"):
     return openai.embeddings.create(input=[text], model=model).data[0].embedding
 
 # Function to generate a summary using the OpenAI API
-def create_summary(user_input, customer_name, customer_title, customer_company):
+def create_summary(user_input, customer_name, customer_title, customer_company, model="gpt-3.5-turbo-0125"):
     response = openai.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model=model,
         messages=[
             {
                 "role": "system",
@@ -55,7 +55,7 @@ def create_summary(user_input, customer_name, customer_title, customer_company):
     return summary
 
 # Function to generate a customized email using the OpenAI API
-def generate_customized_email(recommendations, user_input, customer_name, customer_title, customer_company):
+def generate_customized_email(recommendations, user_input, customer_name, customer_title, customer_company, model="gpt-3.5-turbo-0125"):
 
     # Extract the feature names and value propositions from the recommendations DataFrame
     features_str = "\n".join(recommendations["Feature Name"])
@@ -79,7 +79,7 @@ def generate_customized_email(recommendations, user_input, customer_name, custom
 
     # Generate the email body using the OpenAI API
     response = openai.chat.completions.create(
-        model="gpt-4-0125-preview", messages=conversation
+        model=model, messages=conversation
     )
 
     # Extract the generated email body from the API response

@@ -4,10 +4,12 @@ import pandas as pd
 import streamlit as st
 import base64
 from assets.code.element_configs import column_config_recommendations, config_about
-from assets.code.utils import pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
-from assets.code.utils import generate_customized_email, create_summary, get_themed_logo, update_log_parquet
+from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
+from assets.code.utils import create_summary, get_themed_logo, update_log_parquet
 from fpdf import FPDF
 from moviepy.editor import VideoFileClip, concatenate_videoclips
+from assets.code.genHTML import generate_content, generate_feature_section, generate_html_template
+import streamlit.components.v1 as components
 
 # from assets.code.utils import create_pdf_deck
 
@@ -22,7 +24,7 @@ def format_display_df(recommendations):
     # Create a DataFrame for the recommendations with a "Select" column
     recommendations_df = pd.DataFrame(
         {
-            "Select": [False] * len(recommendations),
+            "Select": [True] * len(recommendations),
             "Customer Pain Point": recommendations["customerPainPoint"],
             "Feature Name": recommendations["featureName"],
             "Value Proposition": recommendations["valueProposition"],
@@ -54,7 +56,7 @@ def displayPDF(file, column = st):
     # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
     
     # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="1100" height="600" type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)
@@ -72,7 +74,12 @@ def setup_streamlit():
         st.session_state.chat_text = None
     if "ap_text" not in st.session_state:
         st.session_state.ap_text = None
-    
+    if "example_name" not in st.session_state:
+        st.session_state.example_name = None
+    if "example_title" not in st.session_state:
+        st.session_state.example_title = None
+    if "example_company" not in st.session_state:
+        st.session_state.example_company = None
     # Pass a variable to the set_page_config function
     st.set_page_config(
         page_title="Proponent", page_icon=None, layout="wide", 
@@ -130,7 +137,7 @@ def get_user_input():
     
     # 1a - Load example video/audio file
     if tab1c.button("Load Audio/Video Example"):
-        example_name, example_title, example_company = get_example_profile(video=True, chat=False, ap=False)
+        st.session_state.example_name, st.session_state.example_title, st.session_state.example_company = get_example_profile(video=True, chat=False, ap=False)
         st.session_state.video_text = "This is a sample transcript of the uploaded video/audio file."
         # save the example video to downloads folder
         example_video = "assets/templates/transcribe_example.mp4"
@@ -157,7 +164,7 @@ def get_user_input():
     chat_example = chat2.selectbox("Select Example", chat_data["label"].values, index=None, label_visibility="visible")
     if chat_example:
         st.session_state.chat_text = chat_data[chat_data["label"] == chat_example]["text"].values[0]
-        example_name, example_title, example_company = get_example_profile(video=False, chat=True, ap=False)
+        st.session_state.example_name, st.session_state.example_title, st.session_state.example_company = get_example_profile(video=False, chat=True, ap=False)
     
     # 1b - Display the chat transcript
     chat_text = tab2.text_area("Chat Transcript", height= container_height-200, label_visibility="collapsed", placeholder="Upload a chat or transcript file of the customer interaction..",value= st.session_state.chat_text)
@@ -171,7 +178,7 @@ def get_user_input():
     ap_example = ap_data["label"].values
     for i in range(len(ap_example)):
         if ap2.button(ap_example[i]):
-            example_name, example_title, example_company = get_example_profile(video=False, chat=False, ap=True)
+            st.session_state.example_name, st.session_state.example_title, st.session_state.example_company = get_example_profile(video=False, chat=False, ap=True)
             st.session_state.ap_text = ap_data["text"].values[i]
 
     # 1c - Display the ask proponent text
@@ -193,10 +200,10 @@ def get_user_input():
     # 2a - Column grid for user Customer Name and Company Name
     persona.markdown("##### Personalize (Optional)")
     personacontainer = persona.container(border=True, height=container_height)
-    customer_name = personacontainer.text_input("Name:", value= example_name)
+    customer_name = personacontainer.text_input("Name:", value= st.session_state.example_name)
     # title_col, indus_col = persona.columns([1, 1])
-    customer_title = personacontainer.text_input("Title:", value= example_title)
-    customer_company = personacontainer.text_input("Company:", value= example_company)
+    customer_title = personacontainer.text_input("Title:", value= st.session_state.example_title)
+    customer_company = personacontainer.text_input("Company:", value= st.session_state.example_company)
 
     # 2b - Load the customer profiles from assets/customer_profiles.csv
     customer_profiles = pd.read_csv("assets/customer_personas.csv")
@@ -229,10 +236,12 @@ def get_recommendations(user_input, customer_name, customer_title, customer_comp
 
 def display_recommendations():
     st.markdown("### Proponent Recommendations:")
-    st.markdown("##### Summary of Customer Asks:")
-    st.write(st.session_state.summary)
-    st.markdown("##### Recommended Features:")
-    selected_df = st.data_editor(
+    tab1, tab2 = st.columns([1, 2])
+    tab1.markdown("##### Customer Asks:")
+    t1container = tab1.container(border=True, height=280)
+    t1container.write(st.session_state.summary)
+    tab2.markdown("##### Recommended Features:")
+    selected_df = tab2.data_editor(
         st.session_state.display_df,
         column_config=column_config_recommendations,
         hide_index=True,
@@ -338,55 +347,93 @@ if rec2.button("Clear View"):
     st.session_state.video_text = None
     st.session_state.chat_text = None
     st.session_state.ap_text = None
+    st.session_state.example_name = None
+    st.session_state.example_title = None
+    st.session_state.example_company = None
     st.rerun()
 
 if st.session_state.clicked:
     # Display the recommendations
     st.divider()
     selected_recommendations = display_recommendations()
-    
+
     # Sales Enablement Center
-    st.divider()
-    st.markdown("### Sales Enablement Center:")
-    col1, col2 = st.columns([1.5,5])
+    optionstab, contenttab = st.columns([1, 4])
+    options = optionstab.container(border=True, height=700)
+    content = contenttab.container(border=True, height=700)
+    # Tab 1 - Draft Email
+    if options.button("Draft Email"):
+        email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company)
+        # email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
+        content.markdown("##### Email Preview:")
+        content.markdown(email_body)
 
-    if col1.button("Draft Custom Email"):
-        # Generate a customized email with the recommendations
-        email_body = generate_customized_email(
-            selected_recommendations, user_input, customer_name, customer_title, customer_company
-        )
-        # col2.markdown("##### Email Preview:")
-        col2.markdown(email_body)
-
-    # Button to generate customized PDF deck
-    if col1.button("Build Sales Deck"):
-        # Create a PDF deck with the selected recommendations
+    # Tab 2 - Build Sales Deck
+    if options.button("Build Sales Deck"):
         create_image_deck(selected_recommendations)
         with open("downloads/combined_PDF.pdf", "rb") as file:
-            col2.download_button(
+            content.download_button(
                 label="Download PDF Deck",
                 data=file.read(),
                 file_name="customized_deck.pdf",
                 mime="application/pdf",
             )
         if os.path.exists("downloads/combined_PDF.pdf"):
-            displayPDF("downloads/combined_PDF.pdf", col2)
+            displayPDF("downloads/combined_PDF.pdf", content)
         else:
-            st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
+            content.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
-    # Button to generate a customized video
-    if col1.button("Build Demo Video"):
-        # Create a video with the selected recommendations 
+    # Tab 3 - Build Demo Video
+    if options.button("Build Demo Video"):
         # create_video(selected_recommendations) # Uncomment this line in local deployment to enable video generation
-        col2.warning("Video generation is not supported on this demo deployement. Below preview is pre-generated.") # Comment this line in local deployment
+        b1, b2 = content.columns([1, 5])
+        b2.warning("Video generation is not supported on this demo deployement. Below preview is pre-generated.") # Comment this line in local deployment
         if os.path.exists("downloads/video.mp4"):
             with open("downloads/video.mp4", "rb") as file:
-                col2.download_button(
-                    label="Download Video",
+                b1.download_button(
+                    label="Download Video MP4 File",
                     data=file.read(),
                     file_name="downloads/video.mp4",
                     mime="video/mp4",
                 )
-            col2.video("downloads/video.mp4")
+            content.video("downloads/video.mp4")
         else:
-            st.error("Error generating video. Please try again or contact me at prashant@yourproponent.com if this persists.")
+            content.error("Error generating video. Please try again or contact me at prashant@yourproponent.com if this persists.")
+
+    # Tab 4 - Generate HTML
+    if options.button("Generate HTML"):
+        # # Generate content for the HTML template using OpenAI
+        # hero_title, hero_description, feature_titles, value_propositions = (
+        #     generate_content(
+        #         recommendations=selected_recommendations,
+        #         user_input=user_input,
+        #         customer_name=customer_name,
+        #         customer_title=customer_title,
+        #         customer_company=customer_company,
+        #         model="gpt-3.5-turbo-0125",
+        #     )
+        # )
+        # # Generate HTML for feature sections
+        # features = [
+        #     generate_feature_section(
+        #         feature_titles[i],
+        #         value_propositions[i],
+        #         "https://source.unsplash.com/random/800x800",
+        #     )
+        #     for i in range(5)
+        # ]
+        # # Generate the HTML template
+        # html_template = generate_html_template(hero_title, hero_description, "https://source.unsplash.com/random/800x800", features)
+        # # Save the generated HTML template to a file
+        # with open("downloads/index.html", "w") as file:
+        #     file.write(html_template)
+        
+        # View the generated HTML template
+        content.markdown("##### HTML Template:")
+        # Button to open the HTML template in a new tab
+        if content.button("Open HTML Template"):
+            # read the html file
+            with open("assets/templates/index.html", "r") as file:
+                html_template = file.read()
+            components.html(html_template, height=800, width=800)
+        

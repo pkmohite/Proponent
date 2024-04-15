@@ -164,7 +164,7 @@ def generate_dummy_data(parquet_file):
         "persona_category2": np.random.choice(["1-100 Employees", "101-500", "500+ Employees"], size=100),
         "persona_category3": np.random.choice(["Marketing Manager", "Software Engineer", "Product Manager"], size=100),
         "user_input": np.random.choice(["Input 1", "Input 2", "Input 3"], size=100),
-        "paintpoints": [np.random.randint(1, 20, size=7) for _ in range(100)],
+        "paintpoints": [np.random.randint(1, 18, size=7) for _ in range(100)],
         "date": pd.to_datetime(np.random.choice(pd.date_range(start='2023-04-01', end='2024-04-01'), size=100)).strftime("%Y-%m-%d"),
         "time": pd.to_datetime(np.random.choice(pd.date_range(start='2022-01-01 10:00:00', end='2022-01-01 16:00:00', freq='s'), size=100)).strftime("%H:%M:%S")
     })

@@ -17,6 +17,7 @@ def add_new_message():
     value_prop = st.text_input("Enter Value Proposition:")
     pdf = st.file_uploader("Upload Product Slide (PDF):", type=["pdf"])
     video = st.file_uploader("Upload Product Demo (MP4):", type=["mp4"])
+    web_url = st.text_input("Enter Web URL:")
 
     if st.button("Add"):
         if pdf is not None or video is not None:
@@ -36,6 +37,7 @@ def add_new_message():
                 [value_prop],
                 [pdf.name if pdf else None],
                 [video.name if video else None],
+                [web_url],
                 [embedding],
             ]
             table = pa.Table.from_arrays(data, schema=parquet_schema_mf)
@@ -69,55 +71,19 @@ def add_new_message():
             st.error("Please attach a PDF or MP4 file to save the painpoint.")
 
 
-def edit_message():
-    # Load the data
-    mf_data = load_mf_data()
-
-    # Create a new list to store the formatted data
-    editor_data = []
-    for mf in mf_data:
-        editor_mf = {
-            #"selected": False,
-            "painPointId": mf["painPointId"],
-            "customerPainPoint": mf["customerPainPoint"],
-            "featureName": mf["featureName"],
-            "valueProposition": mf["valueProposition"],
-            "pdfFile": mf["pdfFile"],
-            "videoFile": mf["videoFile"],
-            "checkPDF": bool(mf["pdfFile"]),
-            "checkVideo": bool(mf["videoFile"]),
-        }
-        editor_data.append(editor_mf)
-    
-    # Display the data editor
-    st.markdown("#### Modify Existing Pain Points")
-    edited_data = st.data_editor(
-        editor_data, column_config=column_config_edit, hide_index=True, use_container_width=True, num_rows='dynamic'
-    )
-    
-    # # Get the selected painpoints
-    # selected_painpoints = [mf for mf in edited_data if mf["selected"] == True]
-    
-    # col1, col2, col3 = st.columns([1, 1, 5])
-    # if col1.button("Save Selected Records"):
-    #     # Save implementation is pending
-    #     st.success("Save implementation is pending!")
-        
-    # if col2.button("Delete Selected Records"):
-    #     for painpoint in selected_painpoints:
-    #         # Delete the painpoint from the data
-    #         delete_painpoint_from_content(painpoint)
-    #         delete_painpoint_from_embeddings(painpoint, data)
-    #     st.success("Painpoints deleted successfully!")
-
-
 def manage_mf():
     # Load the data
     mf_data = load_mf_data()
     edited_data = st.data_editor(mf_data, column_config=column_config_edit, use_container_width=True, hide_index=True, num_rows='dynamic')
     
     if st.button("Update Changes"):
-        
+        # Delete files from the slides, videos, and web folders if the file name is removed
+        for index, row in mf_data.iterrows():
+            if row["pdfFile"] is not None and row["pdfFile"] not in edited_data["pdfFile"].values:
+                os.remove(os.path.join("slides", row["pdfFile"]))
+            if row["videoFile"] is not None and row["videoFile"] not in edited_data["videoFile"].values:
+                os.remove(os.path.join("videos", row["videoFile"]))
+
         # Save the updated data to the Parquet file
         pq.write_table(pa.Table.from_pandas(edited_data, schema=parquet_schema_mf), "assets/mf_embeddings.parquet")
 
@@ -198,7 +164,6 @@ with tab1:
 
 # Modify existing painpoints
 with tab2:
-    #edit_message(data)
     manage_mf()
 
 # Upload CSV

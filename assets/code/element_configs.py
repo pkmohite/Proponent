@@ -45,15 +45,16 @@ config_csv_upload = {
         ),
         "pdfFile": st.column_config.Column(label="PDF File", width="medium"),
         "videoFile": st.column_config.Column(label="Video File", width="medium"),
+        "webURL": st.column_config.Column(label="Web URL", width="medium"),
     }
 
 
 column_config_edit = {
-        "painPointId": st.column_config.Column(label="ID"),
-        "embedding": st.column_config.Column(label="Embedding"),
+        "painPointId": st.column_config.Column(label="ID", width="small"),
+        "embedding": st.column_config.Column(label="Embedding", width="small"),
         "pdfFile": st.column_config.Column(label="PDF File", width="small"),
         "videoFile": st.column_config.Column(label="Video File", width="small"),
-        #"selected": st.column_config.Column(label="Select", width="small"),
+        "webURL": st.column_config.Column(label="Web URL", width="small"),
         "customerPainPoint": st.column_config.Column(
             label="Customer Pain Point", width="medium"
         ),
@@ -94,5 +95,6 @@ parquet_schema_mf = pa.schema([
     pa.field("valueProposition", pa.string()),
     pa.field("pdfFile", pa.string(), nullable=True),
     pa.field("videoFile", pa.string(), nullable=True),
+    pa.field("webURL", pa.string(), nullable=True),
     pa.field("embedding", pa.list_(pa.float64()), nullable=True)
 ])

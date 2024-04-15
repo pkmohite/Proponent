@@ -140,7 +140,7 @@ def create_image_deck(df):
     # Iterate over each row in the DataFrame
     for index, row in df.iterrows():
         # Construct the file path
-        image_file = row["PDF File Name"]
+        image_file = row["pdfFile"]
         file_path = os.path.join("slides", image_file)
 
         # Check if the file exists

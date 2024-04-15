@@ -391,6 +391,14 @@ if st.session_state.clicked:
 
         # View the generated HTML template
         with content.container():
+            # download the HTML file as PDF
+            with open("downloads/index.html", "rb") as file:
+                content.download_button(
+                    label="Download HTML File",
+                    data=file.read(),
+                    file_name="index.html",
+                    mime="text/html",
+                )
             with open("downloads/index.html", "r") as file:
                 html_template = file.read()
-            components.html(html_template, height=5000)
+            components.html(html_template, height=4000)

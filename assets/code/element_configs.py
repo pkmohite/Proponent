@@ -2,25 +2,24 @@ import streamlit as st
 import pyarrow as pa
 
 # Home - Recommendations Table
+
 column_config_recommendations = {
-    "Select": st.column_config.Column(label="Select", disabled=False),
-    "Customer Pain Point": None,
-    # "Customer Pain Point": st.column_config.Column(
-    #     label="Customer Pain Point", disabled=True, width="medium"
-    # ),
-    "Feature Name": st.column_config.Column(
-        label="Feature Name", disabled=True, width="medium"
+    "select": st.column_config.Column(label="Select", disabled=False, width="small"),
+    "featureName": st.column_config.Column(label="Feature Name", disabled=True, width="medium"),
+    "valueProposition": st.column_config.Column(
+        label="Value Proposition", disabled=True, width="medium"
     ),
-    "Value Proposition": st.column_config.Column(
-        label="Value Proposition", disabled=True, width="large"
-    ),
-    "Similarity Score": st.column_config.ProgressColumn(label="Similarity Score"),
-    "PDF File": None,
-    "Video File": None,
-    # "PDF File": st.column_config.Column(label="PDF File", disabled=True),
-    # "Video File": st.column_config.Column(label="Video File", disabled=True),
-    "PDF File Name": None,
-    "Video File Name": None,
+    "ss_Normalized": st.column_config.ProgressColumn(label="Similarity Score"),
+    "customerPainPoint": None,
+    "similarity_score": None,
+    "embedding": None,
+    "painPointId": None,
+    "pdfFile": None,
+    "videoFile": None,
+    "webURL": None,
+    "PDF_Present": None,
+    "Video_Present": None,
+    "Web_URL_Present": None,
 }
 
 # Home - About

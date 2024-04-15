@@ -18,31 +18,20 @@ def click_button():
 
 
 def format_display_df(recommendations):
-
-    # Create a DataFrame for the recommendations with a "Select" column
-    recommendations_df = pd.DataFrame(
-        {
-            "Select": [True] * len(recommendations),
-            "Customer Pain Point": recommendations["customerPainPoint"],
-            "Feature Name": recommendations["featureName"],
-            "Value Proposition": recommendations["valueProposition"],
-            # add normalized similarity score to the data frame, normalized to the min and max similarity score
-            "Similarity Score": (
-                recommendations["similarity_score"]
-                - recommendations["similarity_score"].min()
-            )
-            / (
-                recommendations["similarity_score"].max()
-                - recommendations["similarity_score"].min()
-            ),
-            "PDF File": recommendations["pdfFile"].apply(lambda x: bool(x)),
-            "Video File": recommendations["videoFile"].apply(lambda x: bool(x)),
-            "PDF File Name": recommendations["pdfFile"],
-            "Video File Name": recommendations["videoFile"],
-        }
+    # Append a select column to the recommendations DataFrame
+    recommendations["select"] = [True] * len(recommendations)
+    # append normalized similarity score to the data frame, normalized to the min and max similarity score
+    recommendations["ss_Normalized"] = (
+        recommendations["similarity_score"] - recommendations["similarity_score"].min()
+    ) / (
+        recommendations["similarity_score"].max() - recommendations["similarity_score"].min()
     )
+    # append boolean values for PDF, Video files and Web URL
+    recommendations["PDF_Present"] = recommendations["pdfFile"].apply(lambda x: bool(x))
+    recommendations["Video_Present"] = recommendations["videoFile"].apply(lambda x: bool(x))
+    recommendations["Web_URL_Present"] = recommendations["webURL"].apply(lambda x: bool(x))
 
-    return recommendations_df
+    return recommendations
 
 
 def displayPDF(file, column = st):
@@ -242,15 +231,15 @@ def display_recommendations():
     selected_df = tab2.data_editor(
         st.session_state.display_df,
         column_config=column_config_recommendations,
+        column_order=["select", "customerPainPoint", "featureName", "valueProposition", "ss_Normalized"],
         hide_index=True,
         use_container_width=True,
     )
 
     # Store the selected recommendations in a df
-    selected_recommendations = selected_df[selected_df["Select"] == True]
+    selected_recommendations = selected_df[selected_df["select"] == True]
     
     return selected_recommendations
-
 
 
 def create_video(recommendations):
@@ -370,7 +359,7 @@ if st.session_state.clicked:
     # Tab 4 - Generate HTML
     if options.button("Generate HTML"):
         # Generate content for the HTML template using OpenAI
-        hero_title, hero_description, feature_titles, value_propositions = (
+        hero_title, hero_description, feature_titles, value_propositions, webURL = (
             generate_content(
                 recommendations=selected_recommendations,
                 user_input=user_input,
@@ -385,7 +374,7 @@ if st.session_state.clicked:
             generate_feature_section(
                 feature_titles[i],
                 value_propositions[i],
-                "https://source.unsplash.com/random/800x800",
+                webURL[i],
             )
             for i in range(len(feature_titles))
         ]

@@ -1,6 +1,7 @@
 from assets.code.utils import pass_openAI_key
 import openai
 import json
+import pyarrow.parquet as pq
 
 def generate_html_template(hero_title, hero_description, hero_image, features):
     html_template = f"""<!DOCTYPE html>
@@ -203,9 +204,7 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
     # Extract the feature names and value propositions from the recommendations DataFrame into a list
     feature_list = recommendations["Feature Name"].tolist()
     value_prop_list = recommendations["Value Proposition"].tolist()
-
-    # feature_list = ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5"]
-    # value_prop_list = ["Value Proposition 1", "Value Proposition 2", "Value Proposition 3", "Value Proposition 4", "Value Proposition 5"]
+    web_URl = recommendations["Web URL"].tolist()
 
     # Create the conversation for the OpenAI API
     conversation = [
@@ -286,7 +285,7 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
         feature_titles.append(feature_title)
         value_propositions.append(value_proposition)
 
-    return hero_title, hero_description, feature_titles, value_propositions
+    return hero_title, hero_description, feature_titles, value_propositions, web_URl
     
 # # Example usage
 # hero_title, hero_description, feature_titles, value_propositions = generate_content()

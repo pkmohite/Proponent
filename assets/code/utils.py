@@ -174,24 +174,9 @@ def create_image_deck(df):
 
 # Function to load the data from the Parquet file
 def load_mf_data(file="assets/mf_embeddings.parquet"):
-    if not os.path.exists(file):
-        
+    if not os.path.exists(file):  
         st.warning("No data found. Upload painpoints via CSV.")
-        # Go to the Upload CSV tab
-
-        # Create a single line parquet file using the schema
-        # data = [
-        #     [0],
-        #     ["sample pain point"],
-        #     ["sample feature"],
-        #     ["sample value proposition"],
-        #     [None],
-        #     [None],
-        #     [None],
-        # ]
-        # table = pa.Table.from_arrays(data, schema=parquet_schema_mf)
-        # pq.write_table(table, file)
-        mf_data = None
+        st.stop()
     else:
         mf_data = pd.read_parquet(file)
     

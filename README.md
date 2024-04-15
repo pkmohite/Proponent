@@ -6,12 +6,11 @@
 # Introducing Proponent: Empowering Product-Led Sales with AI
 
 <p align="left">
-  <a href="#features">Features</a> •
-  <a href="#key-differentiation">Key Differentiation</a> •
-  <a href="#project-status">Project Status</a> •
-  <a href="#contributing">Contributing</a> •
-  <a href="#license">License</a> •
-  <a href="#contact">Contact</a>
+   <a href="#features">Features</a> •
+   <a href="#getting-started">Getting Started</a> •
+   <a href="#license">License</a> •
+   <a href="#code-stack">Code Stack</a> •
+   <a href="#contact">Contact</a>
 </p>
 
 ---

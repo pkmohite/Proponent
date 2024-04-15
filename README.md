@@ -15,7 +15,7 @@
 </p>
 
 ---
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://proponent.streamlit.app/) &nbsp;&nbsp;&nbsp; [![Proponent Landing Page](https://img.shields.io/badge/Proponent-Landing%20Page-blue?style=flat-square&logo=github)](https://proponent.streamlit.app/) &nbsp;&nbsp;&nbsp; [![LinkedIn Badge](https://img.shields.io/badge/LinkedIn-Prashant%20Mohite-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/pmohite/)
+[![Proponent Landing Page](https://img.shields.io/badge/Proponent-Landing%20Page-blue?style=flat-square&logo=github)](https://proponent.streamlit.app/) &nbsp;&nbsp;&nbsp; [![LinkedIn Badge](https://img.shields.io/badge/LinkedIn-Prashant%20Mohite-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/pmohite/)
 
 Proponent is an NLU-powered sales enablement tool designed to help product-led businesses drive revenue growth. By leveraging AI and customer insights, Proponent generates hyper-relevant content and enables sales teams to have more effective conversations with prospects.
 <br><br>
@@ -34,7 +34,7 @@ To run the Proponent application locally:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/proponent.git
+   git clone https://github.com/pkmohite/Proponent.git
    ```
 
 2. Install dependencies:
@@ -49,20 +49,6 @@ To run the Proponent application locally:
    ```
 
 <br>
-
-
-## Contributing
-
-We welcome contributions to help make Proponent even better. If you'd like to contribute, please follow these steps:
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature`
-3. Make your changes and commit them: `git commit -m 'Add your feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a pull request
-
-Please note that for feature contributions, we only accept features built using Streamlit native elements, components, and experimental features. We are not open to non-official elements at this time.
-<br><br>
 
 ## License
 

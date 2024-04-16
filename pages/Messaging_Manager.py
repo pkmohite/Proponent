@@ -5,22 +5,46 @@ from assets.code.element_configs import column_config_edit, config_csv_upload, p
 from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data
 import pyarrow as pa
 import pyarrow.parquet as pq
-
+from streamlit_pdf_viewer import pdf_viewer
 
 ## Functions
 
 ## Streamlit Functions
 def add_new_message():
-    st.markdown("#### Add New Pain Point")
-    paint_point = st.text_area("Enter Customer Pain Point:")
-    col11, col12 = st.columns(2)
-    feature = col11.text_area("Enter Feature Name:")
-    value_prop = col12.text_area("Enter Value Proposition:")
-    col21, col22 = st.columns(2)
-    pdf = col21.file_uploader("Upload Product Slide (PDF):", type=["pdf"])
-    video = col22.file_uploader("Upload Product Demo (MP4):", type=["mp4"])
-    web_url = st.text_input("Enter Web URL:")
+    st.markdown("##### Add New Pain Point")
+    cont = st.container(border=True, height=560)
+    col1, col2 = cont.columns([3.5, 2])
+    
+    paint_point = col1.text_area("Enter Customer Pain Point:")
+    feature = col1.text_area("Enter Feature Name:")
+    value_prop = col1.text_area("Enter Value Proposition:")
+    
+    tab1, tab2, tab3 = col2.tabs(["Attach PDF", "Attach Video", "Add Web URL"])
+    
+    # Add a PDF file uploader
+    pdf = tab1.file_uploader("Upload Product Slide (PDF):", type=["pdf"])
+    if pdf:
+        base64_pdf = pdf.getvalue()
+        tab1cont = tab1.container(height=300)
+        with tab1cont:
+            pdf_viewer(input=base64_pdf, width=500)
 
+    # Add a video file uploader
+    video = tab2.file_uploader("Upload Product Demo (MP4):", type=["mp4"])
+    if video:
+        tab2cont = tab2.container()
+        with tab2cont:
+            st.video(video)
+    
+    # Add a web URL
+    web_url = tab3.text_input("Enter Web URL:")
+    # check if the web URL is valid
+    if web_url:
+        if not web_url.startswith("http"):
+            tab3.warning("Please enter a valid URL starting with 'http' or 'https'.")
+        else:
+            tab3.image(web_url, width=500)
+    
     if st.button("Add"):
         if pdf is not None or video is not None:
             
@@ -151,8 +175,10 @@ def update_mf_parquet(data):
     
 
 # Setup
+st.session_state.clicked = False
+st.session_state.display_metrics = False
 st.set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
-st.title("Messaging Manager")
+st.header("Messaging Manager")
 
 ## Pass OpenAI API key
 pass_openAI_key()

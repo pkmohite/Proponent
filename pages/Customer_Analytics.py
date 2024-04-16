@@ -199,6 +199,7 @@ def update_customer_personas():
 
 
 ## Session State Stuff
+st.session_state.clicked = False
 def click_button():
     st.session_state.display_metrics = True
 if "display_metrics" not in st.session_state:
@@ -210,7 +211,7 @@ if "painpoint_metrics" not in st.session_state:
 ## Streamlit code
 # Setup
 st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
-st.title("Customer Analytics")
+st.header("Customer Analytics")
 df, mf_content = get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet')
 
 # Create tabs
@@ -223,7 +224,7 @@ with tab1:
     title, date_range, persona_category1, persona_category2, persona_category3 = create_filter_components(df, filter)
 
     if st.button("Display Painpoint Metrics", on_click=click_button):
-        if (title or date_range or persona_category1 or persona_category2 or persona_category3) is not None:
+        if (title or persona_category1 or persona_category2 or persona_category3) is not None:
             # Get painpoint metrics for the selected filters
             st.session_state.painpoint_metrics = get_painpoint_metrics(df, mf_content, title, date_range, persona_category1, persona_category2, persona_category3)
         else:

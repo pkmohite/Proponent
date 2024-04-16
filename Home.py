@@ -1,10 +1,9 @@
 import os
 import pandas as pd
 import streamlit as st
-import base64
 from assets.code.element_configs import column_config_recommendations, config_about
 from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
-from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck
+from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck, displayPDF
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from assets.code.genHTML import generate_content, generate_feature_section, generate_html_template
 import streamlit.components.v1 as components
@@ -24,7 +23,7 @@ def format_display_df(recommendations):
     recommendations["ss_Normalized"] = (
         recommendations["similarity_score"] - recommendations["similarity_score"].min()
     ) / (
-        recommendations["similarity_score"].max() - recommendations["similarity_score"].min()
+        (recommendations["similarity_score"].max() - recommendations["similarity_score"].min())*1.2
     )
     # append boolean values for PDF, Video files and Web URL
     recommendations["PDF_Present"] = recommendations["pdfFile"].apply(lambda x: bool(x))
@@ -34,22 +33,8 @@ def format_display_df(recommendations):
     return recommendations
 
 
-def displayPDF(file, column = st):
-    # Opening file from file path
-    with open(file, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
-
-    # Embedding PDF in HTML
-    # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
-    
-    # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="1100" height="600" type="application/pdf"></iframe>'
-
-    # Displaying File
-    column.markdown(pdf_display, unsafe_allow_html=True)
-
-
 def setup_streamlit():
+    st.session_state.display_metrics = False
     ## Session State Stuff
     if "clicked" not in st.session_state:
         st.session_state.clicked = False
@@ -207,7 +192,7 @@ def get_user_input():
 def get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value):
     # Get the summary and recommendations
     summary = create_summary(user_input, customer_name, customer_title, customer_company)
-    summary_embedding = get_embedding(user_input) #replace with summary if simalrity search on summary instead of user input
+    summary_embedding = get_embedding(user_input) #replace with user_input or summary if simalrity search on summary instead of user input
     df = calculate_similarity_ordered(summary_embedding)
     df_formatted = format_display_df(df)
     top_7 = df_formatted.head(7)

@@ -75,9 +75,11 @@ def update_themes_csv():
         st.rerun()
 
 
-# Setuo
+# Setup
+st.session_state.display_metrics = False
+st.session_state.clicked = False
 st.set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
-st.title("Settings")
+st.header("Settings")
 
 # Create tabs
 tab1, tab2 = st.tabs(["General", "LLM"])

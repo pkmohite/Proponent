@@ -174,30 +174,6 @@ def generate_dummy_data(parquet_file):
         # If the Parquet file is empty or doesn't exist, write the new data directly
         pq.write_table(table, parquet_file)
 
-# Tab 3: Customer Personas
-def update_customer_personas():
-    st.subheader("Customer Personas")
-    st.write("Upload a CSV file with columns category name, persona name, and persona description.")
-    # Add a download button for template
-    col1, col2 = st.columns([10, 1])
-    template_csv = "assets/templates/cp_template.csv"
-    with open(template_csv, "r") as file:
-        bth = col2.download_button("Download Template", file, file_name="cp_template.csv", mime="text/csv")
-
-    uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
-
-    if uploaded_file is not None:
-        # Preview the uploaded file using st.write
-        df = pd.read_csv(uploaded_file)
-        edited_data = st.data_editor(df, hide_index=True, use_container_width=True)
-        
-        # Add a button to save the uploaded file as a json file
-        if st.button("Upload Customer Personas"):
-            # Save the edited data as a CSV file
-            edited_data.to_csv("assets/customer_personas.csv", index=False)
-            st.success("File saved successfully!")
-
-
 ## Session State Stuff
 st.session_state.clicked = False
 def click_button():
@@ -215,7 +191,7 @@ st.header("Customer Analytics")
 df, mf_content = get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet')
 
 # Create tabs
-tab1, tab2, tab3, tab4 = st.tabs(["Analytics", "View Logs", "Feature Leaderboard", "Customer Personas"])
+tab1, tab2 = st.tabs(["Analytics", "View Logs"])
 
 with tab1:
     filter_col, content_col = st.columns([1, 3])
@@ -239,11 +215,3 @@ with tab2:
     # Code for the second tab
     st.title("View Logs")
     view_log_parquet()
-
-with tab3:
-    # Code for the third tab
-    st.title("Feature Leaderboard")
-    st.session_state.global_metrics = get_painpoint_metrics(df, mf_content, get_all=True)
-
-with tab4:
-    update_customer_personas()

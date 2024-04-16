@@ -123,7 +123,7 @@ def upload_mf_via_csv():
     with open(template_csv, "rb") as file:
         col2.download_button("Download Template", file, file_name="mf_template.csv", mime="text/csv")
     # Upload the CSV file
-    csv_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
+    csv_file = col1.file_uploader("PP CSV:", label_visibility= 'collapsed', type=["csv"])
     if csv_file is not None:
         # Display the data editor
         csv_display = pd.read_csv(csv_file)
@@ -173,6 +173,29 @@ def update_mf_parquet(data):
         # Write the table to a new Parquet file
         pq.write_table(table, parquet_file)
     
+# Tab 3: Customer Personas
+def update_customer_personas():
+    st.subheader("Customer Personas")
+    st.write("Upload a CSV file with columns category name, persona name, and persona description.")
+    # Add a download button for template
+    col1, col2 = st.columns([10, 1])
+    template_csv = "assets/templates/cp_template.csv"
+    with open(template_csv, "r") as file:
+        bth = col2.download_button("Download Template", file, file_name="cp_template.csv", mime="text/csv")
+
+    uploaded_file = col1.file_uploader("CP CSV:", label_visibility= 'collapsed', type=["csv"])
+
+    if uploaded_file is not None:
+        # Preview the uploaded file using st.write
+        df = pd.read_csv(uploaded_file)
+        edited_data = st.data_editor(df, hide_index=True, use_container_width=True)
+        
+        # Add a button to save the uploaded file as a json file
+        if st.button("Upload Customer Personas"):
+            # Save the edited data as a CSV file
+            edited_data.to_csv("assets/customer_personas.csv", index=False)
+            st.success("File saved successfully!")
+
 
 # Setup
 st.session_state.clicked = False
@@ -184,7 +207,7 @@ st.header("Messaging Manager")
 pass_openAI_key()
 
 ## Tabs
-tab1, tab2, tab3 = st.tabs(["Add New Message", "Modify Messaging Framework", "Upload CSV"])
+tab1, tab2, tab3, tab4 = st.tabs(["Add New Message", "Modify Messaging Framework", "Upload CSV", "Update Customer Personas"])
 
 # Add painpoint
 with tab1:
@@ -198,3 +221,6 @@ with tab2:
 with tab3:
     upload_mf_via_csv()
 
+# Update Customer Personas
+with tab4:
+    update_customer_personas()

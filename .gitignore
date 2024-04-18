@@ -1,7 +1,7 @@
 slides/
 archive/
 downloads/combined_PDF.pdf
-# downloads/
+downloads/
 videos/
 **/.DS_Store
 **/.env

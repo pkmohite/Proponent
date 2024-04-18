@@ -1,9 +1,10 @@
 from assets.code.utils import pass_openAI_key
 import openai
 import json
-import pyarrow.parquet as pq
+import random
 
-def generate_html_template(hero_title, hero_description, hero_image, features):
+def generate_html_template(hero_title, hero_description, hero_images, features):
+    selected_image = random.choice(hero_images)
     html_template = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,7 @@ def generate_html_template(hero_title, hero_description, hero_image, features):
       <div>
         <a href="#features" class="text-gray-600 hover:text-gray-800 px-3 py-2">Features</a>
         <a href="#pricing" class="text-gray-600 hover:text-gray-800 px-3 py-2">Pricing</a>
-        <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        <a href="#" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
           Sign Up
         </a>
       </div>
@@ -37,12 +38,12 @@ def generate_html_template(hero_title, hero_description, hero_image, features):
         <div class="md:w-1/2 mb-8 md:mb-0">
           <h1 class="text-4xl font-bold mb-4 text-gray-800">{hero_title}</h1>
           <p class="text-xl text-gray-600 mb-8">{hero_description}</p>
-          <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg">
+          <a href="#" class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg">
             Start Free Trial
           </a>
         </div>
         <div class="md:w-1/2">
-          <img src={hero_image} alt="Hero Image" class="w-full rounded-lg">
+          <img src={selected_image} alt="Hero Image" class="w-full rounded-lg">
         </div>
       </div>
     </div>
@@ -69,7 +70,7 @@ def generate_html_template(hero_title, hero_description, hero_image, features):
             <li class="mb-2">2 GB of storage</li>
             <li class="mb-2">Email support</li>
           </ul>
-          <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg block text-center">
+          <a href="#" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg block text-center">
             Get Started
           </a>
         </div>
@@ -82,7 +83,7 @@ def generate_html_template(hero_title, hero_description, hero_image, features):
             <li class="mb-2">10 GB of storage</li>
             <li class="mb-2">Priority email support</li>
           </ul>
-          <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg block text-center">
+          <a href="#" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg block text-center">
             Get Started
           </a>
         </div>
@@ -95,7 +96,7 @@ def generate_html_template(hero_title, hero_description, hero_image, features):
             <li class="mb-2">100 GB of storage</li>
             <li class="mb-2">Phone and email support</li>
           </ul>
-          <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg block text-center">
+          <a href="#" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg block text-center">
             Get Started
           </a>
         </div>

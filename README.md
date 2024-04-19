@@ -56,7 +56,6 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 ## Code Stack
 
 - Streamlit for the web application framework
-- Poetry for dependency management and packaging
 - Python for the core programming language
 - OpenAI API for NLU & AI-powered content generation
 - Pandas for data manipulation and analysis

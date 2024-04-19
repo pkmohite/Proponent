@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import pandas as pd
 from assets.code.element_configs import column_config_edit, config_csv_upload, parquet_schema_mf
-from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data
+from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data, verify_password
 import pyarrow as pa
 import pyarrow.parquet as pq
 from streamlit_pdf_viewer import pdf_viewer
@@ -196,17 +196,22 @@ def update_customer_personas():
             edited_data.to_csv("assets/customer_personas.csv", index=False)
             st.success("File saved successfully!")
 
+def setup_page():
+    # Session state setup
+    st.session_state.clicked = False
+    st.session_state.display_metrics = False
+    # Page setup
+    st.set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
+    # Password verification
+    
 
 # Setup
-st.session_state.clicked = False
-st.session_state.display_metrics = False
-st.set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
-st.header("Messaging Manager")
-
-## Pass OpenAI API key
+setup_page()
+verify_password()
 pass_openAI_key()
 
 ## Tabs
+st.header("Messaging Manager")
 tab1, tab2, tab3, tab4 = st.tabs(["Add New Message", "Modify Messaging Framework", "Upload CSV", "Update Customer Personas"])
 
 # Add painpoint

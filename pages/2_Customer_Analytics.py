@@ -1,16 +1,30 @@
+import os
 import pandas as pd
 import streamlit as st
-import os
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log, analytics_column_config
 import matplotlib.pyplot as plt
-import textwrap
 import altair as alt
-import json
-from assets.code.utils import get_mf_and_log
+from assets.code.utils import get_mf_and_log, verify_password
 
+# Set page config
+def page_setup():
+    
+    # Session State Stuff
+    st.session_state.clicked = False
+    if "display_metrics" not in st.session_state:
+        st.session_state.display_metrics = False
+    if "painpoint_metrics" not in st.session_state:
+        st.session_state.painpoint_metrics = None
+
+    # Set page config
+    st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
+
+# Click Button
+def click_button():
+        st.session_state.display_metrics = True
 
 # Tab 1: Analytics - Create Filter Components
 def create_filter_components(df,container = st):
@@ -174,23 +188,13 @@ def generate_dummy_data(parquet_file):
         # If the Parquet file is empty or doesn't exist, write the new data directly
         pq.write_table(table, parquet_file)
 
-## Session State Stuff
-st.session_state.clicked = False
-def click_button():
-    st.session_state.display_metrics = True
-if "display_metrics" not in st.session_state:
-    st.session_state.display_metrics = False
-if "painpoint_metrics" not in st.session_state:
-    st.session_state.painpoint_metrics = None
-
+## Setup
+page_setup()
+verify_password()
 
 ## Streamlit code
-# Setup
-st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
 st.header("Customer Analytics")
 df, mf_content = get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet')
-
-# Create tabs
 tab1, tab2 = st.tabs(["Analytics", "View Logs"])
 
 with tab1:

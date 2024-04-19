@@ -1,13 +1,12 @@
-import os
+import os, hmac, json, time
 import pandas as pd
 import streamlit as st
 from assets.code.element_configs import column_config_recommendations, config_about
 from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
-from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck, displayPDF
+from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck, displayPDF, verify_password
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from assets.code.genHTML import generate_content, generate_feature_section, generate_html_template
 import streamlit.components.v1 as components
-
 # from assets.code.utils import create_pdf_deck
 
 ## Functions
@@ -257,11 +256,11 @@ def create_video(recommendations):
 
 ## Setup
 setup_streamlit()
+verify_password()
 create_env_file()
 pass_openAI_key()
 
 ## Main
-
 # Display the user input fields
 customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input = get_user_input()
 rec1, rec2, rec3 = st.columns([1.3, 1, 6])

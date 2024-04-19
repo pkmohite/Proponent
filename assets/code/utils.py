@@ -1,5 +1,4 @@
-import openai
-import os
+import openai, json, hmac, os, base64
 import streamlit as st
 import pandas as pd
 from PyPDF2 import PdfMerger
@@ -9,12 +8,52 @@ import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log
 import assemblyai as aai
 from fpdf import FPDF
-import base64
 
+
+## Authentication Functions
+
+# Function to check if the password is correct
+def check_password():
+    # Function to check if the password is correct
+
+    def login_form():
+        # Create a form for the user to enter their username and password
+        with st.form("Credentials"):
+            st.text_input("Username", key="username")
+            st.text_input("Password", type="password", key="password")
+            st.form_submit_button("Log in", on_click=password_entered)
+
+    def password_entered():
+        login_credentials = json.loads(os.environ["LOGIN"])
+        # Check if the username and password are correct
+        if st.session_state["username"] in login_credentials and hmac.compare_digest(
+            st.session_state["password"], login_credentials[st.session_state["username"]],
+        ):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store the username or password.
+            del st.session_state["username"]
+        else:
+            st.session_state["password_correct"] = False
+
+    # Return True if the username + password is validated.
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Show inputs for username + password.
+    login_form()
+    if "password_correct" in st.session_state:
+        st.error("😕 User not known or password incorrect")
+    return False
+
+def verify_password():
+    # Return True if the username + password is validated.
+    if not st.session_state.get("password_correct", False):
+        st.warning("Please log in with the correct username and password to access this page.")
+        st.stop()
+        
 ## OpenAI Functions
 
 ## AssemblyAI Functions
-
 def transcribe_video(file):
     aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
     transcriber = aai.Transcriber()

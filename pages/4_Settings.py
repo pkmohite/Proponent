@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import json
 import pandas as pd
-from assets.code.utils import pass_openAI_key, verify_password
+from assets.code.utils import pass_openAI_key, verify_password, set_page_config
 
 # Tab 1: General Settings
 def set_API_key():
@@ -79,7 +79,7 @@ def page_setup():
     st.session_state.clicked = False
     st.session_state.display_metrics = False
     # Page setup
-    st.set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
+    set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
 
 # Setup
 page_setup()

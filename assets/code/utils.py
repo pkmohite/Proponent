@@ -5,7 +5,7 @@ from PyPDF2 import PdfMerger
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from assets.code.element_configs import parquet_schema_log
+from assets.code.element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
 
@@ -19,6 +19,10 @@ def check_password():
     def login_form():
         # Create a form for the user to enter their username and password
         with st.form("Credentials"):
+            st.markdown('###')
+            left_co, cent_co,last_co = st.columns([1,1.5,1])
+            with cent_co:
+                get_themed_logo()
             st.text_input("Username", key="username")
             st.text_input("Password", type="password", key="password")
             st.form_submit_button("Log in", on_click=password_entered)
@@ -326,4 +330,11 @@ def get_themed_logo():
         st.image("assets/images/logo_full_black.png", width=300)
     st.markdown('###')
 
-
+def set_page_config(page_title, page_icon, layout="wide", initial_sidebar_state="expanded"):
+    st.set_page_config(
+    page_title=page_title, 
+    page_icon=page_icon,
+    layout=layout, 
+    initial_sidebar_state=initial_sidebar_state,
+    menu_items={'Get Help': "mailto:prashant@yourproponent.com",
+                'About': config_about})

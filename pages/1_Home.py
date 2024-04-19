@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 from assets.code.element_configs import column_config_recommendations, config_about
 from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
-from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck, displayPDF, verify_password
+from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck, displayPDF, verify_password, set_page_config
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from assets.code.genHTML import generate_content, generate_feature_section, generate_html_template
 import streamlit.components.v1 as components
@@ -52,12 +52,9 @@ def setup_streamlit():
     if "example_company" not in st.session_state:
         st.session_state.example_company = None
     # Pass a variable to the set_page_config function
-    st.set_page_config(
-        page_title="Proponent", page_icon=None, layout="wide", 
-        initial_sidebar_state="expanded",
-        menu_items={'Get Help': "mailto:prashant@yourproponent.com",
-                    'About': config_about})
-    
+    set_page_config(page_title="Proponent", page_icon=":rocket:", layout="wide")
+    # Verify the password
+    verify_password()
     # Set the page logo
     get_themed_logo()
 
@@ -256,7 +253,6 @@ def create_video(recommendations):
 
 ## Setup
 setup_streamlit()
-verify_password()
 create_env_file()
 pass_openAI_key()
 

@@ -5,9 +5,8 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log, analytics_column_config
-import matplotlib.pyplot as plt
 import altair as alt
-from assets.code.utils import get_mf_and_log, verify_password
+from assets.code.utils import get_mf_and_log, verify_password, set_page_config
 
 # Set page config
 def page_setup():
@@ -20,7 +19,7 @@ def page_setup():
         st.session_state.painpoint_metrics = None
 
     # Set page config
-    st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
+    set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
 
 # Click Button
 def click_button():

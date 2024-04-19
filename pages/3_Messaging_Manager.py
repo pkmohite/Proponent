@@ -2,14 +2,13 @@ import streamlit as st
 import os
 import pandas as pd
 from assets.code.element_configs import column_config_edit, config_csv_upload, parquet_schema_mf
-from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data, verify_password
+from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data, verify_password, set_page_config
 import pyarrow as pa
 import pyarrow.parquet as pq
 from streamlit_pdf_viewer import pdf_viewer
 
 ## Functions
 
-## Streamlit Functions
 def add_new_message():
     st.markdown("##### Add New Pain Point")
     cont = st.container(border=True, height=560)
@@ -196,12 +195,13 @@ def update_customer_personas():
             edited_data.to_csv("assets/customer_personas.csv", index=False)
             st.success("File saved successfully!")
 
+# Setup
 def setup_page():
     # Session state setup
     st.session_state.clicked = False
     st.session_state.display_metrics = False
     # Page setup
-    st.set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
+    set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
     # Password verification
     
 

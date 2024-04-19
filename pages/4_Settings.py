@@ -2,9 +2,9 @@ import streamlit as st
 import os
 import json
 import pandas as pd
-from assets.code.utils import pass_openAI_key
+from assets.code.utils import pass_openAI_key, verify_password, set_page_config
 
-# Tab 2: LLM settings
+# Tab 1: General Settings
 def set_API_key():
     
     # Add your code for the LLM settings tab here
@@ -47,8 +47,7 @@ def set_API_key():
         st.success("API key deleted from the session environment.")
         con.text_input("Enter your API key", value=os.getenv("USER_API_KEY"), type="password", key = '2')   
 
-
-
+# Tab 2: LLM Settings
 def update_themes_csv():
     themes_df = pd.read_csv("assets/themes.csv")
     theme_names = themes_df["themeName"].tolist()
@@ -74,10 +73,20 @@ def update_themes_csv():
         themes_df.to_csv("assets/themes.csv", index=False)
         st.rerun()
 
+# Page setup
+def page_setup():
+    # Session state setup
+    st.session_state.clicked = False
+    st.session_state.display_metrics = False
+    # Page setup
+    set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
 
-# Setuo
-st.set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
-st.title("Settings")
+# Setup
+page_setup()
+verify_password()
+
+# Streamlit UI
+st.header("Settings")
 
 # Create tabs
 tab1, tab2 = st.tabs(["General", "LLM"])

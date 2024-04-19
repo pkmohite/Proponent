@@ -1,16 +1,29 @@
+import os
 import pandas as pd
 import streamlit as st
-import os
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log, analytics_column_config
-import matplotlib.pyplot as plt
-import textwrap
 import altair as alt
-import json
-from assets.code.utils import get_mf_and_log
+from assets.code.utils import get_mf_and_log, verify_password, set_page_config
 
+# Set page config
+def page_setup():
+    
+    # Session State Stuff
+    st.session_state.clicked = False
+    if "display_metrics" not in st.session_state:
+        st.session_state.display_metrics = False
+    if "painpoint_metrics" not in st.session_state:
+        st.session_state.painpoint_metrics = None
+
+    # Set page config
+    set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
+
+# Click Button
+def click_button():
+        st.session_state.display_metrics = True
 
 # Tab 1: Analytics - Create Filter Components
 def create_filter_components(df,container = st):
@@ -174,47 +187,14 @@ def generate_dummy_data(parquet_file):
         # If the Parquet file is empty or doesn't exist, write the new data directly
         pq.write_table(table, parquet_file)
 
-# Tab 3: Customer Personas
-def update_customer_personas():
-    st.subheader("Customer Personas")
-    st.write("Upload a CSV file with columns category name, persona name, and persona description.")
-    # Add a download button for template
-    col1, col2 = st.columns([10, 1])
-    template_csv = "assets/templates/cp_template.csv"
-    with open(template_csv, "r") as file:
-        bth = col2.download_button("Download Template", file, file_name="cp_template.csv", mime="text/csv")
-
-    uploaded_file = col1.file_uploader("Upload CSV File:", label_visibility= 'collapsed', type=["csv"])
-
-    if uploaded_file is not None:
-        # Preview the uploaded file using st.write
-        df = pd.read_csv(uploaded_file)
-        edited_data = st.data_editor(df, hide_index=True, use_container_width=True)
-        
-        # Add a button to save the uploaded file as a json file
-        if st.button("Upload Customer Personas"):
-            # Save the edited data as a CSV file
-            edited_data.to_csv("assets/customer_personas.csv", index=False)
-            st.success("File saved successfully!")
-
-
-## Session State Stuff
-def click_button():
-    st.session_state.display_metrics = True
-if "display_metrics" not in st.session_state:
-    st.session_state.display_metrics = False
-if "painpoint_metrics" not in st.session_state:
-    st.session_state.painpoint_metrics = None
-
+## Setup
+page_setup()
+verify_password()
 
 ## Streamlit code
-# Setup
-st.set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
-st.title("Customer Analytics")
+st.header("Customer Analytics")
 df, mf_content = get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet')
-
-# Create tabs
-tab1, tab2, tab3, tab4 = st.tabs(["Analytics", "View Logs", "Feature Leaderboard", "Customer Personas"])
+tab1, tab2 = st.tabs(["Analytics", "View Logs"])
 
 with tab1:
     filter_col, content_col = st.columns([1, 3])
@@ -223,7 +203,7 @@ with tab1:
     title, date_range, persona_category1, persona_category2, persona_category3 = create_filter_components(df, filter)
 
     if st.button("Display Painpoint Metrics", on_click=click_button):
-        if (title or date_range or persona_category1 or persona_category2 or persona_category3) is not None:
+        if (title or persona_category1 or persona_category2 or persona_category3) is not None:
             # Get painpoint metrics for the selected filters
             st.session_state.painpoint_metrics = get_painpoint_metrics(df, mf_content, title, date_range, persona_category1, persona_category2, persona_category3)
         else:
@@ -238,11 +218,3 @@ with tab2:
     # Code for the second tab
     st.title("View Logs")
     view_log_parquet()
-
-with tab3:
-    # Code for the third tab
-    st.title("Feature Leaderboard")
-    st.session_state.global_metrics = get_painpoint_metrics(df, mf_content, get_all=True)
-
-with tab4:
-    update_customer_personas()

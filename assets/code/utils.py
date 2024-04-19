@@ -1,19 +1,63 @@
-import openai
-import os
+import openai, json, hmac, os, base64
 import streamlit as st
 import pandas as pd
 from PyPDF2 import PdfMerger
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from assets.code.element_configs import parquet_schema_log
+from assets.code.element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
 
+
+## Authentication Functions
+
+# Function to check if the password is correct
+def check_password():
+    # Function to check if the password is correct
+
+    def login_form():
+        # Create a form for the user to enter their username and password
+        with st.form("Credentials"):
+            st.markdown('###')
+            left_co, cent_co,last_co = st.columns([1,1.5,1])
+            with cent_co:
+                get_themed_logo()
+            st.text_input("Username", key="username")
+            st.text_input("Password", type="password", key="password")
+            st.form_submit_button("Log in", on_click=password_entered)
+
+    def password_entered():
+        login_credentials = json.loads(os.environ["LOGIN"])
+        # Check if the username and password are correct
+        if st.session_state["username"] in login_credentials and hmac.compare_digest(
+            st.session_state["password"], login_credentials[st.session_state["username"]],
+        ):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store the username or password.
+            del st.session_state["username"]
+        else:
+            st.session_state["password_correct"] = False
+
+    # Return True if the username + password is validated.
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Show inputs for username + password.
+    login_form()
+    if "password_correct" in st.session_state:
+        st.error("😕 User not known or password incorrect")
+    return False
+
+def verify_password():
+    # Return True if the username + password is validated.
+    if not st.session_state.get("password_correct", False):
+        st.warning("Please log in with the correct username and password to access this page.")
+        st.stop()
+        
 ## OpenAI Functions
 
 ## AssemblyAI Functions
-
 def transcribe_video(file):
     aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
     transcriber = aai.Transcriber()
@@ -169,6 +213,20 @@ def create_image_deck(df):
     print(f"Combined image PDF created: {output_path}")
 
 
+def displayPDF(file, column = st):
+    # Opening file from file path
+    with open(file, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+
+    # Embedding PDF in HTML
+    # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
+    
+    # Method 2 - Using IFrame
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="1100" height="600" type="application/pdf"></iframe>'
+
+    # Displaying File
+    column.markdown(pdf_display, unsafe_allow_html=True)
+
 
 ## DB Functions
 
@@ -272,4 +330,11 @@ def get_themed_logo():
         st.image("assets/images/logo_full_black.png", width=300)
     st.markdown('###')
 
-
+def set_page_config(page_title, page_icon, layout="wide", initial_sidebar_state="expanded"):
+    st.set_page_config(
+    page_title=page_title, 
+    page_icon=page_icon,
+    layout=layout, 
+    initial_sidebar_state=initial_sidebar_state,
+    menu_items={'Get Help': "mailto:prashant@yourproponent.com",
+                'About': config_about})

@@ -38,13 +38,12 @@ To run the Proponent application locally:
 
 2. Install dependencies:
    ```
-   pip install poetry
-   poetry install
+   pip install requirements.txt
    ```
 
 3. Run the Streamlit app:
    ```
-   poetry run streamlit run app.py
+   run streamlit run app.py
    ```
 
 <br>

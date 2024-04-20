@@ -3,7 +3,7 @@ from assets.code.utils import check_password, set_page_config, get_themed_logo
 import os
 
 # Setup
-set_page_config(page_title="Proponent", page_icon=":wave:", layout="centered",initial_sidebar_state="collapsed")
+set_page_config(page_title="Proponent", layout="centered",initial_sidebar_state="collapsed")
 
 if not check_password():
     st.stop()

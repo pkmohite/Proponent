@@ -5,3 +5,4 @@ __pycache__/
 downloads/index.html
 downloads/combined_PDF.pdf
 downloads/transcribe_cache.mp4
+assets/log.parquet

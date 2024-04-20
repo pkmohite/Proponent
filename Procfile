@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run Welcome.py
+web: sh setup.sh && streamlit run Proponent.py

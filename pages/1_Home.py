@@ -16,8 +16,8 @@ def click_button():
 
 
 def format_display_df(recommendations):
-    # Append a select column to the recommendations DataFrame
-    recommendations["select"] = [True] * len(recommendations)
+    # Mark first 5 recommendations as selected by default
+    recommendations["select"] = [True] * 5 + [False] * (len(recommendations) - 5)
     # append normalized similarity score to the data frame, normalized to the min and max similarity score
     recommendations["ss_Normalized"] = (
         recommendations["similarity_score"] - recommendations["similarity_score"].min()
@@ -249,7 +249,7 @@ def create_video(recommendations):
 
 ## Setup
 setup_streamlit()
-create_env_file()
+# create_env_file()
 pass_openAI_key()
 
 ## Main
@@ -295,14 +295,15 @@ if st.session_state.clicked:
     with dtab2:
         st.markdown("###### Enablement Center")
         dtab2_cont = st.container(border=True, height=700)
-        tab1, tab2, tab3, tab4 = dtab2_cont.tabs(["Draft Email", "Build Sales Deck", "Build Demo Video", "Generate HTML"])
+        tab1, tab2, tab3, tab4, tab5 = dtab2_cont.tabs(["Email", "Sales Deck", "Demo Video", "Landing Page", "Files"])
 
         # Tab 2a - Draft Email
         with tab1:
-            # email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company)
-            email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
-            st.markdown("##### Email Preview:")
-            st.markdown(email_body)
+            email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company)
+            st.write_stream(email_body)
+            # email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
+            # st.write(email_body)
+
 
         # Tab 2b - Build Sales Deck
         with tab2:
@@ -359,10 +360,10 @@ if st.session_state.clicked:
             #     )
             #     for i in range(len(feature_titles))
             # ]
-            # deine hero_images
-            hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
-                        "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
-                        "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
+            # # deine hero_images
+            # hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
+            #             "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
+            #             "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
 
             # # Generate the HTML template
             # html_template = generate_html_template(

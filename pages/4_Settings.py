@@ -4,7 +4,33 @@ import json
 import pandas as pd
 from assets.code.utils import pass_openAI_key, verify_password, set_page_config
 
-# Tab 1: General Settings
+# Tab 1: Update Themes
+def update_themes_csv():
+    themes_df = pd.read_csv("assets/themes.csv")
+    theme_names = themes_df["themeName"].tolist()
+    # get the index of the row where active = 'x'
+    current_theme_index = int(themes_df[themes_df["active"] == "x"].index[0])
+    st.markdown("### Set Theme")
+    selected_theme = st.selectbox("Change Proponent Theme", theme_names,label_visibility="collapsed", index= current_theme_index)
+    selected_theme_values = themes_df.loc[themes_df["themeName"] == selected_theme].iloc[0]
+    # apply button that updates the selected theme values in streamlit/config.toml
+    if st.button("Apply"):
+        # Add the code to update the theme in the config.toml file here
+        with open(".streamlit/config.toml", "w") as file:
+            file.write("[theme]\n")
+            file.write(f'primaryColor="{selected_theme_values["primaryColor"]}"\n')
+            file.write(f'backgroundColor="{selected_theme_values["backgroundColor"]}"\n')
+            file.write(f'secondaryBackgroundColor="{selected_theme_values["secondaryBackgroundColor"]}"\n')
+            file.write(f'textColor="{selected_theme_values["textColor"]}"\n')
+            file.write(f'font="{selected_theme_values["font"]}"\n')        
+        st.write(f"Theme {selected_theme} applied!")
+        # update the active column in the themes.csv file
+        themes_df["active"] = ""
+        themes_df.loc[themes_df["themeName"] == selected_theme, "active"] = "x"
+        themes_df.to_csv("assets/themes.csv", index=False)
+        st.rerun()
+
+# Tab 2: Set API Key
 def set_API_key():
     
     # Add your code for the LLM settings tab here
@@ -47,33 +73,12 @@ def set_API_key():
         st.success("API key deleted from the session environment.")
         con.text_input("Enter your API key", value=os.getenv("USER_API_KEY"), type="password", key = '2')   
 
-# Tab 2: LLM Settings
-def update_themes_csv():
-    themes_df = pd.read_csv("assets/themes.csv")
-    theme_names = themes_df["themeName"].tolist()
-    # get the index of the row where active = 'x'
-    current_theme_index = int(themes_df[themes_df["active"] == "x"].index[0])
-    st.markdown("### Set Theme")
-    selected_theme = st.selectbox("Change Proponent Theme", theme_names,label_visibility="collapsed", index= current_theme_index)
-    selected_theme_values = themes_df.loc[themes_df["themeName"] == selected_theme].iloc[0]
-    # apply button that updates the selected theme values in streamlit/config.toml
-    if st.button("Apply"):
-        # Add the code to update the theme in the config.toml file here
-        with open(".streamlit/config.toml", "w") as file:
-            file.write("[theme]\n")
-            file.write(f'primaryColor="{selected_theme_values["primaryColor"]}"\n')
-            file.write(f'backgroundColor="{selected_theme_values["backgroundColor"]}"\n')
-            file.write(f'secondaryBackgroundColor="{selected_theme_values["secondaryBackgroundColor"]}"\n')
-            file.write(f'textColor="{selected_theme_values["textColor"]}"\n')
-            file.write(f'font="{selected_theme_values["font"]}"\n')        
-        st.write(f"Theme {selected_theme} applied!")
-        # update the active column in the themes.csv file
-        themes_df["active"] = ""
-        themes_df.loc[themes_df["themeName"] == selected_theme, "active"] = "x"
-        themes_df.to_csv("assets/themes.csv", index=False)
-        st.rerun()
-
-# Page setup
+# Tab 2: Select Model
+def select_model():
+    st.subheader("Select Model")
+    top_models_gpt_4 = ["gpt-4-turbo", "gpt-4-turbo-preview", "gpt-4"]
+    top_models_gpt_3_5 = ["gpt-3.5-turbo-0125", "gpt-3.5-turbo", "gpt-3.5-turbo-1106"]
+    st.session_state.model = st.selectbox("Select Model", top_models_gpt_4 + top_models_gpt_3_5, index=0)
 def page_setup():
     # Session state setup
     st.session_state.clicked = False
@@ -93,6 +98,6 @@ tab1, tab2 = st.tabs(["General", "LLM"])
 with tab1:
     update_themes_csv()
 with tab2:
-    set_API_key()
-
+    # set_API_key()
+    select_model()
   

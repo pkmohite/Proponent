@@ -124,13 +124,10 @@ def generate_customized_email(recommendations, user_input, customer_name, custom
 
     # Generate the email body using the OpenAI API
     response = openai.chat.completions.create(
-        model=model, messages=conversation
+        model=model, messages=conversation, stream=True
     )
 
-    # Extract the generated email body from the API response
-    email_body = response.choices[0].message.content
-
-    return email_body
+    return response
 
 # Function to find the cosine similarity between two vectors
 def cosine_similarity(a, b):
@@ -329,6 +326,7 @@ def get_themed_logo():
     else:
         st.image("assets/images/logo_full_black.png", width=300)
     st.markdown('###')
+
 
 def set_page_config(page_title, page_icon = "assets/images/logo.ico", layout="wide", initial_sidebar_state="expanded"):
     st.set_page_config(

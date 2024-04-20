@@ -222,7 +222,7 @@ def displayPDF(file, column = st):
     # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
     
     # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="1100" height="600" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="550" type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)
@@ -330,7 +330,7 @@ def get_themed_logo():
         st.image("assets/images/logo_full_black.png", width=300)
     st.markdown('###')
 
-def set_page_config(page_title, page_icon, layout="wide", initial_sidebar_state="expanded"):
+def set_page_config(page_title, page_icon = "assets/images/logo.ico", layout="wide", initial_sidebar_state="expanded"):
     st.set_page_config(
     page_title=page_title, 
     page_icon=page_icon,

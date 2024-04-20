@@ -19,7 +19,7 @@ def page_setup():
         st.session_state.painpoint_metrics = None
 
     # Set page config
-    set_page_config(page_title="Analytics", page_icon=":bar_chart:", layout="wide")
+    set_page_config(page_title="Analytics", layout="wide")
 
 # Click Button
 def click_button():

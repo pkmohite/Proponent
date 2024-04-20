@@ -79,7 +79,7 @@ def page_setup():
     st.session_state.clicked = False
     st.session_state.display_metrics = False
     # Page setup
-    set_page_config(page_title="Settings", page_icon=":gear:", layout="wide")
+    set_page_config(page_title="Settings", layout="wide")
 
 # Setup
 page_setup()

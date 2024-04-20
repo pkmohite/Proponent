@@ -201,7 +201,7 @@ def setup_page():
     st.session_state.clicked = False
     st.session_state.display_metrics = False
     # Page setup
-    set_page_config(page_title="Messaging Manager", page_icon=":speech_balloon:", layout="wide")
+    set_page_config(page_title="Messaging Manager", layout="wide")
     # Password verification
     
 

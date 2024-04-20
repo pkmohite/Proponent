@@ -340,41 +340,41 @@ if st.session_state.clicked:
 
         # Tab 2d - Generate HTML
         with tab4:
-            # # Generate content for the HTML template using OpenAI
-            # hero_title, hero_description, feature_titles, value_propositions, webURL = (
-            #     generate_content(
-            #         recommendations=selected_recommendations,
-            #         user_input=user_input,
-            #         customer_name=customer_name,
-            #         customer_title=customer_title,
-            #         customer_company=customer_company,
-            #         model="gpt-3.5-turbo-0125",
-            #     )
-            # )
-            # # Generate HTML for feature sections
-            # features = [
-            #     generate_feature_section(
-            #         feature_titles[i],
-            #         value_propositions[i],
-            #         webURL[i],
-            #     )
-            #     for i in range(len(feature_titles))
-            # ]
-            # # deine hero_images
-            # hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
-            #             "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
-            #             "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
+            # Generate content for the HTML template using OpenAI
+            hero_title, hero_description, feature_titles, value_propositions, webURL = (
+                generate_content(
+                    recommendations=selected_recommendations,
+                    user_input=user_input,
+                    customer_name=customer_name,
+                    customer_title=customer_title,
+                    customer_company=customer_company,
+                    model="gpt-3.5-turbo-0125",
+                )
+            )
+            # Generate HTML for feature sections
+            features = [
+                generate_feature_section(
+                    feature_titles[i],
+                    value_propositions[i],
+                    webURL[i],
+                )
+                for i in range(len(feature_titles))
+            ]
+            # deine hero_images
+            hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
+                        "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
+                        "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
 
-            # # Generate the HTML template
-            # html_template = generate_html_template(
-            #     hero_title,
-            #     hero_description,
-            #     hero_images,
-            #     features,
-            # )
-            # # Save the generated HTML template to a file
-            # with open("downloads/index.html", "w") as file:
-            #     file.write(html_template)
+            # Generate the HTML template
+            html_template = generate_html_template(
+                hero_title,
+                hero_description,
+                hero_images,
+                features,
+            )
+            # Save the generated HTML template to a file
+            with open("downloads/index.html", "w") as file:
+                file.write(html_template)
 
             # View the generated HTML template
             with open("downloads/index.html", "rb") as file:

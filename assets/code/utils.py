@@ -8,7 +8,7 @@ import pyarrow.parquet as pq
 from assets.code.element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
-
+from dotenv import load_dotenv
 
 ## Authentication Functions
 
@@ -28,6 +28,7 @@ def check_password():
             st.form_submit_button("Log in", on_click=password_entered)
 
     def password_entered():
+        load_dotenv()
         login_credentials = json.loads(os.environ["LOGIN"])
         # Check if the username and password are correct
         if st.session_state["username"] in login_credentials and hmac.compare_digest(

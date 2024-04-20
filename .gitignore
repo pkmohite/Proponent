@@ -2,4 +2,6 @@ videos/
 .DS_Store
 .env
 __pycache__/
-downloads/
+downloads/index.html
+downloads/combined_PDF.pdf
+downloads/transcribe_cache.mp4

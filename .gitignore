@@ -1,8 +1,5 @@
-slides/
-archive/
-downloads/combined_PDF.pdf
-downloads/
 videos/
-**/.DS_Store
-**/.env
+.DS_Store
+.env
 __pycache__/
+downloads/

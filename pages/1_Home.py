@@ -226,7 +226,7 @@ def create_video(recommendations):
     # Iterate over each row in the DataFrame
     for index, row in recommendations.iterrows():
         # Construct the file path
-        video_file = row["Video File Name"]
+        video_file = row["videoFile"]
         file_path = os.path.join("videos", video_file)
 
         # Check if the file exists

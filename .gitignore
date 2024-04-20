@@ -1,5 +1,6 @@
 videos/
 .DS_Store
+.venv
 .env
 __pycache__/
 downloads/combined_PDF.pdf

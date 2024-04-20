@@ -323,7 +323,7 @@ if st.session_state.clicked:
 
         # Tab 2c - Build Demo Video
         with tab3:
-            # create_video(selected_recommendations) # Uncomment this line in local deployment to enable video generation
+            create_video(selected_recommendations) # Uncomment this line in local deployment to enable video generation
             b1, b2 = st.columns([1, 5])
             b2.warning("Video generation is not available in demo. Below preview is pre-generated.") # Comment this line in local deployment
             if os.path.exists("downloads/video.mp4"):

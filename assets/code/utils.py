@@ -1,4 +1,4 @@
-import openai, json, hmac, os, base64
+import openai, json, hmac, os, base64, requests, re
 import streamlit as st
 import pandas as pd
 from PyPDF2 import PdfMerger
@@ -9,6 +9,9 @@ from assets.code.element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
 from dotenv import load_dotenv
+
+## Load the environment variables
+load_dotenv()
 
 ## Authentication Functions
 
@@ -23,12 +26,19 @@ def check_password():
             left_co, cent_co,last_co = st.columns([1,1.5,1])
             with cent_co:
                 get_themed_logo()
-            st.text_input("Username", key="username")
-            st.text_input("Password", type="password", key="password")
-            st.form_submit_button("Log in", on_click=password_entered)
+            
+            tab1, tab2 = st.tabs(["Log In", "Login as Guest"])
+            with tab1:
+                st.text_input("Username", key="username")
+                st.text_input("Password", type="password", key="password")
+                st.form_submit_button("Log in", on_click=password_entered)
+            with tab2:
+                # Let user login as guest by entering an email
+                email = st.text_input("Email")
+                st.form_submit_button("Log in as Guest", on_click=submit_email, args=(email,))
+                
 
     def password_entered():
-        load_dotenv()
         login_credentials = json.loads(os.environ["LOGIN"])
         # Check if the username and password are correct
         if st.session_state["username"] in login_credentials and hmac.compare_digest(
@@ -40,6 +50,32 @@ def check_password():
         else:
             st.session_state["password_correct"] = False
 
+    def submit_email(email):
+        # Get access key from environment variable
+        access_key = os.getenv('ACCESS_KEY')
+
+        # Set up the form data
+        form_data = {
+            'access_key': access_key,
+            'email': email,
+            'redirect': 'https://web3forms.com/success'
+        }
+
+        # Valid email using regex
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            st.session_state["email_valid"] = "invalid"
+        else:
+            # Submit the form
+            response = requests.post('https://api.web3forms.com/submit', data=form_data)
+
+            # Check the response
+            if response.status_code == 200:
+                st.session_state["password_correct"] = True
+                st.session_state["email_valid"] = "success"
+            else:
+                st.session_state["email_valid"] = "error"
+            
+    
     # Return True if the username + password is validated.
     if st.session_state.get("password_correct", False):
         return True
@@ -48,13 +84,18 @@ def check_password():
     login_form()
     if "password_correct" in st.session_state:
         st.error("😕 User not known or password incorrect")
+    if "email_valid" in st.session_state:
+        if st.session_state["email_valid"] == "invalid":
+            st.error("😕 Please enter a valid email.")
+        elif st.session_state["email_valid"] == "error":    
+            st.error("😕 Something went wrong. Please try again later.")
     return False
+
 
 def verify_password():
     # Return True if the username + password is validated.
     if not st.session_state.get("password_correct", False):
-        st.warning("Please log in with the correct username and password to access this page.")
-        st.stop()
+        st.switch_page("Proponent.py")
         
 ## OpenAI Functions
 
@@ -337,3 +378,4 @@ def set_page_config(page_title, page_icon = "assets/images/logo.ico", layout="wi
     initial_sidebar_state=initial_sidebar_state,
     menu_items={'Get Help': "mailto:prashant@yourproponent.com",
                 'About': config_about})
+

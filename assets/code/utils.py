@@ -172,37 +172,73 @@ def generate_customized_email(recommendations, user_input, customer_name, custom
 
     return response
 
-# Function to generate an EYNK (Everything You Need to Know) content using the OpenAI API
+# # Function to generate an EYNK (Everything You Need to Know) content using the OpenAI API
+# def generate_enyk(recommendations, user_input, customer_name, customer_title, customer_company, history, competitor, model="gpt-3.5-turbo-0125"):
+#     # Concatenate the feature names and value propositions at the line level
+#     features_value_prop = "\n".join([f"{feature}: {value_prop}" for feature, value_prop in zip(recommendations["featureName"], recommendations["valueProposition"])])
+
+#     competitors = pd.read_csv("assets/competitors.csv")
+#     competitor_data = competitors[competitors["name"] == competitor]
+#     if not competitor_data.empty:
+#         battlecard = competitor_data["battlecard"].values[0]
+#     else:
+#         battlecard = "No Competitor"
+
+#     # Create a conversation for OpenAI with user_input, customer_name, customer_title, customer_company, history, features_str, value_prop_str, battlecard
+#     # The goal is for OpenAI to generate an overview of what the sales rep should know about the customer, the features, and the value propositions and how to position against the competitor
+#     # Create the prompt as a list of messages
+#     messages = [
+#         {"role": "system", "content": "You are an AI assistant helping a sales representative from Monday.com, a leading work management platform, with customer interactions. Your goal is to provide actionable insights and recommendations to help the sales representative effectively communicate the value of Monday.com's solutions to potential customers."},
+#         {"role": "user", "content": f"Customer: {customer_name}, {customer_title} at {customer_company}\n\nUser Input (Contains Context of the current interaction with customer): {user_input}\n\nCustomer's Interaction History with Sales Team: {history}"},
+#         {"role": "user", "content": f"Recommended Product Features and Value Propositions of Recommended Features:\n{features_value_prop}\n\nThe customer is currently using {competitor}, here's a Battlecard for {competitor}:\n{battlecard}"},
+#         {"role": "user", "content": "Based on the provided information about the customer, their current challenges, product needs, and the competitor they are using, generate a tailored EYNK (Everything You Need to Know) overview for the sales representative. The EYNK overview should be structured as follows:\n\n1. Customer Background and Needs: Summarize the customer's background, their current situation, and the challenges or needs they've expressed based on the user input and interaction history.\n\n2. Recommended Product Features and Value Propositions: Highlight the most relevant product features from the provided list and explain how their value propositions address the customer's specific needs.\n\n3. Positioning Against the Competitor: Based on the competitor battlecard, provide guidance on how the sales representative can position Monday.com's solutions as a better fit for the customer's needs compared to the competitor they are currently using.\n\n4. Next Steps: Suggest actionable next steps the sales representative can propose to the customer to further explore and address their needs with Monday.com's solutions.\n\nEnsure that the overview is concise, tailored to the customer's situation, and provides the sales representative with a clear understanding of how to proceed with the sales conversation effectively."}
+#     ]
+#     # Generate the email body using the OpenAI API
+#     response = openai.chat.completions.create(
+#         model=model, messages=messages, max_tokens=1024
+#     )
+#     enyk = response.choices[0].message.content
+#     return enyk
+
 def generate_enyk(recommendations, user_input, customer_name, customer_title, customer_company, history, competitor, model="gpt-3.5-turbo-0125"):
-    # Generate the EYNK content
-    # st.write("This is a sample EYNK content. The EYNK content is not available in this demo deployment. Please download the PDF deck and video for the recommendations.")
-
-    # Extract the feature names and value propositions from the recommendations DataFrame
-    features_str = "\n".join(recommendations["featureName"])
-    value_prop_str = "\n".join(recommendations["valueProposition"])
-
+    # Concatenate the feature names and value propositions at the line level
+    features_value_prop = "\n".join([f"{feature}: {value_prop}" for feature, value_prop in zip(recommendations["featureName"], recommendations["valueProposition"])])
+    
     competitors = pd.read_csv("assets/competitors.csv")
     competitor_data = competitors[competitors["name"] == competitor]
     if not competitor_data.empty:
         battlecard = competitor_data["battlecard"].values[0]
     else:
         battlecard = "No Competitor"
-
-    # Create a conversation for OpenAI with user_input, customer_name, customer_title, customer_company, history, features_str, value_prop_str, battlecard
-    # The goal is for OpenAI to generate an overview of what the sales rep should know about the customer, the features, and the value propositions and how to position against the competitor
-    # Create the prompt as a list of messages
+    
     messages = [
-        {"role": "system", "content": "You are an AI assistant helping a sales representative from Monday.com, a leading work management platform, with customer interactions. Your goal is to provide actionable insights and recommendations to help the sales representative effectively communicate the value of Monday.com's solutions to potential customers."},
-        {"role": "user", "content": f"Customer: {customer_name}, {customer_title} at {customer_company}\n\nUser Input (Contains Context of the current interaction with customer): {user_input}\n\nCustomer's Interaction History with Sales Team: {history}"},
-        {"role": "user", "content": f"Recommended Product Features:\n{features_str}\n\nValue Propositions of Recommended Features:\n{value_prop_str}\n\nThe customer is currently using {competitor}, here's a Battlecard for {competitor}:\n{battlecard}"},
-        {"role": "user", "content": "Based on the provided information about the customer, their current challenges, product needs, and the competitor they are using, generate a tailored EYNK (Everything You Need to Know) overview for the sales representative. The EYNK overview should be structured as follows:\n\n1. Customer Background and Needs: Summarize the customer's background, their current situation, and the challenges or needs they've expressed based on the user input and interaction history.\n\n2. Recommended Product Features and Value Propositions: Highlight the most relevant product features from the provided list and explain how their value propositions address the customer's specific needs.\n\n3. Positioning Against the Competitor: Based on the competitor battlecard, provide guidance on how the sales representative can position Monday.com's solutions as a better fit for the customer's needs compared to the competitor they are currently using.\n\n4. Next Steps: Suggest actionable next steps the sales representative can propose to the customer to further explore and address their needs with Monday.com's solutions.\n\nEnsure that the overview is concise, tailored to the customer's situation, and provides the sales representative with a clear understanding of how to proceed with the sales conversation effectively."}
+        {
+            "role": "system",
+            "content": "You are an AI assistant helping a sales representative from Monday.com, a leading work management platform, with customer interactions. Your goal is to provide actionable insights and recommendations to help the sales representative effectively communicate the value of Monday.com's solutions to potential customers."
+        },
+        {
+            "role": "user",
+            "content": f"Customer: {customer_name}, {customer_title} at {customer_company}\n\Context from Customer Interaction: {user_input}\n\nCustomer's Interaction History with Sales Team: {history}"
+        },
+        {
+            "role": "user",
+            "content": f"Recommended Product Features and Value Propositions:\n{features_value_prop}\n\nThe customer is currently using {competitor}, here's a Battlecard for {competitor}:\n{battlecard}"
+        },
+        {
+            "role": "user",
+            "content": "Based on the provided information about the customer, their current challenges, product needs, and the competitor they are using, generate a tailored 'Everything You Need to Know' (ENYK) overview for the sales representative in the following JSON format:\n\n```json\n{\n  \"customerSummary\": \"## Customer Summary\\n\\n- Bullet point summary of the customer's background, industry, and key challenges/pain points based on the provided information.\",\n  \"recommendedSolution\": \"## Recommended Solution\\n\\n- Explanation of how Monday.com's recommended features can address the customer's specific needs and challenges.\",\n  \"competitorAdvantage\": \"## Competitive Advantage\\n\\n- Positioning of Monday.com's strengths and advantages over the competitor based on the provided battlecard.\",\n  \"nextSteps\": \"## Next Steps\\n\\n- Suggested next steps or talking points for the sales representative to continue the conversation effectively.\"\n}\n```\n\nPlease ensure that the overview is tailored to the customer's unique situation, highlights the relevant product features and their value propositions, and provides the sales representative with a clear understanding of how to position Monday.com's solutions effectively against the competitor."
+        }
     ]
-    # Generate the email body using the OpenAI API
     response = openai.chat.completions.create(
-        model=model, messages=messages, stream=True, max_tokens=1024
+        model=model,
+        response_format={ "type": "json_object" },
+        messages=messages,
     )
-
-    return response
+    
+    enyk_json = response.choices[0].message.content
+    enyk = json.loads(enyk_json)
+    
+    return enyk
 
 # Function to find the cosine similarity between two vectors
 def cosine_similarity(a, b):
@@ -294,7 +330,7 @@ def displayPDF(file, column = st):
     # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
     
     # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="550" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="770" height="520" type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)

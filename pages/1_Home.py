@@ -195,7 +195,7 @@ def get_user_input(container_height = 580):
     # input, persona = st.columns([2, 1])
     persona, input = st.columns([1, 2])
     # 1 - User input
-    input.markdown("##### Step2: Upload Customer Interaction")
+    input.markdown("##### Upload Customer Interaction")
     inputcontainer = input.container(border=True, height=container_height)
     tab1, tab2, tab3 = inputcontainer.tabs(["Upload Video/Audio", "Upload Emai/Chat Text", "Ask Proponent"])
 
@@ -226,7 +226,7 @@ def get_user_input(container_height = 580):
     st.session_state.user_input = user_input
 
     # 2 - Load the example profile data
-    persona.markdown("##### Step1: Select Customer")
+    persona.markdown("##### Select Customer")
     personacontainer = persona.container(border=True, height=container_height)
 
     with personacontainer:

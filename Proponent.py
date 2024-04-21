@@ -21,12 +21,13 @@ def intro_page():
     ## Step by Step Guide
     st.container(height=30,border=False)
     st.markdown("### Quick Start Guide")
-    with st.expander("Step 1: Upload a Customer Interaction"):
-        st.write("Upload a video, audio, email, or chat transcript to Proponent. Alternatively, you can directly ask Proponent about a customer's needs.")
+    st.write("In this guide we'll assume a role of a Sales Manager at a SaaS company. Let's say you are interacting with a customer within your CRM tool and you want to create personalized sales enablement content for them. Here's how you can do it using Proponent:")
+    with st.expander("Step 1: Select the customer name you are interacting with from the dropdown menu"):
+        st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
         # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
-    with st.expander("Step 2: Select a Customer to Personalize Recommendations and click 'Get Recommendations'"):
-        st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
+    with st.expander("Step 2: Upload a Customer Interaction snippet or any product query and click 'Get Recommendations'"):
+        st.write("Upload a customer interaction snippet, You can upload a Zoom call transcript, email, chat log, or any other text-based interaction with the customer. You can also type in a product query to get recommendations.")
         # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
     with st.expander("Step 3: Review and shortlist recommendations that you want to include in the sales enablement content"):

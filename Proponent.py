@@ -23,24 +23,23 @@ def intro_page():
     st.markdown("### Quick Start Guide")
     with st.expander("Step 1: Upload a Customer Interaction"):
         st.write("Upload a video, audio, email, or chat transcript to Proponent. Alternatively, you can directly ask Proponent about a customer's needs.")
-        st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
     with st.expander("Step 2: Select a Customer to Personalize Recommendations and click 'Get Recommendations'"):
         st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
-        st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
     with st.expander("Step 3: Review and shortlist recommendations that you want to include in the sales enablement content"):
         st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
-        st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
     with st.expander("Step 4: Click 'Generate Content' to create personalized sales enablement content for the customer!"):
         st.write("Automatically create personalized sales enablement content like presentations, emails, and demo videos. Share the content with your customer and have a meaningful, product-led conversation that resonates with their needs.")
-        st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
-    # Additional Steps: Analytics
     with st.expander("Step 5: Get Insights into Customer Pain Points and Preferences in the Analytics Dashboard"):
         st.write("Gain valuable insights into customer pain points and preferences by analyzing Proponent's usage logs. Use these insights to refine your messaging and product recommendations.")
-        st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
     ## What Can You Do with Proponent?
     st.container(height=30,border=False)
@@ -86,7 +85,7 @@ def intro_page():
     col1, col2, col3, col4 = st.columns([.8,.9,1,5])
     col1.link_button(":email: Email", "mailto:prashant@yourproponent.com")
     col2.link_button(":globe_with_meridians: Website", "https://yourproponent.com")
-    col3.link_button(":link: LinkedIn", "https://www.linkedin.com/company/proponent-ai")
+    col3.link_button(":link: LinkedIn", "https://www.linkedin.com/company/yourproponent")
     
 # Setup
 set_page_config(page_title="Proponent", layout="wide",initial_sidebar_state="collapsed")

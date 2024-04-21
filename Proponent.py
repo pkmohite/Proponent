@@ -3,6 +3,7 @@ import streamlit as st
 from assets.code.utils import check_password, set_page_config, get_themed_logo
 import streamlit as st
 
+# Welcome Page
 def intro_page():
     
     ## Introduction
@@ -87,69 +88,6 @@ def intro_page():
     col2.link_button(":globe_with_meridians: Website", "https://yourproponent.com")
     col3.link_button(":link: LinkedIn", "https://www.linkedin.com/company/proponent-ai")
     
-
-
-def welcome_page():
-
-    # Main title
-    st.title("Welcome to Proponent")
-
-    # Lets Get Started
-    if st.button("Let's Get Started"):
-        st.switch_page("pages/1_Home.py")
-
-    # Introduction
-    intro_container = st.container(border=True, height=200)
-    with intro_container:
-        st.write(
-            "Proponent is an AI-powered tool that empowers your revenue team to create personalized, "
-            "product-led buying experiences for each customer, at scale and in just minutes."
-        )
-
-    # How Proponent Works
-    how_it_works_container = st.container(border=True, height=200)
-    with how_it_works_container:
-        st.header("How Proponent Works")
-        st.write(
-            "1. Upload a customer interaction (video, audio, email, chat transcript) or directly ask Proponent about a customer's needs.\n"
-            "2. Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations.\n"
-            "3. Review and select the most relevant recommendations from Proponent's suggestions.\n"
-            "4. Automatically create personalized sales enablement content like presentations, emails, and demo videos.\n"
-            "5. Share the content with your customer and have a meaningful, product-led conversation that resonates with their needs."
-        )
-
-    # Key Features
-    key_features_container = st.container(border=True, height=200)
-    with key_features_container:
-        st.header("Key Features")
-        st.write(
-            "- Personalized messaging grounded in a single source of truth\n"
-            "- Easy-to-manage messaging framework for product marketers\n"
-            "- Automatically generated sales enablement content\n"
-            "- Valuable customer insights from Proponent's usage logs"
-        )
-
-    # Getting Started
-    getting_started_container = st.container(border=True, height=200)
-    with getting_started_container:
-        st.header("Getting Started")
-        st.write(
-            "1. Upload a customer interaction or directly ask Proponent about a customer's needs.\n"
-            "2. Review and select the most relevant product recommendations.\n"
-            "3. Generate personalized sales enablement content to share with your customer."
-        )
-
-    # Support
-    support_container = st.container(border=True, height=200)
-    with support_container:
-        st.markdown("##### Support")
-        st.write(
-            "If you have any questions or need assistance, please reach out to our support team at "
-            "support@proponent.ai. We're here to help you succeed."
-        )
-
-        st.write("The Proponent Team")
-
 # Setup
 set_page_config(page_title="Proponent", layout="wide",initial_sidebar_state="collapsed")
 
@@ -160,16 +98,9 @@ with col2:
     if not check_password():
         st.stop()
 
-# # Logo
-# log1,log2,log3 = st.columns([3,1,3])
-# with log2:
-#     get_themed_logo()
-
 # Welcome Page
 col1,col2,col3 = st.columns([1,3,1])
 with col2:
-    # welcome_page()
-    # Run the intro page
     intro_page()
 
 

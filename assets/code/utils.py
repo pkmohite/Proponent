@@ -34,8 +34,8 @@ def check_password():
                 st.form_submit_button("Log in", on_click=password_entered)
             with tab2:
                 # Let user login as guest by entering an email
-                email = st.text_input("Email")
-                st.form_submit_button("Log in as Guest", on_click=submit_email, args=(email,))
+                st.text_input("Email", key="email")
+                st.form_submit_button("Log in as Guest", on_click=submit_email)
                 
 
     def password_entered():
@@ -50,9 +50,10 @@ def check_password():
         else:
             st.session_state["password_correct"] = False
 
-    def submit_email(email):
+    def submit_email():
         # Get access key from environment variable
         access_key = os.getenv('ACCESS_KEY')
+        email = st.session_state["email"]
 
         # Set up the form data
         form_data = {
@@ -62,7 +63,8 @@ def check_password():
         }
 
         # Valid email using regex
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        if not re.match(email_regex, email):
             st.session_state["email_valid"] = "invalid"
         else:
             # Submit the form
@@ -71,7 +73,6 @@ def check_password():
             # Check the response
             if response.status_code == 200:
                 st.session_state["password_correct"] = True
-                st.session_state["email_valid"] = "success"
             else:
                 st.session_state["email_valid"] = "error"
             
@@ -358,15 +359,15 @@ def create_env_file():
             file.write("USER_API_KEY=\n")
 
 
-def get_themed_logo():
+def get_themed_logo(width=300):
     # read assets/themes.csv and check if active theme's vibe column is dark or light
     themes_df = pd.read_csv("assets/themes.csv")
     current_theme_index = int(themes_df[themes_df["active"] == "x"].index[0])
     current_theme_values = themes_df.loc[current_theme_index]
     if current_theme_values["vibe"] == "dark":
-        st.image("assets/images/logo_full_white.png", width=300)
+        st.image("assets/images/logo_full_white.png", width=width)
     else:
-        st.image("assets/images/logo_full_black.png", width=300)
+        st.image("assets/images/logo_full_black.png", width=width)
     st.markdown('###')
 
 

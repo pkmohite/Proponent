@@ -2,8 +2,8 @@ import os, hmac, json, time
 import pandas as pd
 import streamlit as st
 from assets.code.element_configs import column_config_recommendations, config_about
-from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, create_env_file, calculate_similarity_ordered, transcribe_video
-from assets.code.utils import create_summary, get_themed_logo, update_log_parquet, create_image_deck, displayPDF, verify_password, set_page_config
+from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, calculate_similarity_ordered, transcribe_video
+from assets.code.utils import create_summary, update_log_parquet, create_image_deck, displayPDF, verify_password, set_page_config, generate_enyk
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from assets.code.genHTML import generate_content, generate_feature_section, generate_html_template
 import streamlit.components.v1 as components
@@ -11,8 +11,12 @@ import streamlit.components.v1 as components
 
 ## Functions
 
-def click_button():
+def click_get_recc():
     st.session_state.clicked = True
+
+
+def click_update_recc():
+    st.session_state.clicked_update = True
 
 
 def format_display_df(recommendations):
@@ -45,12 +49,8 @@ def setup_streamlit():
         st.session_state.chat_text = None
     if "ap_text" not in st.session_state:
         st.session_state.ap_text = None
-    if "example_name" not in st.session_state:
-        st.session_state.example_name = None
-    if "example_title" not in st.session_state:
-        st.session_state.example_title = None
-    if "example_company" not in st.session_state:
-        st.session_state.example_company = None
+    if "clicked_update" not in st.session_state:
+        st.session_state.clicked_update = False
     # Pass a variable to the set_page_config function
     set_page_config(page_title="Proponent", layout="wide")
     # Verify the password
@@ -59,10 +59,9 @@ def setup_streamlit():
     # get_themed_logo()
 
 
-
 def get_user_input():
     # Configure the layout
-    container_height = 570
+    container_height = 580
     input, persona = st.columns([2, 1])
     
     # 1 - User input
@@ -165,9 +164,9 @@ def get_user_input():
         history = example_profile[example_profile["contact_fullname"] == customer_name]["conversation_thread"].values[0]
     customer_title = row11.text_input("Title:", value = example_title)
     customer_company = row12.text_input("Company:", value= example_company)
-    deal_stage = row21.text_input("Deal Stage:", value= deal_stage)
-    deal_amount = row22.text_input("Deal Amount:", value= deal_amount)
-    # competitor = row23.text_input("Competitors:", value= competitor)
+    # deal_stage = row21.text_input("Deal Stage:", value= deal_stage)
+    deal_amount = row21.text_input("Deal Amount:", value= deal_amount)
+    competitor = row22.text_input("Competitors:", value= competitor)
     history = personacontainer.text_area("Conversation History", value= history, height=container_height-320)
 
     # # 2b - Load the customer profiles from assets/customer_profiles.csv
@@ -180,7 +179,7 @@ def get_user_input():
     category2_value = None
     category3_value = None
 
-    return customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input
+    return customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input, history, competitor
 
 
 def get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value):
@@ -196,8 +195,7 @@ def get_recommendations(user_input, customer_name, customer_title, customer_comp
     st.session_state.summary = summary
     
     # Log the recommendations
-    top_7_unformatted = df.head(7)
-    update_log_parquet(customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input, top_7_unformatted)
+    update_log_parquet(customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input, df.head(7))
 
 
 def display_recommendations():
@@ -212,6 +210,8 @@ def display_recommendations():
         hide_index=True,
         use_container_width=True,
     )
+    # if st.button("Update Recommendations", on_click=click_update_recc):
+    #     pass
 
     # Store the selected recommendations in a df
     selected_recommendations = selected_df[selected_df["select"] == True]
@@ -254,11 +254,11 @@ pass_openAI_key()
 
 ## Main
 # Display the user input fields
-customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input = get_user_input()
+customer_name, customer_title, customer_company, category1_value, category2_value, category3_value, user_input, history, competitor = get_user_input()
 rec1, rec2, rec3 = st.columns([1.3, 1, 6])
 
 # Button to get recommendations
-if rec1.button("Get Recommendations", on_click=click_button):
+if rec1.button("Get Recommendations", on_click=click_get_recc):
     # Check if api key is set
     if not os.getenv("USER_API_KEY"):
         st.error("Please set your OpenAI API key in the settings tab before proceeding.")
@@ -271,15 +271,13 @@ if rec1.button("Get Recommendations", on_click=click_button):
     # Get the recommendations
     get_recommendations(user_input, customer_name, customer_title, customer_company, category1_value, category2_value, category3_value)
 
+# Button to clear the view
 if rec2.button("Clear View"):
     # delete st.session_state.clicked
     st.session_state.clicked = False
     st.session_state.video_text = None
     st.session_state.chat_text = None
     st.session_state.ap_text = None
-    st.session_state.example_name = None
-    st.session_state.example_title = None
-    st.session_state.example_company = None
     st.rerun()
 
 # Main content
@@ -295,21 +293,30 @@ if st.session_state.clicked:
     with dtab2:
         st.markdown("###### Enablement Center")
         dtab2_cont = st.container(border=True, height=700)
-        tab1, tab2, tab3, tab4, tab5 = dtab2_cont.tabs(["Email", "Sales Deck", "Demo Video", "Landing Page", "Files"])
+        tab0, tab1, tab2, tab3, tab4 = dtab2_cont.tabs(["EYNK", "Email", "Sales Deck", "Demo Video", "Landing Page"])
 
-        # Tab 2a - Draft Email
+        # Tab 20 - EYNK
+        with tab0:
+            st.markdown("#### Everything You Need to Know")
+            enyk_body = generate_enyk(selected_recommendations, user_input, customer_name, customer_title, customer_company, history, competitor)
+            st.write_stream(enyk_body)
+
+        # Tab 21 - Draft Email
         with tab1:
-            email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company)
-            st.write_stream(email_body)
-            # email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
-            # st.write(email_body)
+            st.markdown("#### Personalized Email Draft")
+            # email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company)
+            # st.write_stream(email_body)
+            email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
+            st.write(email_body)
 
 
-        # Tab 2b - Build Sales Deck
+        # Tab 22 - Build Sales Deck
         with tab2:
+            col1, col2, col3 = st.columns([2.5, 2, 1.5])
+            col1.markdown("#### Personalized Sales Deck")
             create_image_deck(selected_recommendations)
             with open("downloads/combined_PDF.pdf", "rb") as file:
-                st.download_button(
+                col3.download_button(
                     label="Download PDF Deck",
                     data=file.read(),
                     file_name="customized_deck.pdf",
@@ -321,14 +328,15 @@ if st.session_state.clicked:
             else:
                 st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
-        # Tab 2c - Build Demo Video
+        # Tab 23 - Build Demo Video
         with tab3:
+            col1, col2, col3 = st.columns([2.5, 2, 1.5])
+            col1.markdown("#### Personalized Demo Video")
             # create_video(selected_recommendations) # Uncomment this line in local deployment to enable video generation
-            b1, b2 = st.columns([1, 5])
-            b2.warning("Video generation is not available in demo. Below preview is pre-generated.") # Comment this line in local deployment
+            st.warning("Video generation is not available in demo. Below preview is pre-generated.") # Comment this line in local deployment
             if os.path.exists("downloads/video.mp4"):
                 with open("downloads/video.mp4", "rb") as file:
-                    b1.download_button(
+                    col3.download_button(
                         label="Download MP4 File",
                         data=file.read(),
                         file_name="downloads/video.mp4",
@@ -338,54 +346,56 @@ if st.session_state.clicked:
             else:
                 st.error("Error generating video. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
-        # Tab 2d - Generate HTML
+        # Tab 24 - Generate HTML
         with tab4:
-            # Generate content for the HTML template using OpenAI
-            hero_title, hero_description, feature_titles, value_propositions, webURL = (
-                generate_content(
-                    recommendations=selected_recommendations,
-                    user_input=user_input,
-                    customer_name=customer_name,
-                    customer_title=customer_title,
-                    customer_company=customer_company,
-                    model="gpt-3.5-turbo-0125",
-                )
-            )
-            # Generate HTML for feature sections
-            features = [
-                generate_feature_section(
-                    feature_titles[i],
-                    value_propositions[i],
-                    webURL[i],
-                )
-                for i in range(len(feature_titles))
-            ]
-            # deine hero_images
-            hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
-                        "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
-                        "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
+            col1, col2, col3 = st.columns([2.5, 2, 1.5])
+            col1.markdown("#### Personalized Landing Page")
+            # # Generate content for the HTML template using OpenAI
+            # hero_title, hero_description, feature_titles, value_propositions, webURL = (
+            #     generate_content(
+            #         recommendations=selected_recommendations,
+            #         user_input=user_input,
+            #         customer_name=customer_name,
+            #         customer_title=customer_title,
+            #         customer_company=customer_company,
+            #         model="gpt-3.5-turbo-0125",
+            #     )
+            # )
+            # # Generate HTML for feature sections
+            # features = [
+            #     generate_feature_section(
+            #         feature_titles[i],
+            #         value_propositions[i],
+            #         webURL[i],
+            #     )
+            #     for i in range(len(feature_titles))
+            # ]
+            # # deine hero_images
+            # hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
+            #             "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
+            #             "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
 
-            # Generate the HTML template
-            html_template = generate_html_template(
-                hero_title,
-                hero_description,
-                hero_images,
-                features,
-            )
-            # Save the generated HTML template to a file
-            with open("downloads/index.html", "w") as file:
-                file.write(html_template)
+            # # Generate the HTML template
+            # html_template = generate_html_template(
+            #     hero_title,
+            #     hero_description,
+            #     hero_images,
+            #     features,
+            # )
+            # # Save the generated HTML template to a file
+            # with open("downloads/index.html", "w") as file:
+            #     file.write(html_template)
 
-            # View the generated HTML template
+            # Download the generated HTML template
             with open("downloads/index.html", "rb") as file:
-                st.download_button(
+                col3.download_button(
                     label="Download HTML File",
                     data=file.read(),
                     file_name="index.html",
                     mime="text/html",
                 )
+            # View the generated HTML template
             with st.container(height=550, border=False):
-                
                 with open("downloads/index.html", "r") as file:
                     html_template = file.read()
                 components.html(html_template, height=4000)

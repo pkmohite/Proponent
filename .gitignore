@@ -6,3 +6,4 @@ __pycache__/
 downloads/combined_PDF.pdf
 downloads/transcribe_cache.mp4
 assets/log.parquet
+code_aux/

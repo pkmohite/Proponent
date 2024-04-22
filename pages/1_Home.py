@@ -81,7 +81,6 @@ def create_video(recommendations):
     print(f"Concatenated video created: {output_path}")
 
 
-
 def get_video_input(container_height):
     # 1a - File uploader for video/audio
     video_text = None
@@ -358,7 +357,6 @@ if st.session_state.clicked:
             st.write_stream(email_body)
             # email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
             # st.write(email_body)
-
 
         # Tab 22 - Build Sales Deck
         with salesdeck:

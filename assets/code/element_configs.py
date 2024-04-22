@@ -46,7 +46,7 @@ config_csv_upload = {
         "webURL": st.column_config.Column(label="Web URL", width="medium"),
     }
 
-
+# Edit messages
 column_config_edit = {
         "painPointId": st.column_config.Column(label="ID", width="small"),
         "embedding": None,
@@ -64,6 +64,7 @@ column_config_edit = {
         ),
     }
 
+# Analytics - Pain Points
 analytics_column_config = {
     "painPointId": None,
     "customerPainPoint": st.column_config.Column(
@@ -77,6 +78,7 @@ analytics_column_config = {
     "percentage": st.column_config.Column(label="Percentage", width="small"),
 }
 
+# Default theme
 default_theme = {
     "primaryColor": "#F63366",
     "backgroundColor": "#FFFFFF",
@@ -85,6 +87,7 @@ default_theme = {
     "font": "sans serif"
 }
 
+# Parquet schema for logs
 parquet_schema_log = pa.schema([
     pa.field("customer_name", pa.string()),
     pa.field("customer_title", pa.string()),
@@ -98,6 +101,7 @@ parquet_schema_log = pa.schema([
     pa.field("time", pa.string())
     ])
 
+# Parquet schema for messages
 parquet_schema_mf = pa.schema([
     pa.field("painPointId", pa.int64()),
     pa.field("customerPainPoint", pa.string()),

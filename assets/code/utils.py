@@ -146,28 +146,45 @@ def create_summary(user_input, customer_name, customer_title, customer_company, 
     return summary
 
 # Function to generate a customized email using the OpenAI API
-def generate_customized_email(recommendations, user_input, customer_name, customer_title, customer_company, model="gpt-3.5-turbo-0125"):
+def generate_customized_email(recommendations, user_input, customer_name, customer_title, customer_company, history, competitor, model="gpt-3.5-turbo-0125"):
 
     # Extract the feature names and value propositions from the recommendations DataFrame
     features_str = "\n".join(recommendations["featureName"])
     value_prop_str = "\n".join(recommendations["valueProposition"])
+    example_email = f"""Dear {customer_name},
 
-    # Create the conversation for the OpenAI API
+    Thank you for sharing your valuable feedback with us. We understand that you are facing certain challenges in your current workflow and are looking for suitable solutions.
+
+    Based on our analysis, we believe the following features from our product can help you overcome these challenges and improve your productivity:
+
+    * Feature 1: Value Proposition 1
+    * Feature 2: Value Proposition 2
+    * Feature 3: Value Proposition 3
+
+    These features, when combined, will not only address your specific pain points but also provide a significant advantage over your current solution from {competitor}.
+
+    We would love to demonstrate these features in action and discuss how they can be tailored to your unique requirements. If you're interested, please let us know a suitable time for a quick demo or a discussion.
+
+    Looking forward to hearing from you soon.
+
+    Best regards,
+    [Your Name]
+    Sales Team"""
+
     conversation = [
-        {
-            "role": "system",
-            "content": "You are an expert sales communication assistant. Your goal is to craft a personalized, engaging, and concise email under 200 words to follow up with a customer based on their pain points, feature requests, and our proposed solutions.",
-        },
-        {
-            "role": "user",
-            "content": f"Here is the context of my conversation with the customer {customer_name}, {customer_title} from {customer_company}:\n\n{user_input}\n\nBased on their input, we have identified the following features and value propositions:\n\nFeatures:\n{features_str}\n\nValue Propositions:\n{value_prop_str}\n\nPlease draft a short follow-up email that:\n1. Thanks the customer for their input and acknowledges their pain points\n2. Highlights all the shortlisted features and their corresponding value propositions in a bullet-point format\n3. Explains how these features collectively address their needs and improve their workflow\n4. Ends with a clear call-to-action, inviting them to schedule a demo or discuss further\n\nKeep the email concise, personalized, and focused on the customer's unique situation. Use a friendly yet professional tone.",
-        },
-        {
-            "role": "assistant",
-            "content": "Dear [Customer Name],\n\nThank you for taking the time to share your pain points and feature requests with us. We truly appreciate your valuable input and insights.\n\nAfter carefully reviewing your feedback, we believe the following features from our product will comprehensively address your needs:\n\n[List all shortlisted features and their value propositions in bullet points]\n\nTogether, these features will significantly streamline your workflow, increase efficiency, and help you achieve your goals more effectively.\n\nWe would love to show you how our product can be tailored to your specific use case. If you're interested, I would be happy to schedule a personalized demo at your convenience. Please let me know your availability, and I'll set it up.\n\nBest regards,\n[Your Name]\nSales Team \n Generate in Markdown format.",
-        },
+    {
+        "role": "system",
+        "content": "You are an expert sales communication assistant. Your goal is to craft a personalized, engaging, and concise email under 200 words to follow up with a customer based on their pain points, feature requests, our proposed solutions, their interaction history, and their current competitor solution.",
+    },
+    {
+        "role": "user",
+        "content": f"Here is the context of my conversation with the customer {customer_name}, {customer_title} from {customer_company}:\n\n{user_input}\n\nBased on their input, we have identified the following features and value propositions:\n\nFeatures:\n{features_str}\n\nValue Propositions:\n{value_prop_str}\n\nThe customer's interaction history is as follows:\n\n{history}\n\nTheir current competitor solution is:\n\n{competitor}\n\nPlease draft a short follow-up email that:\n1. Thanks the customer for their input and acknowledges their pain points\n2. Highlights all the shortlisted features and their corresponding value propositions in a bullet-point format\n3. Explains how these features collectively address their needs and improve their workflow, while differentiating from their current competitor solution\n4. Ends with a clear call-to-action, inviting them to schedule a demo or discuss further\n\nKeep the email concise, personalized, and focused on the customer's unique situation. Use a friendly yet professional tone.\n\nHere is an example email to guide you:",
+    },
+    {
+        "role": "assistant",
+        "content": example_email,
+    },
     ]
-
     # Generate the email body using the OpenAI API
     response = openai.chat.completions.create(
         model=model, messages=conversation, stream=True

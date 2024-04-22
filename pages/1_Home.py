@@ -192,8 +192,8 @@ def get_customer_profile(personacontainer, container_height):
 
 def get_user_input(container_height = 580):
     # Configure the layout
-    # input, persona = st.columns([2, 1])
-    persona, input = st.columns([1, 2])
+    input, persona = st.columns([2, 1])
+    # persona, input = st.columns([1, 2])
     # 1 - User input
     input.markdown("##### Upload Customer Interaction")
     inputcontainer = input.container(border=True, height=container_height)
@@ -275,14 +275,14 @@ def get_user_input(container_height = 580):
 
 def get_recommendations(user_input, customer_name, customer_title, customer_company, cp1, cp2, cp3, history, competitor):
     # Get the summary and recommendations
-    summary = create_summary(user_input, customer_name, customer_title, customer_company)
-    summary_embedding = get_embedding(summary) #replace with user_input or summary if simalrity search on summary instead of user input
+    # summary = create_summary(user_input, customer_name, customer_title, customer_company)
+    summary_embedding = get_embedding(user_input) #replace with user_input or summary if simalrity search on summary instead of user input
     df = calculate_similarity_ordered(summary_embedding)
     df_formatted = format_display_df(df)
     
     # Store the recommendations in session state
     st.session_state.display_df = df_formatted.head(7)
-    st.session_state.summary = summary
+    # st.session_state.summary = summary
     st.session_state.enyk = generate_enyk(df_formatted.head(7), user_input, customer_name, customer_title, customer_company, history, competitor)
     
     # Log the recommendations
@@ -295,17 +295,17 @@ def dislay_enyk():
     # st.write(enyk)
     with st.container(border=True, height=485):
         tab1, tab2 = st.tabs(["Interaction Summary", "Historical Needs"])
-        ct1 = tab1.container(height=350, border=False)
+        ct1 = tab1.container(height=395, border=False)
         ct1.markdown(enyk["customer_needs_summary"])
         # ct1.markdown(st.session_state.summary)
-        ct2 = tab2.container(height=350, border=False)
+        ct2 = tab2.container(height=395, border=False)
         ct2.markdown(enyk["historical_needs_summary"])
     
     with st.container(border=True, height=485):
         tab3, tab4 = st.tabs(["Competitor Comparison", "Recommended Features & Benefits"])
-        ct3 = tab3.container(height=350, border=False)
+        ct3 = tab3.container(height=395, border=False)
         ct3.markdown(enyk["competitor_comparison"])
-        ct4 = tab4.container(height=350, border=False)
+        ct4 = tab4.container(height=395, border=False)
         ct4.markdown(enyk["recommended_features_benefits"])
 
 
@@ -327,10 +327,14 @@ with input_container:
 if st.session_state.clicked:
     
     # Prepare the display
-    st.divider()
-    # input_empty.empty()
+    # st.divider()
+    input_empty.empty()
     st.markdown("##### Proponent Recommendations:")
     main_col1, main_col2 = st.columns([3, 5])        
+    # button to go back to user input
+    if st.button("Back to User Input"):
+        st.session_state.clicked = False
+        st.rerun()
 
     # Tab 2 - Enablement Center
     with main_col2:
@@ -338,7 +342,7 @@ if st.session_state.clicked:
         selected_df = st.data_editor(
             st.session_state.display_df,
             column_config=column_config_recommendations,
-            column_order=["select", "customerPainPoint", "featureName", "valueProposition", "ss_Normalized"],
+            column_order=["select", "customerPainPoint", "featureName", "ss_Normalized"],
             hide_index=True,
             use_container_width=True,
         )
@@ -350,10 +354,10 @@ if st.session_state.clicked:
         # Tab 21 - Draft Email
         with email:
             st.markdown("#### Personalized Email Draft")
-            # email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company)
-            # st.write_stream(email_body)
-            email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
-            st.write(email_body)
+            email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company, history, competitor)
+            st.write_stream(email_body)
+            # email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
+            # st.write(email_body)
 
 
         # Tab 22 - Build Sales Deck
@@ -396,41 +400,41 @@ if st.session_state.clicked:
         with lp:
             col1, col2, col3 = st.columns([2.5, 2, 1.5])
             col1.markdown("#### Personalized Landing Page")
-            # # Generate content for the HTML template using OpenAI
-            # hero_title, hero_description, feature_titles, value_propositions, webURL = (
-            #     generate_content(
-            #         recommendations=selected_recommendations,
-            #         user_input=user_input,
-            #         customer_name=customer_name,
-            #         customer_title=customer_title,
-            #         customer_company=customer_company,
-            #         model="gpt-3.5-turbo-0125",
-            #     )
-            # )
-            # # Generate HTML for feature sections
-            # features = [
-            #     generate_feature_section(
-            #         feature_titles[i],
-            #         value_propositions[i],
-            #         webURL[i],
-            #     )
-            #     for i in range(len(feature_titles))
-            # ]
-            # # deine hero_images
-            # hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
-            #             "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
-            #             "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
+            # Generate content for the HTML template using OpenAI
+            hero_title, hero_description, feature_titles, value_propositions, webURL = (
+                generate_content(
+                    recommendations=selected_recommendations,
+                    user_input=user_input,
+                    customer_name=customer_name,
+                    customer_title=customer_title,
+                    customer_company=customer_company,
+                    model="gpt-3.5-turbo-0125",
+                )
+            )
+            # Generate HTML for feature sections
+            features = [
+                generate_feature_section(
+                    feature_titles[i],
+                    value_propositions[i],
+                    webURL[i],
+                )
+                for i in range(len(feature_titles))
+            ]
+            # deine hero_images
+            hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
+                        "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
+                        "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
 
-            # # Generate the HTML template
-            # html_template = generate_html_template(
-            #     hero_title,
-            #     hero_description,
-            #     hero_images,
-            #     features,
-            # )
-            # # Save the generated HTML template to a file
-            # with open("downloads/index.html", "w") as file:
-            #     file.write(html_template)
+            # Generate the HTML template
+            html_template = generate_html_template(
+                hero_title,
+                hero_description,
+                hero_images,
+                features,
+            )
+            # Save the generated HTML template to a file
+            with open("downloads/index.html", "w") as file:
+                file.write(html_template)
 
             # Download the generated HTML template
             with open("downloads/index.html", "rb") as file:

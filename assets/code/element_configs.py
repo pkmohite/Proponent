@@ -4,14 +4,12 @@ import pyarrow as pa
 # Home - Recommendations Table
 
 column_config_recommendations = {
-    "select": st.column_config.Column(label="Select", disabled=False),
+    "select": st.column_config.Column(label="Select", disabled=False, width="small"),
     "featureName": st.column_config.Column(label="Feature Name", disabled=True, width="medium"),
-    "valueProposition": None,
-    # "valueProposition": st.column_config.Column(
-    #     label="Value Proposition", disabled=True, width="medium"
-    # ),
+    # "valueProposition": None,
+    "valueProposition": st.column_config.Column(label="Value Proposition", disabled=True, width="medium"),
     "ss_Normalized": st.column_config.ProgressColumn(label="Similarity Score", width="medium"),
-    "customerPainPoint": None,
+    "customerPainPoint": st.column_config.Column(label="Customer Pain Point", disabled=True, width="medium"),
     "similarity_score": None,
     "embedding": None,
     "painPointId": None,

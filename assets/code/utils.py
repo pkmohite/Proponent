@@ -129,15 +129,18 @@ def create_summary(user_input, customer_name, customer_title, customer_company, 
         messages=[
             {
                 "role": "system",
-                "content": f'"You are a helpful sales enablement assistant. I\'m interacting with {customer_name} with title {customer_title} from {customer_company}.\
-                    Extract key customer asks from text I share with you and generate a summary of the customer pain points or asks ONLY. Don\'t include anything else"',
+                "content": f"You are a sales enablement assistant helping to identify key customer needs and pain points. The customer is {customer_name}, {customer_title} from {customer_company}."
             },
-            {"role": "user", "content": user_input},
             {
-                "role": "assistant",
-                "content": "Here is a summary of your input:\n\n",
-            },
+                "role": "user",
+                "content": f"Please analyze the following text and extract the key customer pain points, needs, and asks. Summarize them concisely, focusing only on the essential information. The summary should be suitable for semantic similarity search against product features and value propositions.\n\nText: {user_input}"
+            }
         ],
+        temperature=0.5,
+        max_tokens=150,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
     )
     summary = response.choices[0].message.content
     return summary
@@ -214,19 +217,41 @@ def generate_enyk(recommendations, user_input, customer_name, customer_title, cu
     messages = [
         {
             "role": "system",
-            "content": "You are an AI assistant helping a sales representative from Monday.com, a leading work management platform, with customer interactions. Your goal is to provide actionable insights and recommendations to help the sales representative effectively communicate the value of Monday.com's solutions to potential customers."
+            "content": "You are a helpful assistant designed to output JSON."
         },
         {
             "role": "user",
-            "content": f"Customer: {customer_name}, {customer_title} at {customer_company}\n\Context from Customer Interaction: {user_input}\n\nCustomer's Interaction History with Sales Team: {history}"
-        },
-        {
-            "role": "user",
-            "content": f"Recommended Product Features and Value Propositions:\n{features_value_prop}\n\nThe customer is currently using {competitor}, here's a Battlecard for {competitor}:\n{battlecard}"
-        },
-        {
-            "role": "user",
-            "content": "Based on the provided information about the customer, their current challenges, product needs, and the competitor they are using, generate a tailored 'Everything You Need to Know' (ENYK) overview for the sales representative in the following JSON format:\n\n```json\n{\n  \"customerSummary\": \"## Customer Summary\\n\\n- Bullet point summary of the customer's background, industry, and key challenges/pain points based on the provided information.\",\n  \"recommendedSolution\": \"## Recommended Solution\\n\\n- Explanation of how Monday.com's recommended features can address the customer's specific needs and challenges.\",\n  \"competitorAdvantage\": \"## Competitive Advantage\\n\\n- Positioning of Monday.com's strengths and advantages over the competitor based on the provided battlecard.\",\n  \"nextSteps\": \"## Next Steps\\n\\n- Suggested next steps or talking points for the sales representative to continue the conversation effectively.\"\n}\n```\n\nPlease ensure that the overview is tailored to the customer's unique situation, highlights the relevant product features and their value propositions, and provides the sales representative with a clear understanding of how to position Monday.com's solutions effectively against the competitor."
+            "content": f"""
+            Generate a JSON response with the following sections, keeping each section under 300 words, using bullet points  and  markdown formatting to bold/italicize key parts of the bullets.
+
+            1. Based on the recent conversation provided, summarize the customer needs expressing the the user_input for {customer_name} with title {customer_title} from {customer_company}.
+
+            User input:
+            {user_input}
+
+            2. Reflect on the historical interactions with {customer_name} and summarize their needs and use-cases. Don't overlap with the current needs summary.
+
+            History:
+            {history}
+
+            3. Compare the features and benefits of Monday.com's product with the current solution used by {customer_name} at {customer_company}, which is {competitor}. Highlight the advantages in the context of the customer's needs.
+
+            Competitor Battlecard:
+            {battlecard}
+
+            4. Explain the benefits the following recommended features for {customer_name} in the context of their specific needs and use-case.
+
+            Recommended Features:
+            {features_value_prop}
+
+            Please provide the response in the following JSON format, using bullet points for each section and  markdown formatting to bold/italicize key parts of the bullets.
+            {{
+                "customer_needs_summary": "- Point 1\\n - Point 2\\n - Point 3.. \\n - Point n",
+                "historical_needs_summary": "- Point 1\\n - Point 2\\n - Point 3.. \\n - Point n",
+                "competitor_comparison": "- Point 1\\n - Point 2\\n - Point 3.. \\n - Point n",
+                "recommended_features_benefits": "- Point 1\\n - Point 2\\n - Point 3.. \\n - Point n"
+            }}
+            """
         }
     ]
     response = openai.chat.completions.create(
@@ -330,7 +355,7 @@ def displayPDF(file, column = st):
     # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
     
     # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="770" height="520" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="840" height="520" type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)

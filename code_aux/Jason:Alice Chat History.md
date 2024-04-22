@@ -1,5 +1,5 @@
-label,text
-Jason/ Alice 1st Meeting Transcript,"Alice: Hi Jason, it's Alice from Monday.com again. I hope you've had a productive week! I wanted to check in and see if you've had a chance to discuss the Monday.com platform further with your team after our demo last week.
+<!-- Jason/ Alice 1st Video Meeting Transcript - 2024-02-01 10:00:00 -->
+"Alice: Hi Jason, it's Alice from Monday.com again. I hope you've had a productive week! I wanted to check in and see if you've had a chance to discuss the Monday.com platform further with your team after our demo last week.
 
 Jason: Hi Alice, yes it's been a busy week but we did find time to regroup on Monday.com. Overall the feedback from Sarah, Raj, and others was extremely positive. The capabilities you showcased seem like a great potential fit for streamlining our processes.
 
@@ -32,7 +32,10 @@ Alice: Will do, I'll send over a calendar invite with video conferencing details
 Jason: Likewise, I appreciate you quickly addressing that need. Let's plan to continue this conversation on Wednesday.
 
 Alice: Sounds good, talk to you then!"
-Jason/ Alice 2nd Meeting Transcript,"Alice: Hi Jason, it's Alice from Monday.com again. Thanks for taking the time for another call today.
+
+<!-- Jason/ Alice 2nd Video Meeting Transcript - 2024-02-10 10:20:00 -->
+
+"Alice: Hi Jason, it's Alice from Monday.com again. Thanks for taking the time for another call today.
 
 Jason: No problem at all, Alice. I'm looking forward to seeing what you have to show regarding your document management and recruitment capabilities.
 
@@ -81,7 +84,10 @@ Alice: Perfect, next Tuesday 2pm CT works on my end. I'll get that meeting on th
 Jason: Excellent, thank you again Alice. I know I'm just scratching the surface, but I'm seriously impressed with Monday.com's breadth of functionality so far. I'm confident we're on the right track to finally get our messy processes streamlined and centralized.
 
 Alice: That's great to hear, Jason. I really appreciate you taking the time to thoroughly vet our solution. Looking forward to next week's discussion!"
-Email from Jason,"From: Jason Strickland
+
+<!-- Email, Subject: Quick Question from My Manager - 2024-02-16 10:20:00 -->
+
+From: Jason Strickland
 To: Alice Thompson
 
 Subject: Quick Question from My Manager
@@ -96,8 +102,46 @@ Let me know if you have any information around that, or if it's something we cou
 
 Thanks in advance!
 
-Jason"
-Jason/ Alice 3nd Meeting Transcript,"Alice: Thank you all for joining today's call. Jason, Amy - I'd like to introduce Dave Evans, he's one of our product experts focused specifically on our recruitment and hiring solutions.
+Jason
+
+From: Alice Thompson
+To: Jason Strickland
+Subject: Re: Quick Question from My Manager
+
+Hi Jason,
+
+Thanks for reaching out, and that's an excellent question from your manager Paul. Compliance and legal requirements are absolutely critical, especially in the HR/hiring realm.
+
+The short answer is yes, Monday.com does have robust capabilities built into our recruitment solution to help ensure companies remain fully compliant throughout the hiring process. A few of the key areas include:
+
+EEO Data Collection: We can help automate the confidential collection, tracking, and reporting of EEO data from applicants to meet OFCCP/EEOC requirements.
+Background Check Integrations: Our platform integrates with leading background screening vendors to seamlessly order and track background checks during the hiring process.
+E-Signature & Form Compliance: Digital signatures, electronic storage of forms like I-9s, and audit trails help maintain full compliance with regulations around record-keeping and onboarding documentation.
+Role-Based Permissions: Granular access controls and privacy settings allow you to restrict sensitive applicant/employee data to only authorized individuals.
+We have an entire compliance center and partnership ecosystem focused on this area, so I'd be happy to go into much more detail during next week's call. We can also potentially loop in someone from our compliance team if needed.
+
+Let me know if you need any other information in the meantime! Looking forward to connecting again soon.
+
+Best,
+Alice
+
+From: Jason Strickland
+
+To: Alice Thompson
+Subject: Re: Quick Question from My Manager
+
+Thanks so much for the thorough response, Alice. I really appreciate you quickly addressing Paul's concerns around compliance - that will help ease his mind.
+
+Having those core compliance capabilities around EEO, background checks, signatures, and data privacy is definitely a critical requirement for us. I'm glad to hear Monday.com has robust functionality and a dedicated focus in this area that we could leverage.
+
+Let's plan to overview this in more depth when we reconnect with Amy and your recruiting expert next week. I'll make sure to include Paul's questions in that discussion as well.
+
+Thanks again!
+Jason
+
+<!-- Jason/ Alice 3rd Video Meeting Transcript - 2024-02-16 10:20:00 -->
+
+"Alice: Thank you all for joining today's call. Jason, Amy - I'd like to introduce Dave Evans, he's one of our product experts focused specifically on our recruitment and hiring solutions.
 
 Jason: Thanks for having us Alice, Dave. We're looking forward to diving deeper into this area.
 

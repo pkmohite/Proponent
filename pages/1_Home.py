@@ -157,33 +157,33 @@ def get_customer_profile(personacontainer, container_height):
     example_profile["contact_fullname"] = example_profile["contact_firstname"] + " " + example_profile["contact_lastname"]
 
     # Fetch logic for customer name, title, company, deal stage, deal amount, competitor, history
+    customer_name = personacontainer.selectbox("Customer Name", example_profile["contact_fullname"].tolist(), index=None, placeholder="Select Customer Name")
     row11,row12 = personacontainer.columns([1, 1])
     row21, row22 = personacontainer.columns([1, 1])
-    row31, row32, row33 = personacontainer.columns([1, 1, 1])
-    customer_name = row11.selectbox("Customer Name", example_profile["contact_fullname"].tolist(), index=None, placeholder="Select Customer Name", key="customer_name")
+    # row31, row32, row33 = personacontainer.columns([1, 1, 1])
     
     customer_title, customer_company, deal_stage, deal_amount, competitor, history = None, None, None, None, None, None
     if customer_name:
         customer_title = example_profile[example_profile["contact_fullname"] == customer_name]["contact_function"].values[0]
         customer_company = example_profile[example_profile["contact_fullname"] == customer_name]["company_name"].values[0]
-        # deal_stage = example_profile[example_profile["contact_fullname"] == customer_name]["deal_stage"].values[0]
+        deal_stage = example_profile[example_profile["contact_fullname"] == customer_name]["deal_stage"].values[0]
         # deal_amount = example_profile[example_profile["contact_fullname"] == customer_name]["deal_amount"].values[0]
         competitor = example_profile[example_profile["contact_fullname"] == customer_name]["competitor"].values[0]
         history = example_profile[example_profile["contact_fullname"] == customer_name]["conversation_thread"].values[0]
     
     # Input fields for customer name, title, company, deal stage, deal amount, competitor, history
-    customer_title = row12.text_input("Title:", value = customer_title, key="title")
-    customer_company = row21.text_input("Company:", value= customer_company, key="company")
-    # deal_stage = row21.text_input("Deal Stage:", value= deal_stage, key="deal_stage")
+    customer_title = row11.text_input("Title:", value = customer_title, key="title")
+    customer_company = row12.text_input("Company:", value= customer_company, key="company")
+    deal_stage = row21.text_input("Deal Stage:", value= deal_stage, key="deal_stage")
     # deal_amount = row21.text_input("Deal Amount:", value= deal_amount, key="deal_amount")
     competitor = row22.text_input("Competitor:", value= competitor, key="competitor")
 
-    # Prepare the customer profile data
-    customer_profiles = pd.read_csv("assets/customer_personas.csv")
-    cp1 = row31.selectbox("Customer Profile", customer_profiles[customer_profiles["category_name"] == "Buyer Persona"]["persona_name"].tolist(), index=None, placeholder="Buyer Persona")
-    cp2 = row32.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Company Size"]["persona_name"].tolist(), index=None, placeholder="Company Size", label_visibility="hidden")
-    cp3 = row33.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Role"]["persona_name"].tolist(), index=None, placeholder="Role", label_visibility="hidden")
-
+    # # Prepare the customer profile data
+    # customer_profiles = pd.read_csv("assets/customer_personas.csv")
+    # cp1 = row31.selectbox("Customer Profile", customer_profiles[customer_profiles["category_name"] == "Buyer Persona"]["persona_name"].tolist(), index=None, placeholder="Buyer Persona")
+    # cp2 = row32.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Company Size"]["persona_name"].tolist(), index=None, placeholder="Company Size", label_visibility="hidden")
+    # cp3 = row33.selectbox(" ", customer_profiles[customer_profiles["category_name"] == "Role"]["persona_name"].tolist(), index=None, placeholder="Role", label_visibility="hidden")
+    cp1,cp2,cp3 = None, None, None
     # Text area for conversation history
     history = personacontainer.text_area("Conversation History", value= history, height=container_height-320, key="history")
 
@@ -276,28 +276,37 @@ def get_user_input(container_height = 580):
 def get_recommendations(user_input, customer_name, customer_title, customer_company, cp1, cp2, cp3, history, competitor):
     # Get the summary and recommendations
     summary = create_summary(user_input, customer_name, customer_title, customer_company)
-    summary_embedding = get_embedding(user_input) #replace with user_input or summary if simalrity search on summary instead of user input
+    summary_embedding = get_embedding(summary) #replace with user_input or summary if simalrity search on summary instead of user input
     df = calculate_similarity_ordered(summary_embedding)
     df_formatted = format_display_df(df)
     
     # Store the recommendations in session state
     st.session_state.display_df = df_formatted.head(7)
     st.session_state.summary = summary
+    st.session_state.enyk = generate_enyk(df_formatted.head(7), user_input, customer_name, customer_title, customer_company, history, competitor)
     
     # Log the recommendations
     update_log_parquet(customer_name, customer_title, customer_company, cp1, cp2, cp3, user_input, df.head(7))
 
 
-def dislay_enyk(selected_recommendations):
-    enyk = generate_enyk(selected_recommendations, user_input, customer_name, customer_title, customer_company, history, competitor)
+def dislay_enyk():
+    enyk = st.session_state.enyk
     # enyk = "Everything You Need to Know is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
     # st.write(enyk)
-    tab1, tab2, tab3, tab4 = st.tabs(["Interaction Summary", "Recommended Features", "Competitor Positioning", "Follow-Up Question"])
-    # tab1.write(enyk["customerSummary"])
-    tab1.write(st.session_state.summary)
-    tab2.write(enyk["recommendedSolution"])
-    tab3.write(enyk["competitorAdvantage"])
-    tab4.write(enyk["nextSteps"])
+    with st.container(border=True, height=485):
+        tab1, tab2 = st.tabs(["Interaction Summary", "Historical Needs"])
+        ct1 = tab1.container(height=350, border=False)
+        ct1.markdown(enyk["customer_needs_summary"])
+        # ct1.markdown(st.session_state.summary)
+        ct2 = tab2.container(height=350, border=False)
+        ct2.markdown(enyk["historical_needs_summary"])
+    
+    with st.container(border=True, height=485):
+        tab3, tab4 = st.tabs(["Competitor Comparison", "Recommended Features & Benefits"])
+        ct3 = tab3.container(height=350, border=False)
+        ct3.markdown(enyk["competitor_comparison"])
+        ct4 = tab4.container(height=350, border=False)
+        ct4.markdown(enyk["recommended_features_benefits"])
 
 
 ## Setup
@@ -318,36 +327,25 @@ with input_container:
 if st.session_state.clicked:
     
     # Prepare the display
-    input_empty.empty()
+    st.divider()
+    # input_empty.empty()
     st.markdown("##### Proponent Recommendations:")
-    col1, col2 = st.columns([3, 4])
-    col2_cont = col2.container(border=True, height=container_height)
-    
-    if st.button("<< Update Input"):
-        st.session_state.clicked = False
-        st.rerun()
+    main_col1, main_col2 = st.columns([3, 5])        
 
-    # Tab 1 - Customer Asks and Recommendations
-    with col1:
-
+    # Tab 2 - Enablement Center
+    with main_col2:
         # Container 1: Recommendations & Feature Picker
         selected_df = st.data_editor(
             st.session_state.display_df,
             column_config=column_config_recommendations,
-            column_order=["select", "customerPainPoint", "featureName", "ss_Normalized"],
+            column_order=["select", "customerPainPoint", "featureName", "valueProposition", "ss_Normalized"],
             hide_index=True,
             use_container_width=True,
         )
         selected_recommendations = selected_df[selected_df["select"] == True]
 
-
-        # Container 2: Everything You Need to Know
-        with st.container(border=True, height=container_height-310):
-            dislay_enyk(selected_recommendations)
-        
-
-    # Tab 2 - Enablement Center
-    with col2:
+        # Container 2: Sales Enablement Tools
+        col2_cont = st.container(border=True, height=container_height)
         lp, salesdeck, demovideo, email = col2_cont.tabs(["Landing Page", "Sales Deck", "Demo Video", "Email"])
         # Tab 21 - Draft Email
         with email:
@@ -381,7 +379,7 @@ if st.session_state.clicked:
             col1, col2, col3 = st.columns([2.5, 2, 1.5])
             col1.markdown("#### Personalized Demo Video")
             # create_video(selected_recommendations) # Uncomment this line in local deployment to enable video generation
-            st.warning("Video generation is not available in demo. Below preview is pre-generated.") # Comment this line in local deployment
+            # st.warning("Video generation is not available in demo. Below preview is pre-generated.") # Comment this line in local deployment
             if os.path.exists("downloads/video.mp4"):
                 with open("downloads/video.mp4", "rb") as file:
                     col3.download_button(
@@ -447,3 +445,7 @@ if st.session_state.clicked:
                 with open("downloads/index.html", "r") as file:
                     html_template = file.read()
                 components.html(html_template, height=4000)
+
+    # Tab 1 - Customer Asks and Recommendations
+    with main_col1:
+        dislay_enyk()

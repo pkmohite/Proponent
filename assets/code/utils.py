@@ -5,7 +5,7 @@ from PyPDF2 import PdfMerger
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from element_configs import parquet_schema_log, config_about
+from assets.code.element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
 from dotenv import load_dotenv

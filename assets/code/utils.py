@@ -28,14 +28,14 @@ def check_password():
         
         tab1, tab2 = logincont.tabs(["Log In", "Login as Guest"])
         ## Log In
-        form1 = tab1.form("Log In", border=False)
-        form1.text_input("Username", key="username")
-        form1.text_input("Password", type="password", key="password")
-        form1.form_submit_button("Log in", on_click=password_entered)
+        with tab1.form("Log In", border=False):
+            st.text_input("Username", key="username")
+            st.text_input("Password", type="password", key="password")
+            st.form_submit_button("Log in", on_click=password_entered)
         ## Log in as Guest
-        form2 = tab2.form("Guest", border=False)
-        form2.text_input("Email", key="email")
-        form2.form_submit_button("Log in as Guest", on_click=submit_email)
+        with tab2.form("Guest", border=False):
+            st.text_input("Email", key="email")
+            st.form_submit_button("Log in as Guest", on_click=submit_email)
                 
 
     def password_entered():

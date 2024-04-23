@@ -258,7 +258,7 @@ def get_user_input(container_height = 580):
 
         # Get the recommendations
         get_recommendations(user_input, customer_name, customer_title, customer_company, cp1, cp2, cp3, history, competitor)
-
+        
     # Button to clear the view
     if rec2.button("Clear View"):
         # delete st.session_state.clicked
@@ -279,13 +279,54 @@ def get_recommendations(user_input, customer_name, customer_title, customer_comp
     df = calculate_similarity_ordered(summary_embedding)
     df_formatted = format_display_df(df)
     
-    # Store the recommendations in session state
-    st.session_state.display_df = df_formatted.head(7)
+    # Store recommendations and AI generated content in session state
     # st.session_state.summary = summary
+    st.session_state.display_df = df_formatted.head(7)
     st.session_state.enyk = generate_enyk(df_formatted.head(7), user_input, customer_name, customer_title, customer_company, history, competitor)
+    st.session_state.email_body = generate_customized_email(df_formatted.head(5), user_input, customer_name, customer_title, customer_company, history, competitor)
+    generate_lp_content(df_formatted.head(5), user_input, customer_name, customer_title, customer_company)
     
     # Log the recommendations
     update_log_parquet(customer_name, customer_title, customer_company, cp1, cp2, cp3, user_input, df.head(7))
+
+
+def generate_lp_content(selected_recommendations, user_input, customer_name, customer_title, customer_company, model="gpt-3.5-turbo-0125"):
+    # Generate content for the HTML template using OpenAI
+    hero_title, hero_description, feature_titles, value_propositions, webURL = (
+        generate_content(
+            recommendations=selected_recommendations,
+            user_input=user_input,
+            customer_name=customer_name,
+            customer_title=customer_title,
+            customer_company=customer_company,
+            model=model,
+        )
+    )
+    # Generate HTML for feature sections
+    features = [
+        generate_feature_section(
+            feature_titles[i],
+            value_propositions[i],
+            webURL[i],
+        )
+        for i in range(len(feature_titles))
+    ]
+    # deine hero_images
+    hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
+                "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
+                "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
+
+    # Generate the HTML template
+    html_template = generate_html_template(
+        hero_title,
+        hero_description,
+        hero_images,
+        features,
+    )
+    
+    # Save the generated HTML template to a file
+    with open("downloads/index.html", "w") as file:
+        file.write(html_template)
 
 
 def dislay_enyk():
@@ -330,10 +371,6 @@ if st.session_state.clicked:
     input_empty.empty()
     st.markdown("##### Proponent Recommendations:")
     main_col1, main_col2 = st.columns([3, 5])        
-    # button to go back to user input
-    if st.button("Back to User Input"):
-        st.session_state.clicked = False
-        st.rerun()
 
     # Tab 2 - Enablement Center
     with main_col2:
@@ -353,8 +390,8 @@ if st.session_state.clicked:
         # Tab 21 - Draft Email
         with email:
             st.markdown("#### Personalized Email Draft")
-            email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company, history, competitor)
-            st.write_stream(email_body)
+            # email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company, history, competitor)
+            st.write_stream(st.session_state.email_body)
             # email_body = "Email Preview is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
             # st.write(email_body)
 
@@ -398,41 +435,6 @@ if st.session_state.clicked:
         with lp:
             col1, col2, col3 = st.columns([2.5, 2, 1.5])
             col1.markdown("#### Personalized Landing Page")
-            # Generate content for the HTML template using OpenAI
-            hero_title, hero_description, feature_titles, value_propositions, webURL = (
-                generate_content(
-                    recommendations=selected_recommendations,
-                    user_input=user_input,
-                    customer_name=customer_name,
-                    customer_title=customer_title,
-                    customer_company=customer_company,
-                    model="gpt-3.5-turbo-0125",
-                )
-            )
-            # Generate HTML for feature sections
-            features = [
-                generate_feature_section(
-                    feature_titles[i],
-                    value_propositions[i],
-                    webURL[i],
-                )
-                for i in range(len(feature_titles))
-            ]
-            # deine hero_images
-            hero_images = ["https://imagedelivery.net/XawdbiDo2zcR8LA99WkwZA/9ae4b3c7-108b-4635-4d76-489b1d195700/website",
-                        "https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/NaamaGros/WM-boards/Goals_strategy.png",
-                        "https://assets-global.website-files.com/60058af53d79fbd8e14841ea/60181447286c0bee8d42171a_73dc280a-a211-4157-8e7c-b123b1d4ffa0_product_hero_animation_placeholder.png"]
-
-            # Generate the HTML template
-            html_template = generate_html_template(
-                hero_title,
-                hero_description,
-                hero_images,
-                features,
-            )
-            # Save the generated HTML template to a file
-            with open("downloads/index.html", "w") as file:
-                file.write(html_template)
 
             # Download the generated HTML template
             with open("downloads/index.html", "rb") as file:
@@ -451,3 +453,14 @@ if st.session_state.clicked:
     # Tab 1 - Customer Asks and Recommendations
     with main_col1:
         dislay_enyk()
+
+    # Buttons!
+    col1, col2, col3 = st.columns([1, 1, 6])
+    if col1.button("Back to User Input"):
+        st.session_state.clicked = False
+        st.rerun()
+
+    if col2.button("Update Content"):
+        st.session_state.email_body = generate_customized_email(selected_recommendations, user_input, customer_name, customer_title, customer_company, history, competitor)
+        generate_lp_content(selected_recommendations, user_input, customer_name, customer_title, customer_company)
+        st.rerun()  

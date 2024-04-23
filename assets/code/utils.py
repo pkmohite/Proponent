@@ -5,7 +5,7 @@ from PyPDF2 import PdfMerger
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from assets.code.element_configs import parquet_schema_log, config_about
+from element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
 from dotenv import load_dotenv
@@ -462,4 +462,3 @@ def set_page_config(page_title, page_icon = "assets/images/logo.ico", layout="wi
     initial_sidebar_state=initial_sidebar_state,
     menu_items={'Get Help': "mailto:prashant@yourproponent.com",
                 'About': config_about})
-

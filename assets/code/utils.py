@@ -360,6 +360,7 @@ def load_mf_data(file="assets/mf_embeddings.parquet"):
         st.stop()
     else:
         mf_data = pd.read_parquet(file)
+        # mf_data = pd.read_csv("assets/mf_embeddings.csv")
     
     return mf_data
 

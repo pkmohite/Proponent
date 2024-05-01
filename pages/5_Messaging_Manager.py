@@ -99,7 +99,7 @@ def add_new_message():
 def manage_mf():
     # Load the data
     mf_data = load_mf_data()
-    edited_data = st.data_editor(mf_data, column_config=column_config_edit, use_container_width=True, hide_index=True, num_rows='dynamic')
+    edited_data = st.data_editor(mf_data, use_container_width=True, hide_index=True, num_rows='dynamic')
     
     if st.button("Update Changes"):
         # Delete files from the slides, videos, and web folders if the file name is removed

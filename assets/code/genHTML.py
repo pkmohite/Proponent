@@ -288,3 +288,103 @@ def generate_content(recommendations, user_input = "", customer_name = "", custo
 
     return hero_title, hero_description, feature_titles, value_propositions, web_URl
     
+def generate_content2(recommendations, industry, history_email, history_chat, internal_notes, contact_summary, model="gpt-3.5-turbo-0125"):
+    # Get the OpenAI API key
+    pass_openAI_key()
+
+    # Extract the feature names and value propositions from the recommendations DataFrame into a list
+    feature_list = recommendations["featureName"].tolist()
+    value_prop_list = recommendations["valueProposition"].tolist()
+    web_URl = recommendations["webURL"].tolist()
+
+    # Create the conversation for the OpenAI API
+    conversation = [
+        {
+            "role": "system",
+            "content": "You are a helpful product marketing assistant designed to output JSON.",
+        },
+        {
+            "role": "user",
+            "content": f"""
+            Here is the context for generating personalized content for the SaaS landing page:
+
+            Industry: {industry}
+            Email History: {history_email}
+            Chat History: {history_chat}
+            Internal Notes: {internal_notes}
+            Contact Summary: {contact_summary}
+
+            Based on the provided information, we have identified the following features and value propositions:
+            Features: {feature_list}
+            Value Propositions: {value_prop_list}
+
+            Please generate a personalized title and a very short subtitle text for the hero section of the SaaS landing page. The response should be in JSON format with the following structure:
+            {{
+                "hero_title": "The title for the hero section of the SaaS landing page.",
+                "hero_description": "A description for the hero section of the SaaS landing page."
+            }}
+            """,
+        },
+    ]
+
+    # Generate the hero title and description using the OpenAI API
+    response = openai.chat.completions.create(
+        model=model,
+        response_format={
+            "type": "json_object"
+        },
+        messages=conversation
+    )
+    response = json.loads(response.choices[0].message.content)
+    hero_title = response["hero_title"]
+    hero_description = response["hero_description"]
+
+    # Initialize empty lists to store the generated feature titles and value propositions
+    feature_titles = []
+    value_propositions = []
+
+    # Iterate over all the entries
+    for i in range(len(feature_list)):
+        # Create the conversation for the OpenAI API
+        conversation2 = [
+            {
+                "role": "system",
+                "content": "You are a helpful product marketing assistant designed to output JSON.",
+            },
+            {
+                "role": "user",
+                "content": f"""
+                Here is the context for generating personalized content for the SaaS landing page:
+
+                Industry: {industry}
+                Email History: {history_email}
+                Chat History: {history_chat}
+                Internal Notes: {internal_notes}
+                Contact Summary: {contact_summary}
+
+                Please generate a personalized title and a very short subtitle text to highlight the feature {feature_list[i]} and value prop {value_prop_list[i]} for the customer on a landing page. The response should be in JSON format with the following structure:
+                {{
+                    "feature_title": "The title for the feature section of the SaaS landing page.",
+                    "value_proposition": "A value proposition for the feature section of the SaaS landing page."
+                }}
+                """,
+            },
+        ]
+
+        # Generate the feature title and value proposition using the OpenAI API
+        response = openai.chat.completions.create(
+            model=model,
+            response_format={
+                "type": "json_object"
+            },
+            messages=conversation2
+        )
+        response = json.loads(response.choices[0].message.content)
+        feature_title = response["feature_title"]
+        value_proposition = response["value_proposition"]
+
+        # Append the generated feature title and value proposition to the respective lists
+        feature_titles.append(feature_title)
+        value_propositions.append(value_proposition)
+
+    return hero_title, hero_description, feature_titles, value_propositions, web_URl

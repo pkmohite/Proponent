@@ -385,7 +385,7 @@ def customer_attributes():
     with tab1:
         # Display history_summary from company_db where company_name == st.session_state.customer_name
         history_summary = company_db[company_db['company_name'] == st.session_state.customer_name]['history_summary'].values[0]
-        st.markdown("###### ?")
+        st.markdown("###### Deal History")
         tab1container = st.container(border=True, height=300)
         tab1container.markdown(history_summary)
         

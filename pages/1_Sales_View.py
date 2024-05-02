@@ -1,9 +1,8 @@
 import os
 import pandas as pd
 import streamlit as st
-from assets.code.element_configs import column_config_recommendations, config_about, config_painpoint_selector
-from assets.code.utils import generate_customized_email, pass_openAI_key, get_embedding, calculate_similarity_ordered, transcribe_video, load_mf_data
-from assets.code.utils import create_summary, update_log_parquet, create_image_deck, displayPDF, verify_password, set_page_config, generate_enyk
+from assets.code.element_configs import config_painpoint_selector
+from assets.code.utils import pass_openAI_key, create_image_deck, displayPDF, verify_password, set_page_config
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 from assets.code.genHTML import generate_content2, generate_feature_section, generate_html_template
 import streamlit.components.v1 as components

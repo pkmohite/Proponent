@@ -13,7 +13,7 @@ def intro_page():
         st.header("Welcome to Proponent!")
         st.write("Read this guide to learn how Proponent can help you create personalized, product-led buying experiences for your customers.")
         if st.button("Done reading? Click here to get started"):
-            st.switch_page("pages/1_Sales_View.py")
+            st.switch_page("pages/1_Sales_Enablement.py")
     
     with col2:
         st.image("assets/images/kelly-kapoor.svg", use_column_width=True)

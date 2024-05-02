@@ -97,10 +97,12 @@ with col2:
     col2a, col2b, col2c = st.columns([1,3,1])
     if not check_password():
         st.stop()
+    else:
+        st.switch_page("pages/1_Sales_Enablement.py")
 
-# Welcome Page
-col1,col2,col3 = st.columns([1,3,1])
-with col2:
-    intro_page()
+# # Welcome Page
+# col1,col2,col3 = st.columns([1,3,1])
+# with col2:
+#     intro_page()
 
 

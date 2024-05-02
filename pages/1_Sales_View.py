@@ -542,7 +542,7 @@ def sales_content_generator():
     # Create a demo video
     if col3.button("Create Personalized Product Demo"):
         create_demo_video()
-    if col4.button("Important Links & Resources"):
+    # if col4.button("Important Links & Resources"):
         # display_resources()
 
 def create_landing_page():

@@ -337,7 +337,7 @@ def create_image_deck(df):
     print(f"Combined image PDF created: {output_path}")
 
 
-def displayPDF(file, column = st):
+def displayPDF(file, column = st, width = 840, height = 520):
     # Opening file from file path
     with open(file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
@@ -346,7 +346,7 @@ def displayPDF(file, column = st):
     # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
     
     # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="840" height="520" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width={width} height={height} type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)

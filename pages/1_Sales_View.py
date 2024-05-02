@@ -543,13 +543,12 @@ def sales_content_generator():
     if col3.button("Create Personalized Product Demo"):
         create_demo_video()
     if col4.button("Important Links & Resources"):
-        display_resources()
+        # display_resources()
 
 def create_landing_page():
 
     def generate_lp_content(model="gpt-3.5-turbo-0125"):
         # Generate content for the HTML template using OpenAI
-        st.write(selected_recommendations)
         hero_title, hero_description, feature_titles, value_propositions, webURL = generate_content2(
             recommendations=selected_recommendations,
             industry=industry,
@@ -559,7 +558,6 @@ def create_landing_page():
             contact_summary=contact_summary,
             model=model,
         )
-        st.write(webURL)
         # Generate HTML for feature sections
         features = [
             generate_feature_section(
@@ -605,8 +603,37 @@ def create_landing_page():
             html_template = file.read()
         components.html(html_template, height=4000)
 
+def create_sales_deck():
+    col1, col2, col3 = st.columns([2.5, 2, 1.5])
+    col1.markdown("#### Personalized Sales Deck")
+    create_image_deck(selected_recommendations)
+    with open("downloads/combined_PDF.pdf", "rb") as file:
+        col3.download_button(
+            label="Download PDF Deck",
+            data=file.read(),
+            file_name="customized_deck.pdf",
+            mime="application/pdf",
+        )
+    
+    if os.path.exists("downloads/combined_PDF.pdf"):
+        displayPDF("downloads/combined_PDF.pdf", width=810, height=560)
+    else:
+        st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
-
+def create_demo_video():
+    col1, col2, col3 = st.columns([2.5, 2, 1.5])
+    col1.markdown("#### Personalized Demo Video")
+    if os.path.exists("downloads/video.mp4"):
+        with open("downloads/video.mp4", "rb") as file:
+            col3.download_button(
+                label="Download MP4 File",
+                data=file.read(),
+                file_name="downloads/video.mp4",
+                mime="video/mp4",
+            )
+        st.video("downloads/video.mp4")
+    else:
+        st.error("Error generating video. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
 ## Setup
 setup_streamlit()

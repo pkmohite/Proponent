@@ -9,6 +9,7 @@ from assets.code.element_configs import parquet_schema_log, config_about
 import assemblyai as aai
 from fpdf import FPDF
 from dotenv import load_dotenv
+from openai import OpenAI
 
 ## Load the environment variables
 load_dotenv()
@@ -336,7 +337,7 @@ def create_image_deck(df):
     print(f"Combined image PDF created: {output_path}")
 
 
-def displayPDF(file, column = st):
+def displayPDF(file, column = st, width = 840, height = 520):
     # Opening file from file path
     with open(file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
@@ -345,7 +346,7 @@ def displayPDF(file, column = st):
     # pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="600" type="application/pdf">'
     
     # Method 2 - Using IFrame
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="840" height="520" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width={width} height={height} type="application/pdf"></iframe>'
 
     # Displaying File
     column.markdown(pdf_display, unsafe_allow_html=True)
@@ -360,6 +361,7 @@ def load_mf_data(file="assets/mf_embeddings.parquet"):
         st.stop()
     else:
         mf_data = pd.read_parquet(file)
+        # mf_data = pd.read_csv("assets/mf_embeddings.csv")
     
     return mf_data
 
@@ -462,3 +464,113 @@ def set_page_config(page_title, page_icon = "assets/images/logo.ico", layout="wi
     initial_sidebar_state=initial_sidebar_state,
     menu_items={'Get Help': "mailto:prashant@yourproponent.com",
                 'About': config_about})
+
+
+
+## Archive Functions
+
+
+def product_chatbot():
+    client = OpenAI(api_key=os.getenv("USER_API_KEY"))
+
+    if "openai_model" not in st.session_state:
+        st.session_state["openai_model"] = "gpt-3.5-turbo"
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    col1, col2 = st.columns([6, 1])
+    prompt = col1.chat_input("Say something")
+    if col2.button("Reset Chat"):
+        st.session_state.messages = []
+        with st.chat_message("assistant"):
+            st.markdown("Hello! How can I help you today?")
+        st.session_state.messages.append({"role": "assistant", "content": "Hello! How can I help you today?"})
+
+    if prompt :
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):
+            stream = client.chat.completions.create(
+                model=st.session_state["openai_model"],
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
+                stream=True,
+            )
+            response = st.write_stream(stream)
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+    # for message in st.session_state.messages:
+    #     with st.chat_message(message["role"]):
+    #         st.markdown(message["content"])
+
+def product_chatbot_v2():
+    client = OpenAI(api_key=os.getenv("USER_API_KEY"))
+    if "openai_model" not in st.session_state:
+        st.session_state["openai_model"] = "gpt-3.5-turbo"
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    col1, col2 = st.columns([6, 1])
+    prompt = col1.chat_input("Say something")
+    if col2.button("Reset Chat"):
+        st.session_state.messages = []
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        with st.chat_message("assistant"):
+            # Use ChatGPT API to determine user's choice
+            choice_prompt = f"Based on the user's input: '{prompt}', determine which of the following options the user is requesting:\n1. Create Personalized Landing Webpage\n2. Create Personalized Sales Deck\n3. Create Personalized Product Demo\n4. Answer general questions\n\nProvide your response in JSON format with the key 'choice' and the corresponding option number as the value."
+            choice_response = client.chat.completions.create(
+                model=st.session_state["openai_model"],
+                messages=[{"role": "user", "content": choice_prompt}],
+            )
+            choice_result = choice_response.choices[0].message.content.strip()
+            choice_json = json.loads(choice_result)
+            choice = int(choice_json["choice"])
+
+            if choice == 1:
+                # response = create_personalized_landing_webpage()
+                col1, col2, col3 = st.columns([2.5, 2, 1.5])
+                col1.markdown("#### Personalized Sales Deck")
+                create_image_deck(selected_recommendations)
+                with open("downloads/combined_PDF.pdf", "rb") as file:
+                    col3.download_button(
+                        label="Download PDF Deck",
+                        data=file.read(),
+                        file_name="customized_deck.pdf",
+                        mime="application/pdf",
+                    )
+                
+                if os.path.exists("downloads/combined_PDF.pdf"):
+                    displayPDF("downloads/combined_PDF.pdf", st)
+                else:
+                    st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")                
+
+            elif choice == 2:
+                # response = create_personalized_sales_deck()
+                response = "Sales Deck Creation is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
+            elif choice == 3:
+                # response = create_personalized_product_demo()
+                response = "Product Demo Creation is not available in this demo deployment. Please download the PDF deck and video for the recommendations."
+            else:
+                
+                # Concatenate the feature names and value propositions at the line level
+                features_value_prop = "\n".join([f"{feature}: {value_prop}" for feature, value_prop in zip(selected_recommendations["featureName"], selected_recommendations["valueProposition"])])
+                # Pass context variables to the general query
+                context = f"Chat History: {history_chat}\nEmail History: {history_email}\nRecommended Features: {features_value_prop}\nCompetitor Battlecard: {competitor_battlecard}"
+                general_query_prompt = f"{context}\n\nUser Query: {prompt}\n\nAssistant Response:"
+                stream = client.chat.completions.create(
+                    model=st.session_state["openai_model"],
+                    messages=[
+                        {"role": "system", "content": general_query_prompt},
+                        *[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+                    ],
+                    stream=True,
+                )
+                response = st.write_stream(stream)
+                st.session_state.messages.append({"role": "assistant", "content": response})

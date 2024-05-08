@@ -2,7 +2,6 @@ import streamlit as st
 import pyarrow as pa
 
 # Home - Recommendations Table
-
 column_config_recommendations = {
     "select": st.column_config.Column(label="Select", disabled=False, width="small"),
     "featureName": st.column_config.Column(label="Recommended Feature", disabled=True, width="medium"),
@@ -19,6 +18,14 @@ column_config_recommendations = {
     "PDF_Present": None,
     "Video_Present": None,
     "Web_URL_Present": None,
+}
+
+# Home - Recommendations Table
+config_painpoint_selector = {
+    "select": st.column_config.Column(label="Select", disabled=False, width="small"),
+    "featureName": st.column_config.Column(label="Recommended Feature", disabled=True, width="medium"),
+    "customerPainPoint": st.column_config.Column(label="Customer Pain Point", disabled=True, width="medium"),
+    "similarity_score": st.column_config.ProgressColumn(label="Similarity Score", width="medium"),
 }
 
 # Home - About
@@ -110,5 +117,6 @@ parquet_schema_mf = pa.schema([
     pa.field("pdfFile", pa.string(), nullable=True),
     pa.field("videoFile", pa.string(), nullable=True),
     pa.field("webURL", pa.string(), nullable=True),
+    pa.field("customerName", pa.string(), nullable=True),
     pa.field("embedding", pa.list_(pa.float64()), nullable=True)
 ])

@@ -18,29 +18,29 @@ def intro_page():
     with col2:
         st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
     
-    ## Step by Step Guide
-    st.container(height=30,border=False)
-    st.markdown("### Quick Start Guide")
-    st.write("In this guide we'll assume a role of a Sales Manager at a SaaS company. Let's say you are interacting with a customer within your CRM tool and you want to create personalized sales enablement content for them. Here's how you can do it using Proponent:")
-    with st.expander("Step 1: Select the customer name you are interacting with from the dropdown menu"):
-        st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
-        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+    # ## Step by Step Guide
+    # st.container(height=30,border=False)
+    # st.markdown("### Quick Start Guide")
+    # st.write("In this guide we'll assume a role of a Sales Manager at a SaaS company. Let's say you are interacting with a customer within your CRM tool and you want to create personalized sales enablement content for them. Here's how you can do it using Proponent:")
+    # with st.expander("Step 1: Select the customer name you are interacting with from the dropdown menu"):
+    #     st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
+    #     # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
-    with st.expander("Step 2: Upload a Customer Interaction snippet or any product query and click 'Get Recommendations'"):
-        st.write("Upload a customer interaction snippet, You can upload a Zoom call transcript, email, chat log, or any other text-based interaction with the customer. You can also type in a product query to get recommendations.")
-        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+    # with st.expander("Step 2: Upload a Customer Interaction snippet or any product query and click 'Get Recommendations'"):
+    #     st.write("Upload a customer interaction snippet, You can upload a Zoom call transcript, email, chat log, or any other text-based interaction with the customer. You can also type in a product query to get recommendations.")
+    #     # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
-    with st.expander("Step 3: Review and shortlist recommendations that you want to include in the sales enablement content"):
-        st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
-        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+    # with st.expander("Step 3: Review and shortlist recommendations that you want to include in the sales enablement content"):
+    #     st.write("Proponent uses advanced NLU to analyze the customer's unique pain points and generate tailored product recommendations. Review and select the most relevant recommendations from Proponent's suggestions.")
+    #     # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
-    with st.expander("Step 4: Click 'Generate Content' to create personalized sales enablement content for the customer!"):
-        st.write("Automatically create personalized sales enablement content like presentations, emails, and demo videos. Share the content with your customer and have a meaningful, product-led conversation that resonates with their needs.")
-        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+    # with st.expander("Step 4: Click 'Generate Content' to create personalized sales enablement content for the customer!"):
+    #     st.write("Automatically create personalized sales enablement content like presentations, emails, and demo videos. Share the content with your customer and have a meaningful, product-led conversation that resonates with their needs.")
+    #     # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
-    with st.expander("Step 5: Get Insights into Customer Pain Points and Preferences in the Analytics Dashboard"):
-        st.write("Gain valuable insights into customer pain points and preferences by analyzing Proponent's usage logs. Use these insights to refine your messaging and product recommendations.")
-        # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
+    # with st.expander("Step 5: Get Insights into Customer Pain Points and Preferences in the Analytics Dashboard"):
+    #     st.write("Gain valuable insights into customer pain points and preferences by analyzing Proponent's usage logs. Use these insights to refine your messaging and product recommendations.")
+    #     # st.image("assets/images/kelly-kapoor.svg", use_column_width=True)
 
     ## What Can You Do with Proponent?
     st.container(height=30,border=False)
@@ -97,12 +97,12 @@ with col2:
     col2a, col2b, col2c = st.columns([1,3,1])
     if not check_password():
         st.stop()
-    else:
-        st.switch_page("pages/1_Sales_Enablement.py")
+    # else:
+    #     st.switch_page("pages/1_Sales_Enablement.py")
 
-# # Welcome Page
-# col1,col2,col3 = st.columns([1,3,1])
-# with col2:
-#     intro_page()
+# Welcome Page
+col1,col2,col3 = st.columns([1,3,1])
+with col2:
+    intro_page()
 
 

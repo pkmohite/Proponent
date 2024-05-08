@@ -11,6 +11,7 @@ from fpdf import FPDF
 from dotenv import load_dotenv
 from openai import OpenAI
 
+
 ## Load the environment variables
 load_dotenv()
 
@@ -420,9 +421,14 @@ def update_log_parquet(
 # Function to get the log and the mf embeddings
 def get_mf_and_log(log_file = 'assets/log.parquet', mf_file = 'assets/mf_embeddings.parquet'):
    
-    # Read the Parquet file into an Arrow Table
-    table = pq.read_table(log_file)
-    
+    # Read the Parquet file into an Arrow Table, if not 
+    try:
+        table = pq.read_table(log_file)
+    except:
+        # Generate dummy data if the file does not exist
+        generate_dummy_data('assets/log.parquet')
+        st.success("Dummy data generated successfully!")
+        
     # Convert the Arrow Table to a Pandas DataFrame
     df = table.to_pandas()
     
@@ -465,6 +471,37 @@ def set_page_config(page_title, page_icon = "assets/images/logo.ico", layout="wi
     menu_items={'Get Help': "mailto:prashant@yourproponent.com",
                 'About': config_about})
 
+
+def generate_dummy_data(parquet_file):
+    # Generate dummy data
+    dummy_data = pd.DataFrame({
+        "customer_name": np.random.choice(["John", "Jane", "Mike", "Emily"], size=100),
+        "customer_title": np.random.choice(["Manager", "Director", "CXO"], size=100),
+        "customer_company": np.random.choice(["Company A", "Company B", "Company C"], size=100),
+        "persona_category1": np.random.choice(["Decision Maker", "Influencer", "Operational User"], size=100),
+        "persona_category2": np.random.choice(["1-100 Employees", "101-500", "500+ Employees"], size=100),
+        "persona_category3": np.random.choice(["Marketing Manager", "Software Engineer", "Product Manager"], size=100),
+        "user_input": np.random.choice(["Input 1", "Input 2", "Input 3"], size=100),
+        "paintpoints": [np.random.randint(1, 18, size=7) for _ in range(100)],
+        "date": pd.to_datetime(np.random.choice(pd.date_range(start='2023-04-01', end='2024-04-01'), size=100)).strftime("%Y-%m-%d"),
+        "time": pd.to_datetime(np.random.choice(pd.date_range(start='2022-01-01 10:00:00', end='2022-01-01 16:00:00', freq='s'), size=100)).strftime("%H:%M:%S")
+    })
+
+    # Convert the DataFrame to a PyArrow Table
+    table = pa.Table.from_pandas(dummy_data, preserve_index=False)
+
+    if os.path.exists(parquet_file):
+        # Read the existing data from the Parquet file
+        existing_data = pq.read_table(parquet_file)
+
+        # Concatenate the existing data with the new data
+        combined_data = pa.concat_tables([existing_data, table])
+
+        # Write the combined data back to the Parquet file
+        pq.write_table(combined_data, parquet_file)
+    else:
+        # If the Parquet file is empty or doesn't exist, write the new data directly
+        pq.write_table(table, parquet_file)
 
 
 ## Archive Functions

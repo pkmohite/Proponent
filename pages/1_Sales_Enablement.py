@@ -317,12 +317,11 @@ def product_chatbot_v3():
         messagecontainer = st.container(height=630, border=False)
         with messagecontainer.chat_message("assistant"):
             # Create a personalized prompt based on customer details
-            personalized_prompt = f"""As a product marketing expert, use the following customer details to provide a highly targeted response:\n\n Company Name: {st.session_state.customer_name}\nCompany Industry: {industry}\n
+            personalized_prompt = f""" You are a product marketing expert. Use the following context to offer short helpful answers to questions that a sales person from Monday.com may ask you. 
+            Response must be under 300 words. You MUST cite source:\n\n Company Name: {st.session_state.customer_name}\nCompany Industry: {industry}\n
             Deal Stage: {deal_stage}\nDeal Amount: {deal_amount}\n\nInternal Notes: {internal_notes}\nEmail History: {history_email}\nChat History: {history_chat}\n
-            Competitor Battlecard: {competitor_battlecard}\nCase Studies: {case_studies_concat} \nSummary of Contact's Involved in the deal and thier needs: {contact_summary}\n Recommended Features: {features_value_prop}\n\n
-            Focus on addressing the customer's specific needs, pain points, and challenges based on their industry, deal stage, and history. Highlight relevant features, 
-            benefits, and case studies that demonstrate how our product can provide value and solve their problems. Tailor your language and tone to match the customer's 
-            background and preferences.\n\nUser Query: {prompt}\n\nAssistant Response:"
+            Competitor Battlecard: {competitor_battlecard}\nCase Studies: {case_studies_concat} \nSummary of Contact's Involved in the deal and thier needs: {contact_summary}\n 
+            Recommended Features: {features_value_prop}\n\nSales Person Query: {prompt}\n\n "
             """
             stream = client.chat.completions.create(
                 model=st.session_state["openai_model"],

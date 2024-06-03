@@ -106,7 +106,7 @@ def customer_selector():
 def painpoint_selector():
     header = st.container(border=True, height=870)
     
-    tab0, tab1, tab2, tab3, tab4 = header.tabs(["Recommendations","AI Product Expert", "Case Studies", "Comeptitors", "Content Center"])
+    tab0, tab1, tab2, tab3, tab4 = header.tabs(["Recommendations","AI Product Expert", "Case Studies", "Competitors", "Content Center"])
 
     # Display the recommendations
     tab0.markdown("##### Feature Recommendations")
@@ -299,7 +299,7 @@ def update_recommendations():
 def product_chatbot_v3():
     client = OpenAI(api_key=os.getenv("USER_API_KEY"))
     if "openai_model" not in st.session_state:
-        st.session_state["openai_model"] = "gpt-3.5-turbo"
+        st.session_state["openai_model"] = "gpt-4o"
     if "messages" not in st.session_state:
         st.session_state.messages = []
 

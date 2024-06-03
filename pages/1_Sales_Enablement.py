@@ -119,22 +119,43 @@ def painpoint_selector():
     pp_data['select'] = [True] * 5 + [False] * (len(pp_data) - 5)
 
     selected_recommendations = []
+    
+    # Title row
+    cont.container(border=True)
+    cols = cont.columns([1, 5, 3, 2])
+    with cols[0]:
+        st.write("**Select**")
+    with cols[1]:
+        st.write("**Customer Quote**")
+    with cols[2]:
+        st.write("**Feature**")
+    with cols[3]:
+        st.write("**Relevance**")
 
+    # Recommendation rows
     for index, row in pp_data.iterrows():
         with cont.container(border=True):
-            cols = st.columns([1, 4, 4, 2])
+            cols = st.columns([1, 5, 3, 2])
             
             with cols[0]:
                 select = st.checkbox("Select", value=row['select'], key=f"select_{index}", label_visibility="collapsed")
             
             with cols[1]:
-                st.write(f"**Pain Point:** {row['customerPainPoint']}")
+                st.write(f"\"{row['quote']}\"")
             
             with cols[2]:
-                st.write(f"**Feature:** {row['featureName']}")
+                st.write(row['featureName'])
             
             with cols[3]:
-                st.write(f"**Similarity:** {row['similarity_score']:.2f}")
+                relevance_score = row['relevance_score']
+                if relevance_score == "High":
+                    st.write(f"<span style='color:green'>{relevance_score}</span>", unsafe_allow_html=True)
+                elif relevance_score == "Medium":
+                    st.write(f"<span style='color:yellow'>{relevance_score}</span>", unsafe_allow_html=True)
+                elif relevance_score == "Low":
+                    st.write(f"<span style='color:red'>{relevance_score}</span>", unsafe_allow_html=True)
+                else:
+                    st.write(relevance_score)
 
             if select:
                 selected_recommendations.append(row)

@@ -136,18 +136,24 @@ Alice: Perfect, next Tuesday 2pm CT works on my end. I'll get that meeting on th
 
 Jason: Excellent, thank you again Alice. I know I'm just scratching the surface, but I'm seriously impressed with Monday.com's breadth of functionality so far. I'm confident we're on the right track to finally get our messy processes streamlined and centralized.
 
-Alice: That's great to hear, Jason. I really appreciate you taking the time to thoroughly vet our solution. Looking forward to next week's discussion!""",This is the summary of customer interaction,The customer has strongly expressed the need to have support for mobile.,Asana
+Alice: That's great to hear, Jason. I really appreciate you taking the time to thoroughly vet our solution. Looking forward to next week's discussion!""","Norman-Day has been exploring Monday.com to streamline their HR and recruitment processes. They've been impressed with the automation capabilities and integrations with existing tools. They have specific requirements around compliance, document management, and recruitment workflows. They're eager to implement the platform but need guidance on meeting their specific security and compliance requirements.","* Follow up with Jason Strickland to discuss security and compliance requirements in more detail
+* Loop in David Lee, security expert, to provide guidance on setting up granular permissions and guest access
+* Send over a formal proposal with pricing details and an outline of the onboarding and training process
+* Schedule a call to discuss the implementation process and address any further questions or concerns
+* Emphasize the importance of security and compliance, and highlight Monday.com's robust security framework and commitment to meeting the latest compliance requirements.
+* Set up a follow-up meeting with Jason and recruitment manager Amy Wong to discuss recruitment workflows and demo the hiring and onboarding solutions.
+* Coordinate with recruiting expert to join the call and provide a mock end-to-end scenario tailored for Norman-Day's hiring workflows.",Asana
 Apex Systems,Manufacturing,Qualified To Buy,15000,Direct Traffic,This is sample email history,This is sample chat history,This is the summary of customer interaction,The customer has strongly expressed the need to have support for mobile.,Smartsheets
 BlueSky Media,Marketing,Proposal Sent,45000,Referral,"<!-- Email, Subject: Request for Pricing & Feature Details - 2024-04-03 14:30:00 -->
 
-From: Sarah Johnson
+From: Sarah Johnson 
 To: John Doe
 
 Subject: Request for Pricing & Feature Details
 
 Hi John,
 
-Thanks for the informative demo of Monday.com last week. Our team was impressed with the platform's capabilities, particularly the ability to connect boards and mirror columns to keep information synchronized across related projects.
+Thanks for the informative demo of Monday.com last week. Our team was impressed with the platform's capabilities, particularly the ability to connect boards and mirror columns to keep information synchronized across related projects. 
 
 As discussed, we're currently evaluating solutions to streamline our marketing campaign management and content production workflows. The content calendar template and marketing campaign management features in Monday.com seem like a great fit.
 
@@ -168,7 +174,7 @@ Hi Sarah,
 
 Thank you for reaching out and for your interest in Monday.com. I'm delighted to hear that your team found value in the demo and that our marketing solutions align with your needs.
 
-Regarding pricing, we offer flexible plans based on the number of users and the features required. For a team of 25 users, our Standard plan would cost $750 per month, billed annually. This plan includes access to all the essential features, such as the content calendar, campaign management, automations, and integrations.
+Regarding pricing, we offer flexible plans based on the number of users and the features required. For a team of 25 users, our Standard plan would cost $750 per month, billed annually. This plan includes access to all the essential features, such as the content calendar, campaign management, automations, and integrations.  
 
 I've attached a few case studies showcasing how other marketing teams have successfully implemented Monday.com to streamline their workflows and drive better results. These should provide some valuable insights into the platform's potential impact.
 
@@ -177,40 +183,47 @@ As for customization, Monday.com is highly adaptable to your unique use cases. Y
 Please let me know if you have any further questions or if you'd like to schedule a follow-up call to discuss the next steps. I'm confident that Monday.com can help your team achieve its marketing goals more efficiently.
 
 Best,
-John","<!-- Sarah / John 1st Video Meeting Transcript - 2024-03-29 11:00:00 -->
-""John: Hi Sarah, it's John from Monday.com. Thanks for taking the time to meet today and discuss your team's marketing needs.
+John","<!-- Sarah / Michael / John 1st Video Meeting Transcript - 2024-04-12 15:00:00 -->
 
-Sarah: Hi John, thanks for reaching out. We're definitely interested in learning more about how Monday.com can help us streamline our marketing processes.
+John: Hi Sarah, Michael, thanks for making the time for another call today. I wanted to continue our discussion around how Monday.com can support BlueSky Media's marketing workflows.
 
-John: Great, I'm happy to provide an overview of our marketing solutions. Let's start with campaign management - our platform allows you to plan, execute, and track all your marketing initiatives in one place.
+Sarah: Thanks for preparing that follow-up info, John. Michael and I had a chance to review the case studies and pricing you sent over.
 
-Sarah: That's exactly what we're looking for. Right now, we're struggling to keep our campaigns organized and aligned across different channels and teams. How would Monday.com help with that?
+John: Excellent, I'm glad you found that information helpful. What were your overall impressions after looking through those materials?
 
-John: With Monday.com, you can create a centralized board for each campaign, assign tasks to team members, set deadlines, and track progress in real-time. You can also connect related boards to ensure everyone has visibility into how their work contributes to the overall campaign.
+Michael: I was really impressed with the depth of marketing functionality Monday.com offers. The content calendar, campaign tracking, and social media integration features in particular seem incredibly valuable for streamlining our operations.
 
-Sarah: That would be a huge improvement over our current approach of juggling spreadsheets and email threads. What about content production? We're finding it challenging to manage our content calendar and ensure a steady flow of high-quality content.
+Sarah: I agree, Michael. I could see our content creators and social teams being much more efficient with those centralized collaboration tools at their disposal.
 
-John: Our content calendar template is designed to help with that. You can plan out your content themes, assign writing and design tasks, and collaborate on drafts - all within the Monday.com platform. The calendar view provides a clear picture of upcoming deadlines and publishing dates.
+John: That's great to hear. One of our key value propositions is eliminating the disparate apps and manual processes that often slow marketing teams down. Everything from planning and execution to performance analysis happens seamlessly in one platform.
 
-Sarah: I like the idea of having all our content work happening in one place. Can we also integrate our social media scheduling and analytics tools?
+Sarah: The customization capabilities also caught my eye. Can you expand on how we could tailor the templates and workflows to match our team's unique processes and terminology?
 
-John: Absolutely. Monday.com integrates with popular social media management platforms like Hootsuite and Sprout Social. You can automatically sync your content calendar with your social posting schedule and pull performance data back into Monday.com for analysis.
+John: Absolutely. With our no-code customization tools, you can easily modify any of our pre-built templates to include your own custom fields, views, and automations without needing technical resources.
 
-Sarah: That's fantastic. Another pain point for us has been managing our creative assets and ensuring brand consistency across all our content. Does Monday.com have any features to help with that?
+For example, let's say you have specific campaign stages or content types you want to track. You can simply add new columns to the relevant boards and mirror those across any connected projects.
 
-John: Yes, our digital asset management (DAM) solution allows you to store, organize, and share your creative files directly within the platform. You can set permissions to control access and use automation to streamline creative workflows, like automatically routing design requests to the appropriate team members.
+We also have a robust API that makes it easy to push and pull data from Monday.com to integrate with your other business systems. And if you need advanced features like single sign-on or white labeling, we offer professional services engagements to help with those implementations.
 
-Sarah: Wow, it sounds like Monday.com covers all the bases when it comes to marketing workflows. I'm impressed by the breadth of features and integrations.
+Michael: That's really impressive flexibility. One of my main concerns was having to conform to a rigid, pre-defined structure that doesn't match our processes.
 
-John: We've worked hard to create a comprehensive solution that addresses the most common challenges marketing teams face. By bringing everything together in one platform, teams can work more efficiently and focus on delivering great results.
+John: I can assure you that won't be the case, Michael. Our goal is to empower your team by providing a truly adaptable platform that molds to your needs rather than the other way around.
 
-Sarah: I think this could be a game-changer for our team. Could you send over some more information on pricing and implementation? I'd like to share it with my manager and discuss the potential ROI.
+Sarah: I have to say, I'm feeling more and more confident that Monday.com could be a game-changer for BlueSky's marketing operations. Obviously we'd need to run some final numbers, but are you able to share some potential implementation timelines if we decide to move forward?
 
-John: Of course, I'll put together a detailed proposal with pricing options and some case studies from other marketing teams who have successfully adopted Monday.com. Let's schedule a follow-up call next week to review the proposal and answer any other questions you may have.
+John: Of course. Based on a team of your size, we could likely have you fully onboarded and trained within 4-6 weeks from the time of purchase. We'd start by holding a kickoff to define your key requirements and use cases...
 
-Sarah: That sounds great, John. Thanks for taking the time to walk me through the platform. I'm looking forward to continuing the conversation.
+[John continues explaining the implementation process...]
 
-John: My pleasure, Sarah. I'm excited about the opportunity to help your team work smarter and achieve your marketing goals. Talk to you next week!""",This is the summary of our conversations so far,The customer is concerned about the level of support Monday.com provides during onboarding and implementation.,Wrike
+","Customer's main focus has been on streamlining their marketing campaign management, content production workflows, and enabling secure collaboration across internal and external teams. Key capabilities they are evaluating include:
+
+- Content calendar and campaign management templates 
+- Integrations with social media tools for content scheduling and analytics
+- Digital asset management for organizing creative files/assets
+- Document collaboration and real-time co-authoring
+- Customization to tailor the platform to their unique processes
+
+They seem very interested in the platform but want to finalize pricing, implementation timelines, and ensure they can customize it as needed before moving forward. Overall sentiment is quite positive.",They seem hesitant to fully commit given the potentially long implementation timeline and want reassurance it can be customized sufficiently. Pricing may also be a sticking point.,Clickup
 SunTech Solutions,IT Services,Decision Made,28000,Organic Search,"<!-- Email, Subject: Follow-up on Monday.com Trial - 2024-05-10 09:45:00 -->
 
 From: Alex Patel
@@ -256,39 +269,56 @@ Could you send over a formal proposal with pricing details and an outline of the
 Thanks again for your support throughout the trial period. We're excited about the potential impact Monday.com can have on our team's productivity and collaboration.
 
 Best regards,
+Emily
+
+From: David Lee
+To: Emily Brown
+Subject: Re: Follow-up on Monday.com Trial
+
+Hi Emily,
+
+I hope you're doing well. I wanted to follow up on the trial and see how your team is enjoying the platform. Alex mentioned that you had some questions about board permissions and guest access, and I'd be happy to help clarify those for you.
+
+We take security and compliance very seriously at Monday.com, and we've implemented robust measures to ensure that your data is protected. Our platform offers granular permission controls, so you can define exactly who has access to specific boards, items, and information. We also have a guest access feature that allows you to invite external collaborators to specific boards, while controlling their level of access.
+
+Let me know if you'd like to schedule a call to discuss this further, and I'll be happy to walk you through the security features in more detail.
+
+Best regards,
+David
+
+From: Emily Brown
+To: David Lee
+Subject: Re: Follow-up on Monday.com Trial
+
+Hi David,
+
+Thanks for reaching out and offering your expertise. I appreciate the clarification on the security features, and I'd love to schedule a call to discuss this further. Our team is eager to ensure that we're implementing the platform in a way that meets our security and compliance requirements.
+
+I'll send over a meeting invite for this week, and we can discuss the next steps for implementing Monday.com for our team.
+
+Thanks again for your support, and I look forward to speaking with you soon.
+
+Best regards,
 Emily","<!-- Alex / Emily 1st Video Meeting Transcript - 2024-04-28 14:00:00 -->
-""Alex: Hi Emily, thanks for joining the call today. I understand your team has been testing out Monday.com for a couple of weeks now. How has your experience been so far?
-
-Emily: Hi Alex, yes, we've been diving into the platform and exploring how it can support our IT project management workflows. Overall, we're quite impressed with the features and flexibility Monday.com offers.
-
-Alex: That's great to hear. Were there any specific areas or capabilities that stood out to your team?
-
-Emily: Definitely. One of our biggest pain points has been automating repetitive tasks and keeping project data in sync across different tools. The workflow automations in Monday.com have been a real time-saver for us. We've been able to set up automations for task assignments, status updates, and even notifications to external stakeholders.
-
-Alex: I'm glad to hear that the automations are already making a difference for your team. It's one of the most powerful features of the platform, and it can really streamline your processes and reduce manual work.
-
-Emily: Absolutely. We've also been testing out the integrations with our existing tools, like our CRM and time tracking software. Having that data flow seamlessly between systems has been a game-changer for us.
-
-Alex: Yes, the Apps Marketplace offers a wide range of integrations to help you connect Monday.com with your other tools and keep all your project data in sync. It's a great way to create a more unified workflow and get a holistic view of your work.
-
-Emily: Agreed. Another area that's been valuable for us is the resource management and workload view. We've struggled with allocating resources effectively and preventing team burnout in the past, but the workload view in Monday.com gives us a clear picture of everyone's capacity and helps us balance the workload more evenly.
-
-Alex: That's fantastic. The workload view is a powerful tool for optimizing your team's resources and ensuring that everyone has a manageable workload. It can help you identify potential bottlenecks and make informed decisions about task assignments.
-
-Emily: Definitely. One question I did have was around board permissions and guest access. We often collaborate with external clients and vendors, so we need to be able to share specific information while still maintaining control over sensitive data. How granular can we get with the permissions in Monday.com?
-
-Alex: Monday.com offers a robust set of permission controls and guest access settings. You can set permissions at the board level, defining who can view, edit, or delete items. You can also create custom permissions for specific columns or tasks, ensuring that sensitive information is only accessible to authorized users.
-
-When it comes to guest access, you can invite external collaborators to specific boards and set their access levels based on their role. Guests will only be able to see and interact with the boards they've been invited to, and you can revoke access at any time.
-
-Emily: That's really helpful. It's important for us to have that level of control and flexibility when working with external stakeholders.
-
-Alex: Absolutely. Monday.com is designed to support secure collaboration, both within your team and with external partners. You'll have the tools you need to keep your data protected while still enabling seamless communication and collaboration.
-
-Emily: Great, that covers most of our key areas of interest. I think we have a good understanding of how Monday.com can support our IT project management needs.
-
-Alex: I'm thrilled to hear that. If you have any other questions or if you'd like to discuss the next steps, I'm here to help. We can talk about pricing, onboarding, and training to ensure a smooth implementation for your team.
-
-Emily: Thanks, Alex. I'll discuss this with my manager and circle back with you on the next steps. We appreciate your support throughout the trial period.
-
-Alex: It's my pleasure, Emily. I'm confident that Monday.com can bring significant value to your team and help you work more efficiently. Looking forward to continuing the conversation and getting you set up for success.""","This is a summary of our interactions","The customer has inquired about data security and compliance, which may be a potential concern.",Smartsheets
+Alex: Hi Emily, thanks for joining the call today! How's your experience been with Monday.com so far?
+Emily: Hi Alex! Yeah, we've been playing around with it for a couple of weeks now. I have to say, the automation features have been a game-changer for us.
+Alex: That's awesome to hear! Automation can really streamline your workflows. What specific pain points were you trying to address with Monday.com?
+Emily: Well, we were using a bunch of different tools and spreadsheets to manage our projects, and it was getting really cumbersome. We needed something that could tie everything together and give us a more holistic view.
+Alex: I totally get it. It sounds like you were experiencing some serious tool overload! How do you think Monday.com has helped you tackle that issue?
+Emily: Honestly, it's been a huge help. The integrations with our existing tools have been seamless, and the automation features have saved us so much time. We're really excited about the potential impact it can have on our team's productivity.
+Alex: That's fantastic to hear! I know you mentioned earlier that you had some questions about security and compliance. Can you tell me more about that?
+Emily: Yeah, we work with a lot of sensitive client data, so we need to make sure that we're meeting all the necessary security and compliance requirements. We're looking for more guidance on how to set up the platform to meet those needs.
+Alex: Absolutely, I understand. David Lee, our security expert, can help clarify those details for you. I'll make sure to loop him in on our conversation.
+<!-- David / Emily 2nd Video Meeting Transcript - 2024-05-03 10:00:00 -->
+David: Hi Emily, thanks for joining the call today! I understand you had some questions about security and compliance.
+Emily: Hi David, yeah, we're looking for more guidance on how to set up the platform to meet our security and compliance requirements. We work with a lot of sensitive client data, so we need to make sure we're meeting all the necessary standards.
+David: Absolutely, I understand. Can you tell me a bit more about your specific requirements? What kind of data are you working with, and what kind of compliance regulations do you need to adhere to?
+Emily: Sure. We work with a lot of personal client data, so we need to make sure we're meeting all the necessary GDPR and HIPAA requirements. We're also subject to regular security audits, so we need to make sure we can demonstrate compliance with those standards.
+David: Got it. Well, Monday.com takes security and compliance very seriously. We have a robust security framework in place, and we're constantly updating our features to meet the latest compliance requirements. Let me walk you through some of the specific features we have in place to address your needs... (David proceeds to demonstrate the security features)
+Emily: That's really helpful, thank you. I feel much more confident now in setting up the platform to meet our security and compliance requirements.
+David: You're welcome, Emily. If you have any more questions or need further assistance, please don't hesitate to reach out. We're here to support you throughout the implementation process.","SunTech Solutions has been exploring Monday.com to streamline their IT project management processes. They've been impressed with the automation capabilities and integrations with existing tools. However, they have questions about security and compliance, particularly regarding granular permissions and guest access. They're eager to implement the platform but need guidance on meeting their specific security and compliance requirements.
+","* Follow up with Emily Brown to discuss security and compliance requirements in more detail
+* Loop in David Lee, security expert, to provide guidance on setting up granular permissions and guest access
+* Send over a formal proposal with pricing details and an outline of the onboarding and training process
+* Schedule a call to discuss the implementation process and address any further questions or concerns
+* Emphasize the importance of security and compliance, and highlight Monday.com's robust security framework and commitment to meeting the latest compliance requirements.",Smartsheets

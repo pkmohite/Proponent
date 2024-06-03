@@ -91,14 +91,14 @@ def intro_page():
 # Setup
 set_page_config(page_title="Proponent", layout="wide",initial_sidebar_state="collapsed")
 
-# Check password
-col1,col2,col3 = st.columns([1,1.5,1])
-with col2:
-    col2a, col2b, col2c = st.columns([1,3,1])
-    if not check_password():
-        st.stop()
-    # else:
-    #     st.switch_page("pages/1_Sales_Enablement.py")
+# # Check password
+# col1,col2,col3 = st.columns([1,1.5,1])
+# with col2:
+#     col2a, col2b, col2c = st.columns([1,3,1])
+#     if not check_password():
+#         st.stop()
+#     # else:
+#     #     st.switch_page("pages/1_Sales_Enablement.py")
 
 # Welcome Page
 col1,col2,col3 = st.columns([1,3,1])

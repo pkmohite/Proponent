@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import pandas as pd
 from assets.code.element_configs import column_config_edit, config_csv_upload, parquet_schema_mf
-from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data, verify_password, set_page_config
+from assets.code.utils import pass_openAI_key, get_embedding, load_mf_data, set_page_config
 import pyarrow as pa
 import pyarrow.parquet as pq
 from streamlit_pdf_viewer import pdf_viewer
@@ -207,7 +207,6 @@ def setup_page():
 
 # Setup
 setup_page()
-verify_password()
 pass_openAI_key()
 
 ## Tabs

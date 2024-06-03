@@ -1,8 +1,18 @@
-﻿company_name,painPointId,similarity_score
-Norman-Day,8,0.93
-Norman-Day,12,0.86
-Norman-Day,3,0.69
-Norman-Day,6,0.52
-Norman-Day,16,0.35
-Norman-Day,7,0.18
-Norman-Day,18,0.15
+﻿company_name,painPointId,quote,relevance_score,similarity_score
+Norman-Day,3,"We were able to set up automations to handle task assignments, notifications, and status updates, which has already saved us a considerable amount of time and reduced the risk of manual errors.",High,0.93
+Norman-Day,7,"One area where we did have some questions was around the board permissions and guest access. We often collaborate with external clients and vendors, so we want to ensure that we can maintain control over sensitive information while still fostering seamless communication.",High,0.86
+Norman-Day,2,"We also explored the integrations with our CRM and time tracking tools, and we were pleased to find that the setup process was relatively straightforward. Having all our project data synced across systems has given us a more holistic view of our work and has made reporting much easier.",Medium,0.69
+Norman-Day,8,"With Monday.com, you can create a centralized board for each campaign, assign tasks to team members, set deadlines, and track progress in real-time. You can also connect related boards to ensure everyone has visibility into how their work contributes to the overall campaign.",Medium,0.52
+Norman-Day,14,"Historically we've had people working in Word, uploading to shared drives, attaching to emails - it gets messy. This embedded document solution could streamline things nicely.",Medium,0.35
+Norman-Day,9,"Our content calendar template is designed to help with that. You can plan out your content themes, assign writing and design tasks, and collaborate on drafts - all within the Monday.com platform.",Medium,0.18
+SunTech Solutions,1,"Struggling to keep complex projects with multiple stakeholders organized, on track, and delivered on time","High",0.95
+SunTech Solutions,2,"Difficulty integrating essential third-party tools and apps, leading to inefficient workflows and reduced productivity","Medium",0.75
+SunTech Solutions,3,"Wasting time on repetitive tasks and manual workflows that could be automated","High",0.93
+SunTech Solutions,7,"Challenges in securely collaborating with external partners and clients without compromising sensitive information","High",0.86
+SunTech Solutions,14,"Inefficient document creation and collaboration processes, leading to version control issues and wasted time","Medium",0.35
+BlueSky Media,1,"Thanks for the informative demo of Monday.com last week. Our team was impressed with the platform's capabilities, particularly the ability to connect boards and mirror columns to keep information synchronized across related projects. As discussed, we're currently evaluating solutions to streamline our marketing campaign management and content production workflows.","High",0.9
+BlueSky Media,2,"I was really impressed with the depth of marketing functionality Monday.com offers. The content calendar, campaign tracking, and social media integration features in particular seem incredibly valuable for streamlining our operations.","Medium",0.7
+BlueSky Media,3,"...automations, and integrations. (implied, not directly quoted)","Low",0.4
+BlueSky Media,8,"...inconsistent and outdated information across related boards, leading to confusion and errors (implied, not directly quoted)","Medium",0.6
+BlueSky Media,11,"The content calendar and campaign management features in Monday.com seem like a great fit.","High",0.8
+BlueSky Media,14,"We'd love to get some documentation or case studies showcasing how other marketing teams have leveraged Monday.com to improve their processes.","High",0.9

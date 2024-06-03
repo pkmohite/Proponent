@@ -3,6 +3,5 @@ videos/
 .venv
 .env
 __pycache__/
-downloads/combined_PDF.pdf
-downloads/transcribe_cache.mp4
+downloads/
 assets/log.parquet

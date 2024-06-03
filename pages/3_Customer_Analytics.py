@@ -161,7 +161,6 @@ def view_log_parquet():
 
 ## Setup
 page_setup()
-verify_password()
 
 ## Streamlit code
 st.header("Customer Analytics")

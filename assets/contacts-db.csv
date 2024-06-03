@@ -1,4 +1,11 @@
 ﻿contact_name,company_name,title,buyer_persona,history_summary
-Jason Strickland,Norman-Day,"VP, Engineering",Decision Maker,This is summary of Jason's Asks
-Karen Emery,Norman-Day,CISO,Influencer,This is summary of Karen's Asks
-Emily Chen,Norman-Day,Sr. Data Analyst,End User,This is summary of Emily's  Asks
+Jason Strickland,Norman-Day,"VP, Engineering",Decision Maker,"Jason is interested in streamlining HR processes like document collaboration, recruitment workflows, and ensuring compliance with regulations around hiring. He seems to be driving the evaluation for a solution like Monday.com."
+Amy Wong,Norman-Day,Recruitment Manager,End User,"Amy is interested in data integration, reporting, and dashboard capabilities to better analyze and visualize HR data and metrics."
+Paul Henderson,Norman-Day,VP of HR,Decision Maker,"Paul needs a solution to modernize core HR processes and increase operational efficiency across employee lifecycle management, from hiring to performance reviews and development."
+Sarah Johnson,BlueSky Media,Marketing Director,Decision Maker,"Sarah is evaluating solutions to streamline marketing campaign management and content production workflows. She is interested in customizing templates, marketing-specific features like content calendars, campaign tracking, and integrations with marketing tools."
+Michael Thompson,BlueSky Media,Digital Marketing Manager,End User,"Michael is looking for better collaboration tools for content creation, review workflows, and social media management integration to improve the effectiveness of BlueSky's digital marketing efforts."
+Alex Patel,SunTech Solutions,Account Executive,Decision Maker,"Alex is following up on SunTech Solution's trial of Monday.com, specifically their experience with workflow automations, third-party integrations, and permission controls for external collaboration."
+Emily Brown,SunTech Solutions,IT Project Manager,Decision Maker,"Emily's team has been testing Monday.com for IT project management needs. She is interested in automations, integrations with existing tools, resource management, workload visibility, and granular permission controls."
+David Wilson,SunTech Solutions,Director of IT Operations,Influencer,"David wants to evaluate solutions that can increase IT operational efficiency through features like knowledge management, internal ticketing system integration, and centralized documentation."
+Jessica Lee,Apex Systems,Operations Manager,Decision Maker,"Jessica needs a solution to streamline manufacturing operations, including production planning, quality management, and supply chain collaboration."
+Thomas Kim,Apex Systems,Plant Manager,Influencer,"Thomas is interested in solutions that can improve plant floor visibility, enable real-time reporting and analytics, and support lean manufacturing initiatives."

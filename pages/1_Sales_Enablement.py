@@ -149,11 +149,11 @@ def painpoint_selector():
             with cols[3]:
                 relevance_score = row['relevance_score']
                 if relevance_score == "High":
-                    st.write(f"<span style='color:green'>{relevance_score}</span>", unsafe_allow_html=True)
+                    st.write(f"<span style='color:#008000'>{relevance_score}</span>", unsafe_allow_html=True)
                 elif relevance_score == "Medium":
-                    st.write(f"<span style='color:yellow'>{relevance_score}</span>", unsafe_allow_html=True)
+                    st.write(f"<span style='color:#FFD700'>{relevance_score}</span>", unsafe_allow_html=True)
                 elif relevance_score == "Low":
-                    st.write(f"<span style='color:red'>{relevance_score}</span>", unsafe_allow_html=True)
+                    st.write(f"<span style='color:#FF0000'>{relevance_score}</span>", unsafe_allow_html=True)
                 else:
                     st.write(relevance_score)
 

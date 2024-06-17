@@ -395,14 +395,22 @@ def create_landing_page():
     col1, col2, col3 = st.columns([2.5, 2, 1.5])
     col1.markdown("#### Personalized Landing Page")
 
-    # Download the generated HTML template
-    with open("downloads/index.html", "rb") as file:
-        col3.download_button(
+    # # Download the generated HTML template
+    # with open("downloads/index.html", "rb") as file:
+    #     col3.download_button(
+    #         label="Download HTML File",
+    #         data=file.read(),
+    #         file_name="index.html",
+    #         mime="text/html",
+    #     )
+
+    col3.download_button(
             label="Download HTML File",
-            data=file.read(),
+            data=html_template.encode(),
             file_name="index.html",
             mime="text/html",
         )
+
     # View the generated HTML template
     with st.container(height=620, border=False):
         # with open("downloads/index.html", "r") as file:

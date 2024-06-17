@@ -389,7 +389,7 @@ def create_landing_page():
 
     html_template = generate_lp_content()
     
-    col1, col2, col3 = st.columns([2.5, 2.5, 1.5])
+    col1, col2, col3 = st.columns([2.5, 2.8, 1.5])
     col1.markdown("#### Personalized Landing Page")
     col3.download_button(
             label="Download HTML File",
@@ -403,7 +403,7 @@ def create_landing_page():
         components.html(html_template, height=4000)
 
 def create_sales_deck():
-    col1, col2, col3 = st.columns([2.5, 2.5, 1.5])
+    col1, col2, col3 = st.columns([2.5, 2.8, 1.5])
     col1.markdown("#### Personalized Sales Deck")
     create_image_deck(st.session_state.selected_recommendations)
     with open("downloads/combined_PDF.pdf", "rb") as file:
@@ -417,11 +417,12 @@ def create_sales_deck():
     if os.path.exists("downloads/combined_PDF.pdf"):
         displayPDF("downloads/combined_PDF.pdf", width=820, height=640)
     else:
-        st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
+        st.error("Error generating PDF. Please try again or contact me at prashant@proponentapp.com if this persists.")
 
 def create_demo_video():
-    create_video(st.session_state.selected_recommendations) # Uncomment this line in local deployment to enable video generation
-    col1, col2, col3 = st.columns([2.5, 2, 1.5])
+    # create_video(st.session_state.selected_recommendations) # Uncomment this line in local deployment to enable video generation
+    st.warning("This feature is disabled in the demo version. Please contact me at prashant@proponentapp.com to see a demo.")
+    col1, col2, col3 = st.columns([2.5, 2.8, 1.5])
     col1.markdown("#### Personalized Demo Video")
     if os.path.exists("downloads/video.mp4"):
         with open("downloads/video.mp4", "rb") as file:
@@ -433,7 +434,7 @@ def create_demo_video():
             )
         st.video("downloads/video.mp4")
     else:
-        st.error("Error generating video. Please try again or contact me at prashant@yourproponent.com if this persists.")
+        st.error("Error generating video. Please try again or contact me at prashant@proponentapp.com if this persists.")
 
 def display_resources():
     # Fetch files-db.csv

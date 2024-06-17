@@ -233,7 +233,7 @@ def customer_attributes():
     cont = st.container(border=True, height=870)
     
     # Select company
-    col1, col2, col3 = cont.columns([1, 1, 1])
+    col1, col2, col3 = cont.columns([1.5, 2, 1])
     col1.markdown(f"##### {st.session_state.customer_name}")
     if col3.button("Back to Deals"):
         reset_customer_name()

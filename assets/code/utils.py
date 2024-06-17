@@ -338,7 +338,7 @@ def create_image_deck(df):
     print(f"Combined image PDF created: {output_path}")
 
 
-def displayPDF(file, column = st, width = 840, height = 520):
+def displayPDF(file, column = st, width = 1000, height = 600):
     # Opening file from file path
     with open(file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")

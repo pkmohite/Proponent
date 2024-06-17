@@ -389,7 +389,7 @@ def create_landing_page():
 
     html_template = generate_lp_content()
     
-    col1, col2, col3 = st.columns([2.5, 2, 1.5])
+    col1, col2, col3 = st.columns([2.5, 2.5, 1.5])
     col1.markdown("#### Personalized Landing Page")
     col3.download_button(
             label="Download HTML File",
@@ -403,7 +403,7 @@ def create_landing_page():
         components.html(html_template, height=4000)
 
 def create_sales_deck():
-    col1, col2, col3 = st.columns([2.5, 2, 1.5])
+    col1, col2, col3 = st.columns([2.5, 2.5, 1.5])
     col1.markdown("#### Personalized Sales Deck")
     create_image_deck(st.session_state.selected_recommendations)
     with open("downloads/combined_PDF.pdf", "rb") as file:

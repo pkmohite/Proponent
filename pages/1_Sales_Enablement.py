@@ -360,7 +360,7 @@ def create_landing_page():
             history_email=history_email,
             history_chat=history_chat,
             internal_notes=internal_notes,
-            contact_summary=contact_summary,
+            contact_summary=contacts_list,
             model=model,
         )
         # Generate HTML for feature sections

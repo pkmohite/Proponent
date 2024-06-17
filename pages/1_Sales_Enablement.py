@@ -284,7 +284,7 @@ def customer_attributes():
         tab4container = st.container(border=False, height=100)
         st.button("Update Recommendations", on_click=update_recommendations)
 
-    return internal_notes, history_email, history_chat, competitor_battlecard, case_studies_concat, contact_summary
+    return internal_notes, history_email, history_chat, competitor_battlecard, case_studies_concat, contacts_list
 
 
     with tab1:
@@ -320,7 +320,7 @@ def product_chatbot_v3():
             personalized_prompt = f""" You are a product marketing expert. Use the following context to offer short helpful answers to questions that a sales person from Monday.com may ask you. 
             Response must be under 300 words. You MUST cite source:\n\n Company Name: {st.session_state.customer_name}\nCompany Industry: {industry}\n
             Deal Stage: {deal_stage}\nDeal Amount: {deal_amount}\n\nInternal Notes: {internal_notes}\nEmail History: {history_email}\nChat History: {history_chat}\n
-            Competitor Battlecard: {competitor_battlecard}\nCase Studies: {case_studies_concat} \nSummary of Contact's Involved in the deal and thier needs: {contact_summary}\n 
+            Competitor Battlecard: {competitor_battlecard}\nCase Studies: {case_studies_concat} \nSummary of Contact's Involved in the deal and thier needs: {contacts_list}\n 
             Recommended Features: {features_value_prop}\n\nSales Person Query: {prompt}\n\n "
             """
             stream = client.chat.completions.create(
@@ -488,7 +488,7 @@ mainco1, mainco2 = st.columns([4,6])
 
 # Display customer details
 with mainco1:
-    internal_notes, history_email, history_chat, competitor_battlecard, case_studies_concat, contact_summary = customer_attributes()
+    internal_notes, history_email, history_chat, competitor_battlecard, case_studies_concat, contacts_list = customer_attributes()
 
 # Display recommendations
 with mainco2:

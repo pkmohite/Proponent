@@ -415,7 +415,7 @@ def create_sales_deck():
         )
     
     if os.path.exists("downloads/combined_PDF.pdf"):
-        displayPDF("downloads/combined_PDF.pdf", width=820, height=640)
+        displayPDF("downloads/combined_PDF.pdf", width=1020, height=640)
     else:
         st.error("Error generating PDF. Please try again or contact me at prashant@proponentapp.com if this persists.")
 

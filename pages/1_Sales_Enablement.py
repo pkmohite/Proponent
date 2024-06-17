@@ -384,26 +384,13 @@ def create_landing_page():
             hero_images,
             features,
         )
-        
-        # # Save the generated HTML template to a file
-        # with open("downloads/index.html", "w") as file:
-        #     file.write(html_template)
+
         return html_template
 
     html_template = generate_lp_content()
     
     col1, col2, col3 = st.columns([2.5, 2, 1.5])
     col1.markdown("#### Personalized Landing Page")
-
-    # # Download the generated HTML template
-    # with open("downloads/index.html", "rb") as file:
-    #     col3.download_button(
-    #         label="Download HTML File",
-    #         data=file.read(),
-    #         file_name="index.html",
-    #         mime="text/html",
-    #     )
-
     col3.download_button(
             label="Download HTML File",
             data=html_template.encode(),
@@ -413,8 +400,6 @@ def create_landing_page():
 
     # View the generated HTML template
     with st.container(height=620, border=False):
-        # with open("downloads/index.html", "r") as file:
-        #     html_template = file.read()
         components.html(html_template, height=4000)
 
 def create_sales_deck():

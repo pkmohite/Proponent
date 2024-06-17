@@ -320,7 +320,7 @@ def create_image_deck(df):
             st.error(f"No slides in database. Please upload via Messaging Framework Tab or Contact Support if that doesn't work.")
 
     # Specify the output file path
-    output_path = "pkmohite/proponent/main/downloads/combined_PDF.pdf"
+    output_path = "downloads/combined_PDF.pdf"
 
     # Create a new PDF document with 16:9 layout
     pdf = FPDF(orientation="L", format=(285, 510))

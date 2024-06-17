@@ -233,9 +233,9 @@ def customer_attributes():
     cont = st.container(border=True, height=870)
     
     # Select company
-    col1, col2, col3 = cont.columns([1, 2, 1])
+    col1, col2, col3 = cont.columns([2, 4, 1.5])
     col1.markdown(f"##### {st.session_state.customer_name}")
-    if col2.button("Back to Deals"):
+    if col3.button("Back to Deals"):
         reset_customer_name()
     # Display contacts in st.multiselect: they are in contacts_db where company_name == st.session_state.customer_name
     contacts_list = contacts_db[contacts_db['company_name'] == st.session_state.customer_name]['contact_name'].tolist()

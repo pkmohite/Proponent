@@ -406,7 +406,7 @@ def create_sales_deck():
     col1, col2, col3 = st.columns([2.5, 2, 1.5])
     col1.markdown("#### Personalized Sales Deck")
     create_image_deck(st.session_state.selected_recommendations)
-    with open("downloads/combined_PDF.pdf", "rb") as file:
+    with open("/downloads/combined_PDF.pdf", "rb") as file:
         col3.download_button(
             label="Download PDF Deck",
             data=file.read(),
@@ -414,8 +414,8 @@ def create_sales_deck():
             mime="application/pdf",
         )
     
-    if os.path.exists("downloads/combined_PDF.pdf"):
-        displayPDF("downloads/combined_PDF.pdf", width=820, height=640)
+    if os.path.exists("/downloads/combined_PDF.pdf"):
+        displayPDF("/downloads/combined_PDF.pdf", width=820, height=640)
     else:
         st.error("Error generating PDF. Please try again or contact me at prashant@yourproponent.com if this persists.")
 
